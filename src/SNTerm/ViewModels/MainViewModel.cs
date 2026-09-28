@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using SNTerm.Connections;
 using SNTerm.Models;
 using SNTerm.Services;
+using SNTerm.Views;
 
 namespace SNTerm.ViewModels;
 
@@ -84,6 +85,58 @@ public partial class MainViewModel : ObservableObject
     private void AddVm()
     {
         SessionList.AddSession();
+    }
+
+    [RelayCommand]
+    public void Export(object? parameter = null)
+    {
+        IEnumerable<SessionInfo>? preSelected = null;
+        if (parameter is SessionInfo single)
+        {
+            preSelected = new[] { single };
+        }
+        else if (parameter is System.Collections.IList list)
+        {
+            preSelected = list.OfType<SessionInfo>().ToList();
+        }
+
+        var dlg = new ExportDialog(SessionList.Sessions, preSelected)
+        {
+            Owner = Application.Current?.MainWindow
+        };
+        dlg.ShowDialog();
+    }
+
+    [RelayCommand]
+    public void Import(string? filePath = null)
+    {
+        if (string.IsNullOrEmpty(filePath))
+        {
+            var ofd = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Chọn file danh sách VM",
+                Filter = "SN Term Export (*.snterm)|*.snterm|Tất cả file (*.*)|*.*"
+            };
+
+            if (ofd.ShowDialog(Application.Current?.MainWindow) == true)
+            {
+                filePath = ofd.FileName;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        var dlg = new ImportDialog(filePath, _sessionStore)
+        {
+            Owner = Application.Current?.MainWindow
+        };
+
+        if (dlg.ShowDialog() == true)
+        {
+            SessionList.LoadSessions();
+        }
     }
 
     public void OpenSessionTab(SessionInfo session)

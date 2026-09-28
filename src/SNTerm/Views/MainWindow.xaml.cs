@@ -131,6 +131,35 @@ public partial class MainWindow : Window
         }
     }
 
+    private void Window_DragOver(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files != null && files.Any(f => f.EndsWith(".snterm", StringComparison.OrdinalIgnoreCase)))
+            {
+                e.Effects = DragDropEffects.Copy;
+                e.Handled = true;
+                return;
+            }
+        }
+        e.Effects = DragDropEffects.None;
+    }
+
+    private void Window_Drop(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var sntermFile = files?.FirstOrDefault(f => f.EndsWith(".snterm", StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrEmpty(sntermFile))
+            {
+                ViewModel.Import(sntermFile);
+                e.Handled = true;
+            }
+        }
+    }
+
     private void ContextMenuDelete_Click(object sender, RoutedEventArgs e)
     {
         if (SessionsListBox.SelectedItems.Count > 0)
@@ -139,3 +168,4 @@ public partial class MainWindow : Window
         }
     }
 }
+

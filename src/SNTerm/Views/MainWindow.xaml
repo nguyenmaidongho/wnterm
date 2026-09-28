@@ -10,6 +10,7 @@
         Width="1100" Height="700"
         MinWidth="800" MinHeight="500"
         WindowStartupLocation="CenterScreen"
+        AllowDrop="True" Drop="Window_Drop" DragOver="Window_DragOver"
         FontFamily="Segoe UI" FontSize="13">
 
     <Window.DataContext>
@@ -44,8 +45,8 @@
         <Border Grid.Row="0" Background="{StaticResource ToolbarBackground}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="8,6">
             <StackPanel Orientation="Horizontal">
                 <Button Content="+ Thêm VM" Command="{Binding AddVmCommand}" Style="{StaticResource ToolbarButtonStyle}" />
-                <Button Content="⇪ Export" Style="{StaticResource ToolbarButtonStyle}" />
-                <Button Content="⇩ Import" Style="{StaticResource ToolbarButtonStyle}" />
+                <Button Content="⇪ Export" Command="{Binding ExportCommand}" Style="{StaticResource ToolbarButtonStyle}" />
+                <Button Content="⇩ Import" Command="{Binding ImportCommand}" Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="⚙ Cài đặt" Style="{StaticResource ToolbarButtonStyle}" />
             </StackPanel>
         </Border>
@@ -151,6 +152,7 @@
                                         <MenuItem Header="Kết nối" Command="{Binding SessionList.ConnectCommand}" />
                                         <MenuItem Header="Sửa" Command="{Binding SessionList.EditSessionCommand}" />
                                         <MenuItem Header="Nhân bản" Command="{Binding SessionList.DuplicateSessionCommand}" />
+                                        <MenuItem Header="Export VM này..." Command="{Binding DataContext.ExportCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
                                         <Separator />
                                         <MenuItem Header="Xóa" Click="ContextMenuDelete_Click" />
                                     </ContextMenu>
@@ -296,5 +298,7 @@
         </Border>
     </Grid>
 </Window>
+
+
 
 
