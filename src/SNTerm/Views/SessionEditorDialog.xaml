@@ -111,7 +111,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Content="Kiểm tra kết nối" IsEnabled="{Binding CanTestConnection}" Padding="10,6" Background="#F2F4F7" BorderBrush="#D0D5DD" ToolTip="Tính năng kích hoạt ở giai đoạn 2" />
+                <Button Grid.Column="0" Content="Kiểm tra kết nối" IsEnabled="{Binding CanTestConnection}" Padding="10,6" Background="#F2F4F7" BorderBrush="#D0D5DD" Command="{Binding TestConnectionCommand}" />
 
                 <Button Grid.Column="2" Content="Lưu &amp; Kết nối" Command="{Binding SaveAndCloseCommand}" CommandParameter="{x:Static vm:SessionListViewModel.TrueBox}" Padding="12,6" Margin="0,0,8,0" Background="#1570EF" Foreground="#FFFFFF" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" />
                 <Button Grid.Column="3" Content="Lưu" Command="{Binding SaveAndCloseCommand}" CommandParameter="{x:Static vm:SessionListViewModel.FalseBox}" Padding="14,6" Margin="0,0,8,0" Background="#F2F4F7" BorderBrush="#D0D5DD" FontWeight="SemiBold" Cursor="Hand" />
@@ -120,3 +120,4 @@
         </Border>
     </Grid>
 </Window>
+

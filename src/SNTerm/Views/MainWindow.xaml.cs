@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Input;
 using SNTerm.Models;
 using SNTerm.ViewModels;
@@ -12,6 +15,72 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Loaded += MainWindow_Loaded;
+    }
+
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        ViewModel.Tabs.CollectionChanged += OnTabsCollectionChanged;
+        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+        UpdateTerminalViews();
+    }
+
+    private void OnTabsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.OldItems != null)
+        {
+            foreach (TerminalTabViewModel tab in e.OldItems)
+            {
+                TerminalContainerGrid.Children.Remove(tab.TerminalControl);
+            }
+        }
+
+        UpdateTerminalViews();
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainViewModel.SelectedTab))
+        {
+            UpdateTerminalViews();
+        }
+    }
+
+    private void UpdateTerminalViews()
+    {
+        foreach (var tab in ViewModel.Tabs)
+        {
+            if (!TerminalContainerGrid.Children.Contains(tab.TerminalControl))
+            {
+                TerminalContainerGrid.Children.Add(tab.TerminalControl);
+            }
+
+            tab.TerminalControl.Visibility = (tab == ViewModel.SelectedTab)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        if (ViewModel.SelectedTab != null)
+        {
+            ViewModel.SelectedTab.TerminalControl.PostFocus();
+        }
+    }
+
+    private void Tab_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is FrameworkElement el && el.DataContext is TerminalTabViewModel tab)
+        {
+            ViewModel.SelectedTab = tab;
+        }
+    }
+
+    private void Tab_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.MiddleButton == MouseButtonState.Pressed && sender is FrameworkElement el && el.DataContext is TerminalTabViewModel tab)
+        {
+            ViewModel.CloseTab(tab);
+            e.Handled = true;
+        }
     }
 
     private void SessionsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)

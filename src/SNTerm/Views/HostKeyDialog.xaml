@@ -1,0 +1,64 @@
+﻿<Window x:Class="SNTerm.Views.HostKeyDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Xác nhận Host Key"
+        Width="520" Height="360"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        FontFamily="Segoe UI" FontSize="13"
+        Background="#FFFFFF">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header / Warning -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+            <TextBlock x:Name="TitleBlock" Text="Xác nhận kết nối tới máy chủ mới" FontWeight="Bold" FontSize="15" Foreground="#101828" Margin="0,0,0,6" />
+            <Border x:Name="WarningBox" Background="#FEF3F2" BorderBrush="#FECDCA" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,8" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="⚠ CẢNH BÁO: Khóa máy chủ đã thay đổi!" FontWeight="Bold" Foreground="#B42318" Margin="0,0,0,4" />
+                    <TextBlock Text="Khóa của máy chủ này không khớp với khóa đã lưu. Có thể máy chủ đã được cài lại, hoặc ai đó đang cố gắng chặn kết nối của bạn." Foreground="#B42318" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <!-- Details -->
+        <Border Grid.Row="1" Background="#F8F9FA" BorderBrush="#EAECF0" BorderThickness="1" CornerRadius="6" Padding="12">
+            <StackPanel>
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Máy chủ:" FontWeight="SemiBold" Foreground="#475467" />
+                    <TextBlock x:Name="HostBlock" Grid.Column="1" Text="10.0.0.5:22" Foreground="#101828" />
+                </Grid>
+
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Thuật toán:" FontWeight="SemiBold" Foreground="#475467" />
+                    <TextBlock x:Name="AlgorithmBlock" Grid.Column="1" Text="RSA" Foreground="#101828" />
+                </Grid>
+
+                <TextBlock Text="Fingerprint SHA256:" FontWeight="SemiBold" Foreground="#475467" Margin="0,4,0,2" />
+                <TextBox x:Name="FingerprintBox" IsReadOnly="True" Background="#FFFFFF" Padding="6" FontFamily="Consolas, monospace" FontSize="12" TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+
+        <!-- Buttons -->
+        <Border Grid.Row="2" Padding="0,16,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="TrustAndSaveButton" Content="Tin cậy &amp; Lưu" Click="TrustAndSave_Click" Padding="14,6" Margin="0,0,8,0" Background="#1570EF" Foreground="#FFFFFF" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" />
+                <Button x:Name="TrustOnceButton" Content="Chỉ lần này" Click="TrustOnce_Click" Padding="12,6" Margin="0,0,8,0" Background="#F2F4F7" BorderBrush="#D0D5DD" Cursor="Hand" />
+                <Button x:Name="CancelButton" Content="Hủy" Click="Cancel_Click" Padding="14,6" Background="Transparent" BorderBrush="#D0D5DD" Cursor="Hand" IsCancel="True" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

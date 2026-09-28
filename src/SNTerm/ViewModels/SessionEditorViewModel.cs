@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Renci.SshNet;
 using SNTerm.Models;
 using SNTerm.Services;
 
@@ -50,6 +53,9 @@ public partial class SessionEditorViewModel : ObservableObject
     private bool isPasswordCleared;
 
     [ObservableProperty]
+    private bool isTestingConnection;
+
+    [ObservableProperty]
     private string? hostError;
 
     [ObservableProperty]
@@ -61,7 +67,7 @@ public partial class SessionEditorViewModel : ObservableObject
     [ObservableProperty]
     private string? keyFileWarning;
 
-    public bool CanTestConnection => false; // Bật ở giai đoạn 2
+    public bool CanTestConnection => !IsTestingConnection;
 
     public ObservableCollection<string> ExistingGroups { get; } = new();
 
@@ -155,6 +161,59 @@ public partial class SessionEditorViewModel : ObservableObject
         IsPasswordCleared = true;
         HasStoredPassword = false;
         Password = "";
+    }
+
+    [RelayCommand]
+    private async Task TestConnectionAsync()
+    {
+        if (!Validate()) return;
+
+        IsTestingConnection = true;
+        OnPropertyChanged(nameof(CanTestConnection));
+
+        try
+        {
+            var tempSession = new SessionInfo
+            {
+                Host = Host.Trim(),
+                Port = Port,
+                Username = Username.Trim(),
+                KeyFilePath = string.IsNullOrWhiteSpace(KeyFilePath) ? null : KeyFilePath.Trim()
+            };
+
+            string? testPassword = Password;
+            if (string.IsNullOrEmpty(testPassword) && !IsPasswordCleared && _editingSession != null)
+            {
+                testPassword = SecretProtector.Decrypt(_editingSession.EncryptedPassword);
+            }
+
+            string? testPassphrase = Passphrase;
+            if (string.IsNullOrEmpty(testPassphrase) && _editingSession != null)
+            {
+                testPassphrase = SecretProtector.Decrypt(_editingSession.EncryptedPassphrase);
+            }
+
+            var factory = new SshConnectionFactory(new KnownHostsStore());
+            var connInfo = factory.CreateConnectionInfo(tempSession, testPassword, testPassphrase);
+
+            using var client = new SshClient(connInfo);
+            factory.AttachHostKeyVerification(client, tempSession.Host, tempSession.Port);
+
+            await Task.Run(() => client.Connect());
+            client.Disconnect();
+
+            MessageBox.Show("Kết nối SSH thành công!", "Kiểm tra kết nối", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            string msg = ErrorTranslator.Translate(ex, Host, Port);
+            MessageBox.Show(msg, "Kiểm tra kết nối thất bại", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+        finally
+        {
+            IsTestingConnection = false;
+            OnPropertyChanged(nameof(CanTestConnection));
+        }
     }
 
     [RelayCommand]

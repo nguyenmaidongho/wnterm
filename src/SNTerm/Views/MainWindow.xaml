@@ -59,7 +59,7 @@
 
             <!-- Cột trái: TabControl Sessions / SFTP -->
             <Border Grid.Column="0" Background="{StaticResource SidebarBackground}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
-                <TabControl BorderThickness="0" Background="Transparent">
+                <TabControl x:Name="LeftTabControl" BorderThickness="0" Background="Transparent">
                     <!-- Tab Sessions -->
                     <TabItem Header="Sessions" FontWeight="SemiBold">
                         <Grid Margin="6">
@@ -179,19 +179,91 @@
 
                 <!-- Thanh tab ngang phía trên -->
                 <Border Grid.Row="0" Background="#2B2D30" BorderBrush="#1E1E1E" BorderThickness="0,0,0,1">
-                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
-                            <!-- Nút thêm tab [+] -->
-                            <Button Content="+" Command="{Binding AddVmCommand}" Width="28" Height="28" Margin="4,0,4,2" Background="Transparent" Foreground="#C9D1D9" BorderThickness="0" FontWeight="Bold" FontSize="14" Cursor="Hand" ToolTip="Mở danh sách VM" />
-                        </StackPanel>
-                    </ScrollViewer>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                <ItemsControl ItemsSource="{Binding Tabs}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border x:Name="TabBorder" Margin="2,0,2,0" Padding="10,6" CornerRadius="4,4,0,0"
+                                                    Cursor="Hand" ToolTip="{Binding TooltipText}"
+                                                    MouseLeftButtonDown="Tab_MouseLeftButtonDown"
+                                                    MouseDown="Tab_MouseDown">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="#32353A" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                                <Setter Property="Background" Value="#1E1E1E" />
+                                                                <Setter Property="BorderBrush" Value="#3C3F41" />
+                                                                <Setter Property="BorderThickness" Value="1,1,1,0" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <TextBlock Text="● " Foreground="{Binding StatusBrush}" FontWeight="Bold" />
+                                                    <TextBlock Text="{Binding Title}" Foreground="#E6EDF3" FontWeight="SemiBold" Margin="0,0,8,0" />
+                                                    <Button Content="×" Command="{Binding DataContext.CloseTabCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Foreground="#8B949E" Background="Transparent" BorderThickness="0" Cursor="Hand" />
+                                                </StackPanel>
+
+                                                <Border.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Kết nối lại" Command="{Binding ReconnectCommand}" />
+                                                        <MenuItem Header="Nhân bản tab" Command="{Binding DataContext.DuplicateTabCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
+                                                        <Separator />
+                                                        <MenuItem Header="Đóng tab" Command="{Binding DataContext.CloseTabCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
+                                                        <MenuItem Header="Đóng các tab khác" Command="{Binding DataContext.CloseOtherTabsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
+                                                        <MenuItem Header="Đóng các tab bên phải" Command="{Binding DataContext.CloseRightTabsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
+                                                        <MenuItem Header="Đóng tất cả" Command="{Binding DataContext.CloseAllTabsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                                    </ContextMenu>
+                                                </Border.ContextMenu>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!-- Nút thêm tab [+] -->
+                                <Button Content="+" Command="{Binding AddVmCommand}" Width="28" Height="28" Margin="4,0,4,2" Background="Transparent" Foreground="#C9D1D9" BorderThickness="0" FontWeight="Bold" FontSize="14" Cursor="Hand" ToolTip="Mở danh sách VM" />
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
                 </Border>
 
-                <!-- Vùng chứa Terminal (xterm.js layout) -->
-                <Border Grid.Row="1" Background="{StaticResource TerminalBackground}" Padding="12">
+                <!-- Vùng chứa Terminal (xterm.js WebView2) -->
+                <Border Grid.Row="1" Background="{StaticResource TerminalBackground}">
                     <Grid>
+                        <!-- Container cho các WebView2 của các tab -->
+                        <Grid x:Name="TerminalContainerGrid" />
+
+                        <!-- Placeholder khi chưa có tab nào -->
                         <TextBlock Text="Chọn hoặc nhấp đúp vào một VM ở danh sách bên trái để kết nối terminal..."
-                                   Foreground="#8B949E" FontStyle="Italic" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                   Foreground="#8B949E" FontStyle="Italic" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                   Visibility="{Binding Tabs.Count, Converter={x:Static vm:SessionListViewModel.NullToVisibilityConverter}}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Tabs.Count}" Value="0">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </Grid>
                 </Border>
             </Grid>
