@@ -47,7 +47,7 @@
                 <Button Content="+ Thêm VM" Command="{Binding AddVmCommand}" Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="⇪ Export" Command="{Binding ExportCommand}" Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="⇩ Import" Command="{Binding ImportCommand}" Style="{StaticResource ToolbarButtonStyle}" />
-                <Button Content="⚙ Cài đặt" Style="{StaticResource ToolbarButtonStyle}" />
+                <Button Content="⚙ Cài đặt" Command="{Binding OpenSettingsCommand}" Style="{StaticResource ToolbarButtonStyle}" />
             </StackPanel>
         </Border>
 
@@ -298,6 +298,7 @@
         </Border>
     </Grid>
 </Window>
+
 
 
 

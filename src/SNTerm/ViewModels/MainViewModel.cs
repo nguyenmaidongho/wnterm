@@ -23,6 +23,8 @@ public partial class MainViewModel : ObservableObject
     private readonly AppSettings _settings;
     private readonly SemaphoreSlim _connectSemaphore;
 
+    public AppSettings Settings => _settings;
+
     [ObservableProperty]
     private string windowTitle = "SN Term";
 
@@ -85,6 +87,51 @@ public partial class MainViewModel : ObservableObject
     private void AddVm()
     {
         SessionList.AddSession();
+    }
+
+    [RelayCommand]
+    public void OpenSettings()
+    {
+        var dlg = new SettingsDialog(_settings)
+        {
+            Owner = Application.Current?.MainWindow
+        };
+
+        if (dlg.ShowDialog() == true)
+        {
+            _settingsStore.Save(_settings);
+
+            foreach (var tab in Tabs)
+            {
+                tab.TerminalControl.PostSettings(_settings);
+            }
+        }
+    }
+
+    public void SaveWindowState(double width, double height, double leftCol)
+    {
+        _settings.WindowWidth = width;
+        _settings.WindowHeight = height;
+        _settings.LeftColumnWidth = leftCol;
+        _settingsStore.Save(_settings);
+    }
+
+    public bool CanCloseWindow()
+    {
+        int connectedCount = Tabs.Count(t => t.Status == ConnectionStatus.Connected);
+        if (connectedCount > 0)
+        {
+            var res = MessageBox.Show(
+                $"Đang có {connectedCount} tab kết nối SSH. Bạn có chắc chắn muốn thoát SN Term?",
+                "Xác nhận đóng ứng dụng",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (res != MessageBoxResult.Yes) return false;
+        }
+
+        CloseAllTabs();
+        return true;
     }
 
     [RelayCommand]

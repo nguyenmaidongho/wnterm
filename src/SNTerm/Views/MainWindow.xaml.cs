@@ -16,6 +16,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Loaded += MainWindow_Loaded;
+                Closing += MainWindow_Closing;
     }
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -131,6 +132,17 @@ public partial class MainWindow : Window
         }
     }
 
+    private void MainWindow_Closing(object? sender, CancelEventArgs e)
+    {
+        if (!ViewModel.CanCloseWindow())
+        {
+            e.Cancel = true;
+            return;
+        }
+
+        ViewModel.SaveWindowState(ActualWidth, ActualHeight, ViewModel.LeftColumnWidth);
+    }
+
     private void Window_DragOver(object sender, DragEventArgs e)
     {
         if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -168,4 +180,5 @@ public partial class MainWindow : Window
         }
     }
 }
+
 
