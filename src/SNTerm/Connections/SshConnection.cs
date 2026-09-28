@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -70,7 +70,6 @@ public class SshConnection : IDisposable
     {
         byte[] buffer = new byte[32768];
         using var batchStream = new MemoryStream();
-        var lastFlush = DateTime.UtcNow;
 
         try
         {
@@ -81,11 +80,9 @@ public class SshConnection : IDisposable
 
                 batchStream.Write(buffer, 0, read);
 
-                var elapsed = (DateTime.UtcNow - lastFlush).TotalMilliseconds;
-                if (batchStream.Length >= 65536 || elapsed >= 16)
+                if (!stream.DataAvailable || batchStream.Length >= 65536)
                 {
                     FlushBatch(batchStream);
-                    lastFlush = DateTime.UtcNow;
                 }
             }
         }
