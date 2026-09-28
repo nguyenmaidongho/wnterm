@@ -6,13 +6,13 @@
         xmlns:vm="clr-namespace:SNTerm.ViewModels"
         mc:Ignorable="d"
         Title="{Binding DialogTitle}"
-        Width="480" Height="580"
+        Width="500" Height="680" MinWidth="460" MinHeight="560" ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
+        
         FontFamily="Segoe UI" FontSize="13"
         Background="#FFFFFF">
 
-    <Grid Margin="20">
+    <Grid Margin="18,14">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -22,12 +22,12 @@
             <StackPanel>
                 <!-- Tên hiển thị -->
                 <TextBlock Text="Tên hiển thị (tùy chọn):" Margin="0,0,0,4" Foreground="#344054" />
-                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Padding="8,6" Margin="0,0,0,12" />
+                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Padding="8,6" Margin="0,0,0,8" />
 
                 <!-- Nhóm -->
                 <TextBlock Text="Nhóm:" Margin="0,0,0,4" Foreground="#344054" />
                 <ComboBox IsEditable="True" Text="{Binding Group, UpdateSourceTrigger=PropertyChanged}"
-                          ItemsSource="{Binding ExistingGroups}" Padding="6,6" Margin="0,0,0,12" />
+                          ItemsSource="{Binding ExistingGroups}" Padding="6,6" Margin="0,0,0,8" />
 
                 <!-- IP / Hostname -->
                 <TextBlock Text="IP / Hostname: *" Margin="0,0,0,4" FontWeight="SemiBold" Foreground="#344054" />
@@ -36,7 +36,7 @@
                            Visibility="{Binding HostError, Converter={x:Static vm:SessionListViewModel.NullToVisibilityConverter}}" />
 
                 <!-- Port & User -->
-                <Grid Margin="0,0,0,12">
+                <Grid Margin="0,0,0,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="16" />
@@ -79,7 +79,7 @@
                     <Button Content="Xóa mật khẩu đã lưu" Command="{Binding ClearStoredPasswordActionCommand}" Margin="8,0,0,0" FontSize="11" Background="Transparent" BorderThickness="0" Foreground="#D92D20" Cursor="Hand" />
                 </StackPanel>
 
-                <CheckBox Content="Lưu mật khẩu" IsChecked="{Binding SavePassword}" Margin="0,0,0,12" />
+                <CheckBox Content="Lưu mật khẩu" IsChecked="{Binding SavePassword}" Margin="0,0,0,8" />
 
                 <!-- Key file -->
                 <TextBlock Text="Key file (OpenSSH / .ppk / PEM):" Margin="0,0,0,4" Foreground="#344054" />
@@ -96,12 +96,12 @@
 
                 <!-- Passphrase -->
                 <TextBlock Text="Passphrase key:" Margin="0,0,0,4" Foreground="#344054" />
-                <PasswordBox x:Name="PassphraseBoxControl" Padding="8,6" PasswordChanged="PassphraseBox_PasswordChanged" Margin="0,0,0,16" />
+                <PasswordBox x:Name="PassphraseBoxControl" Padding="8,6" PasswordChanged="PassphraseBox_PasswordChanged" Margin="0,0,0,8" />
             </StackPanel>
         </ScrollViewer>
 
         <!-- Nút hành động -->
-        <Border Grid.Row="1" Padding="0,16,0,0" BorderBrush="#E4E7EC" BorderThickness="0,1,0,0">
+        <Border Grid.Row="1" Padding="0,12,0,0" BorderBrush="#E4E7EC" BorderThickness="0,1,0,0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
