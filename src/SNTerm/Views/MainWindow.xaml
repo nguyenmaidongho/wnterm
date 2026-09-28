@@ -42,7 +42,7 @@
         <!-- Thanh công cụ phía trên -->
         <Border Grid.Row="0" Background="{StaticResource ToolbarBackground}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="8,6">
             <StackPanel Orientation="Horizontal">
-                <Button Content="+ Thêm VM" Style="{StaticResource ToolbarButtonStyle}" />
+                <Button Content="+ Thêm VM" Command="{Binding AddVmCommand}" Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="⇪ Export" Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="⇩ Import" Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="⚙ Cài đặt" Style="{StaticResource ToolbarButtonStyle}" />
@@ -52,7 +52,7 @@
         <!-- Nội dung chính 2 cột chia bằng GridSplitter -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="280" MinWidth="180" MaxWidth="600" />
+                <ColumnDefinition Width="{Binding LeftColumnWidth, Mode=TwoWay}" MinWidth="180" MaxWidth="600" />
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
@@ -69,42 +69,92 @@
                             </Grid.RowDefinitions>
 
                             <!-- Ô tìm kiếm -->
-                            <TextBox Grid.Row="0" Margin="0,0,0,8" Padding="6,4" Text="🔍 Tìm VM..." Foreground="#667085" />
+                            <TextBox Grid.Row="0" Margin="0,0,0,8" Padding="6,4"
+                                     Text="{Binding SessionList.SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <!-- Danh sách VM mẫu theo nhóm -->
-                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                                <StackPanel>
-                                    <!-- Nhóm Dev -->
-                                    <Expander Header="▾ Dev" IsExpanded="True" FontWeight="Bold" Margin="0,0,0,4">
-                                        <StackPanel Margin="16,4,0,0" >
-                                            <Border Padding="6,4" Background="#EBF3FF" CornerRadius="4" Margin="0,2">
-                                                <StackPanel>
-                                                    <TextBlock Text="web-01" FontWeight="SemiBold" Foreground="#101828" />
-                                                    <TextBlock Text="ubuntu@10.0.0.5:22" FontSize="11" Foreground="#475467" />
-                                                </StackPanel>
-                                            </Border>
-                                            <Border Padding="6,4" Margin="0,2">
-                                                <StackPanel>
-                                                    <TextBlock Text="db-02" FontWeight="SemiBold" Foreground="#101828" />
-                                                    <TextBlock Text="root@10.0.0.6:22" FontSize="11" Foreground="#475467" />
-                                                </StackPanel>
-                                            </Border>
-                                        </StackPanel>
-                                    </Expander>
+                            <!-- Danh sách VM gom nhóm -->
+                            <ListBox x:Name="SessionsListBox" Grid.Row="1"
+                                     ItemsSource="{Binding SessionList.SessionsView}"
+                                     SelectedItem="{Binding SessionList.SelectedSession}"
+                                     SelectionMode="Extended"
+                                     BorderThickness="0" Background="Transparent"
+                                     MouseDoubleClick="SessionsListBox_MouseDoubleClick"
+                                     KeyDown="SessionsListBox_KeyDown">
 
-                                    <!-- Nhóm Prod -->
-                                    <Expander Header="▾ Prod" IsExpanded="True" FontWeight="Bold" Margin="0,4,0,4">
-                                        <StackPanel Margin="16,4,0,0" >
-                                            <Border Padding="6,4" Margin="0,2">
-                                                <StackPanel>
-                                                    <TextBlock Text="api-01" FontWeight="SemiBold" Foreground="#101828" />
-                                                    <TextBlock Text="deploy@api.example.com:2222" FontSize="11" Foreground="#475467" />
-                                                </StackPanel>
-                                            </Border>
-                                        </StackPanel>
-                                    </Expander>
-                                </StackPanel>
-                            </ScrollViewer>
+                                <ListBox.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.ContainerStyle>
+                                            <Style TargetType="{x:Type GroupItem}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                            <Expander IsExpanded="True" Header="{Binding Name}" FontWeight="Bold" Margin="0,2,0,6">
+                                                                <ItemsPresenter Margin="12,2,0,0" />
+                                                            </Expander>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.ContainerStyle>
+                                    </GroupStyle>
+                                </ListBox.GroupStyle>
+
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="Padding" Value="6,4" />
+                                        <Setter Property="Margin" Value="0,1" />
+                                        <Setter Property="Cursor" Value="Hand" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBoxItem">
+                                                    <Border x:Name="Bd" Padding="{TemplateBinding Padding}" CornerRadius="4" Background="Transparent" SnapsToDevicePixels="true">
+                                                        <ContentPresenter />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="true">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#F2F4F7" />
+                                                        </Trigger>
+                                                        <Trigger Property="IsSelected" Value="true">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#EBF3FF" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="2,1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" Foreground="#101828" />
+                                                <TextBlock Text="{Binding Subtitle}" FontSize="11" Foreground="#475467" />
+                                            </StackPanel>
+
+                                            <!-- Biểu tượng cảnh báo thiếu file key -->
+                                            <TextBlock Grid.Column="1" Text="⚠" Foreground="#F79009" FontWeight="Bold" ToolTip="Không tìm thấy file key"
+                                                       Visibility="{Binding IsKeyFileMissing, Converter={x:Static vm:SessionListViewModel.BoolToVisibilityConverter}}"
+                                                       VerticalAlignment="Center" Margin="4,0,0,0" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Kết nối" Command="{Binding SessionList.ConnectCommand}" />
+                                        <MenuItem Header="Sửa" Command="{Binding SessionList.EditSessionCommand}" />
+                                        <MenuItem Header="Nhân bản" Command="{Binding SessionList.DuplicateSessionCommand}" />
+                                        <Separator />
+                                        <MenuItem Header="Xóa" Click="ContextMenuDelete_Click" />
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+                            </ListBox>
                         </Grid>
                     </TabItem>
 
@@ -131,35 +181,17 @@
                 <Border Grid.Row="0" Background="#2B2D30" BorderBrush="#1E1E1E" BorderThickness="0,0,0,1">
                     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
-                            <!-- Tab active: web-01 -->
-                            <Border Background="#1E1E1E" CornerRadius="4,4,0,0" Padding="12,6" Margin="4,0,2,0" BorderBrush="#3C3F41" BorderThickness="1,1,1,0">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="● " Foreground="#52C41A" FontWeight="Bold" ToolTip="Đã kết nối" />
-                                    <TextBlock Text="web-01" Foreground="#E6EDF3" FontWeight="SemiBold" ToolTip="ubuntu@10.0.0.5:22" />
-                                    <Button Content="×" Margin="8,0,0,0" Foreground="#8B949E" Background="Transparent" BorderThickness="0" Cursor="Hand" />
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Tab phụ: db-02 -->
-                            <Border Background="#32353A" CornerRadius="4,4,0,0" Padding="12,6" Margin="2,0,2,0">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="● " Foreground="#52C41A" FontWeight="Bold" ToolTip="Đã kết nối" />
-                                    <TextBlock Text="db-02" Foreground="#C9D1D9" ToolTip="root@10.0.0.6:22" />
-                                    <Button Content="×" Margin="8,0,0,0" Foreground="#8B949E" Background="Transparent" BorderThickness="0" Cursor="Hand" />
-                                </StackPanel>
-                            </Border>
-
                             <!-- Nút thêm tab [+] -->
-                            <Button Content="+" Width="28" Height="28" Margin="4,0,4,2" Background="Transparent" Foreground="#C9D1D9" BorderThickness="0" FontWeight="Bold" FontSize="14" Cursor="Hand" ToolTip="Mở danh sách VM" />
+                            <Button Content="+" Command="{Binding AddVmCommand}" Width="28" Height="28" Margin="4,0,4,2" Background="Transparent" Foreground="#C9D1D9" BorderThickness="0" FontWeight="Bold" FontSize="14" Cursor="Hand" ToolTip="Mở danh sách VM" />
                         </StackPanel>
                     </ScrollViewer>
                 </Border>
 
                 <!-- Vùng chứa Terminal (xterm.js layout) -->
-                <Border Grid.Row="1" Background="{StaticResource TerminalBackground}" Padding="8">
+                <Border Grid.Row="1" Background="{StaticResource TerminalBackground}" Padding="12">
                     <Grid>
-                        <TextBlock Text="ubuntu@web-01:~$ ls -la&#x0a;total 24&#x0a;drwxr-xr-x 4 ubuntu ubuntu 4096 Sep 28 10:00 .&#x0a;drwxr-xr-x 3 root   root   4096 Sep 28 09:30 ..&#x0a;-rw-r--r-- 1 ubuntu ubuntu  220 Sep 28 09:30 .bash_logout&#x0a;-rw-r--r-- 1 ubuntu ubuntu 3771 Sep 28 09:30 .bashrc&#x0a;ubuntu@web-01:~$ █"
-                                   Foreground="#CCCCCC" FontFamily="'JetBrains Mono', Consolas, monospace" FontSize="13" />
+                        <TextBlock Text="Chọn hoặc nhấp đúp vào một VM ở danh sách bên trái để kết nối terminal..."
+                                   Foreground="#8B949E" FontStyle="Italic" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </Grid>
                 </Border>
             </Grid>
@@ -171,4 +203,3 @@
         </Border>
     </Grid>
 </Window>
-

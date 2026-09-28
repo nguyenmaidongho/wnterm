@@ -1,0 +1,122 @@
+﻿<Window x:Class="SNTerm.Views.SessionEditorDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:SNTerm.ViewModels"
+        mc:Ignorable="d"
+        Title="{Binding DialogTitle}"
+        Width="480" Height="580"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        FontFamily="Segoe UI" FontSize="13"
+        Background="#FFFFFF">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Tên hiển thị -->
+                <TextBlock Text="Tên hiển thị (tùy chọn):" Margin="0,0,0,4" Foreground="#344054" />
+                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Padding="8,6" Margin="0,0,0,12" />
+
+                <!-- Nhóm -->
+                <TextBlock Text="Nhóm:" Margin="0,0,0,4" Foreground="#344054" />
+                <ComboBox IsEditable="True" Text="{Binding Group, UpdateSourceTrigger=PropertyChanged}"
+                          ItemsSource="{Binding ExistingGroups}" Padding="6,6" Margin="0,0,0,12" />
+
+                <!-- IP / Hostname -->
+                <TextBlock Text="IP / Hostname: *" Margin="0,0,0,4" FontWeight="SemiBold" Foreground="#344054" />
+                <TextBox Text="{Binding Host, UpdateSourceTrigger=PropertyChanged}" Padding="8,6" Margin="0,0,0,2" />
+                <TextBlock Text="{Binding HostError}" Foreground="#D92D20" FontSize="11" Margin="0,0,0,8"
+                           Visibility="{Binding HostError, Converter={x:Static vm:SessionListViewModel.NullToVisibilityConverter}}" />
+
+                <!-- Port & User -->
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Port: *" Margin="0,0,0,4" FontWeight="SemiBold" Foreground="#344054" />
+                        <TextBox Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" Padding="8,6" />
+                        <TextBlock Text="{Binding PortError}" Foreground="#D92D20" FontSize="11" Margin="0,2,0,0"
+                                   Visibility="{Binding PortError, Converter={x:Static vm:SessionListViewModel.NullToVisibilityConverter}}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="User: *" Margin="0,0,0,4" FontWeight="SemiBold" Foreground="#344054" />
+                        <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Padding="8,6" />
+                        <TextBlock Text="{Binding UsernameError}" Foreground="#D92D20" FontSize="11" Margin="0,2,0,0"
+                                   Visibility="{Binding UsernameError, Converter={x:Static vm:SessionListViewModel.NullToVisibilityConverter}}" />
+                    </StackPanel>
+                </Grid>
+
+                <Separator Margin="0,4,0,12" Background="#E4E7EC" />
+                <TextBlock Text="Xác thực" FontWeight="Bold" Margin="0,0,0,8" Foreground="#1D2939" />
+
+                <!-- Password -->
+                <TextBlock Text="Mật khẩu:" Margin="0,0,0,4" Foreground="#344054" />
+                <Grid Margin="0,0,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <PasswordBox x:Name="PasswordBoxControl" Grid.Column="0" Padding="8,6" PasswordChanged="PasswordBox_PasswordChanged" />
+                    <TextBox x:Name="PasswordRevealBox" Grid.Column="0" Padding="8,6" Visibility="Collapsed" TextChanged="PasswordRevealBox_TextChanged" />
+                    <Button Grid.Column="1" Content="👁" Width="32" Margin="4,0,0,0" Click="TogglePasswordVisibility_Click" Background="#F2F4F7" BorderBrush="#D0D5DD" />
+                </Grid>
+
+                <!-- Hiển thị khi đang sửa và đã có mật khẩu lưu -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8" Visibility="{Binding HasStoredPassword, Converter={x:Static vm:SessionListViewModel.BoolToVisibilityConverter}}">
+                    <TextBlock Text="Đang dùng mật khẩu đã lưu." Foreground="#475467" FontSize="11" VerticalAlignment="Center" />
+                    <Button Content="Xóa mật khẩu đã lưu" Command="{Binding ClearStoredPasswordActionCommand}" Margin="8,0,0,0" FontSize="11" Background="Transparent" BorderThickness="0" Foreground="#D92D20" Cursor="Hand" />
+                </StackPanel>
+
+                <CheckBox Content="Lưu mật khẩu" IsChecked="{Binding SavePassword}" Margin="0,0,0,12" />
+
+                <!-- Key file -->
+                <TextBlock Text="Key file (OpenSSH / .ppk / PEM):" Margin="0,0,0,4" Foreground="#344054" />
+                <Grid Margin="0,0,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Text="{Binding KeyFilePath, UpdateSourceTrigger=PropertyChanged}" Padding="8,6" />
+                    <Button Grid.Column="1" Content="Chọn..." Margin="4,0,0,0" Padding="12,6" Click="BrowseKeyFile_Click" Background="#F2F4F7" BorderBrush="#D0D5DD" />
+                </Grid>
+                <TextBlock Text="{Binding KeyFileWarning}" Foreground="#F79009" FontSize="11" Margin="0,0,0,8"
+                           Visibility="{Binding KeyFileWarning, Converter={x:Static vm:SessionListViewModel.NullToVisibilityConverter}}" />
+
+                <!-- Passphrase -->
+                <TextBlock Text="Passphrase key:" Margin="0,0,0,4" Foreground="#344054" />
+                <PasswordBox x:Name="PassphraseBoxControl" Padding="8,6" PasswordChanged="PassphraseBox_PasswordChanged" Margin="0,0,0,16" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Nút hành động -->
+        <Border Grid.Row="1" Padding="0,16,0,0" BorderBrush="#E4E7EC" BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Content="Kiểm tra kết nối" IsEnabled="{Binding CanTestConnection}" Padding="10,6" Background="#F2F4F7" BorderBrush="#D0D5DD" ToolTip="Tính năng kích hoạt ở giai đoạn 2" />
+
+                <Button Grid.Column="2" Content="Lưu &amp; Kết nối" Command="{Binding SaveAndCloseCommand}" CommandParameter="{x:Static vm:SessionListViewModel.TrueBox}" Padding="12,6" Margin="0,0,8,0" Background="#1570EF" Foreground="#FFFFFF" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" />
+                <Button Grid.Column="3" Content="Lưu" Command="{Binding SaveAndCloseCommand}" CommandParameter="{x:Static vm:SessionListViewModel.FalseBox}" Padding="14,6" Margin="0,0,8,0" Background="#F2F4F7" BorderBrush="#D0D5DD" FontWeight="SemiBold" Cursor="Hand" />
+                <Button Grid.Column="4" Content="Hủy" Command="{Binding CancelCommand}" Padding="14,6" Background="Transparent" BorderBrush="#D0D5DD" Cursor="Hand" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
