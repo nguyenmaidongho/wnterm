@@ -14,6 +14,11 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        var settingsStore = new SettingsStore();
+        var settings = settingsStore.Load();
+        ThemeManager.ApplyTheme(settings.Theme);
+        LocalizationManager.ApplyLanguage(settings.Language);
+
         DispatcherUnhandledException += OnDispatcherUnhandledException;
         TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
         AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
@@ -60,7 +65,7 @@ public partial class App : Application
         {
             string logsDir = AppPaths.Default.LogsDir;
             string logFile = Path.Combine(logsDir, $"error-{DateTime.Now:yyyyMMdd}.log");
-            string entry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{source}] {ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}\n\n";
+            string entry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{source}] {ex}\n\n";
             File.AppendAllText(logFile, entry, Encoding.UTF8);
         }
         catch { }

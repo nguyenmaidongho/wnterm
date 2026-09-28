@@ -41,3 +41,13 @@ ehthumbs.db
 Desktop.ini
 .BIN/
 .DS_Store
+
+## Publish & Installers
+publish/
+SNTerm-Setup.exe
+SNTerm-portable.zip
+*.zip
+
+## User session backups & dumps
+*.mxtsessions
+Screenshot*.png

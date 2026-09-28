@@ -12,7 +12,13 @@
 
     try {
         if (document.fonts && document.fonts.load) {
-            await document.fonts.load("14px 'JetBrains Mono'");
+            await Promise.all([
+                document.fonts.load("14px 'JetBrains Mono'"),
+                document.fonts.load("bold 14px 'JetBrains Mono'")
+            ]);
+        }
+        if (document.fonts) {
+            await document.fonts.ready;
         }
     } catch (e) {
         console.warn('Font load error:', e);
@@ -20,11 +26,15 @@
 
     const TerminalClass = window.Terminal?.Terminal || window.Terminal;
     const term = new TerminalClass({
-        fontFamily: "'JetBrains Mono', 'Cascadia Mono', Consolas, monospace",
+        fontFamily: "'JetBrains Mono', Consolas, 'Courier New', monospace",
         fontSize: 14,
+        lineHeight: 1.0,
+        letterSpacing: 0,
         scrollback: 10000,
         cursorBlink: true,
         allowProposedApi: true,
+        customGlyphs: true,
+        rescaleOverlappingGlyphs: true,
         rightClickSelectsWord: false,
         theme: {
             background: '#1e1e1e',
@@ -54,17 +64,32 @@
     function notifyResize() {
         if (resizeTimer) clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
+            const oldCols = term.cols;
+            const oldRows = term.rows;
             fitAddon.fit();
-    window.term = term;
-    window.fitAddon = fitAddon;
-            post({ type: 'resize', cols: term.cols, rows: term.rows });
-        }, 100);
+            if (term.cols !== oldCols || term.rows !== oldRows) {
+                post({ type: 'resize', cols: term.cols, rows: term.rows });
+            }
+        }, 50);
     }
 
     const resizeObserver = new ResizeObserver(() => {
         notifyResize();
     });
     resizeObserver.observe(container);
+    window.addEventListener('resize', notifyResize);
+
+    if (document.fonts) {
+        document.fonts.ready.then(() => {
+            term.refresh(0, term.rows - 1);
+            const oldCols = term.cols;
+            const oldRows = term.rows;
+            fitAddon.fit();
+            if (term.cols !== oldCols || term.rows !== oldRows) {
+                post({ type: 'resize', cols: term.cols, rows: term.rows });
+            }
+        });
+    }
 
     term.onData((data) => {
         post({ type: 'input', data: data });
@@ -167,15 +192,26 @@
                     }
                     break;
                 case 'settings':
-                    if (msg.fontSize) term.options.fontSize = msg.fontSize;
-                    if (msg.fontFamily) term.options.fontFamily = msg.fontFamily;
+                    let changed = false;
+                    if (msg.fontSize && term.options.fontSize !== msg.fontSize) {
+                        term.options.fontSize = msg.fontSize;
+                        changed = true;
+                    }
+                    if (msg.fontFamily) {
+                        const font = msg.fontFamily.includes(',') ? msg.fontFamily : `'${msg.fontFamily}', Consolas, 'Courier New', monospace`;
+                        if (term.options.fontFamily !== font) {
+                            term.options.fontFamily = font;
+                            changed = true;
+                        }
+                    }
                     if (msg.theme) term.options.theme = msg.theme;
                     if (msg.scrollback) term.options.scrollback = msg.scrollback;
                     if (msg.copyOnSelect !== undefined) settings.copyOnSelect = msg.copyOnSelect;
                     if (msg.rightClickAction) settings.rightClickAction = msg.rightClickAction;
                     fitAddon.fit();
-    window.term = term;
-    window.fitAddon = fitAddon;
+                    if (changed) {
+                        post({ type: 'resize', cols: term.cols, rows: term.rows });
+                    }
                     break;
                 case 'selectAll':
                     term.selectAll();
@@ -185,7 +221,12 @@
                     break;
                 case 'focus':
                     term.focus();
+                    const oldCols = term.cols;
+                    const oldRows = term.rows;
                     fitAddon.fit();
+                    if (term.cols !== oldCols || term.rows !== oldRows) {
+                        post({ type: 'resize', cols: term.cols, rows: term.rows });
+                    }
                     break;
             }
         });
@@ -193,5 +234,3 @@
 
     post({ type: 'ready', cols: term.cols, rows: term.rows });
 })();
-
-

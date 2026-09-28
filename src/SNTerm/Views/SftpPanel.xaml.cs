@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Microsoft.Win32;
 using SNTerm.Models;
 using SNTerm.ViewModels;
+using SNTerm.Services;
 
 namespace SNTerm.Views;
 
@@ -28,11 +29,55 @@ public partial class SftpPanel : UserControl
         }
     }
 
+    private void FileListView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+    {
+        if (FileListView.SelectedItem is SftpItem item && (item.IsParentDirectory || item.Name == ".."))
+        {
+            e.Handled = true;
+        }
+    }
+
     private void FileListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (FileListView.SelectedItem is SftpItem item && item.IsDirectory && ViewModel != null)
+        if (FileListView.SelectedItem is SftpItem item && ViewModel != null)
         {
-            _ = ViewModel.NavigateToAsync(item.FullName);
+            if (item.IsParentDirectory || item.Name == "..")
+            {
+                _ = ViewModel.GoUpAsync();
+            }
+            else if (item.IsDirectory)
+            {
+                _ = ViewModel.NavigateToAsync(item.FullName);
+            }
+            else
+            {
+                _ = ViewModel.EditFileDefaultAsync(item);
+            }
+        }
+    }
+
+    private void FileListView_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter && FileListView.SelectedItem is SftpItem item && ViewModel != null)
+        {
+            if (item.IsParentDirectory || item.Name == "..")
+            {
+                _ = ViewModel.GoUpAsync();
+            }
+            else if (item.IsDirectory)
+            {
+                _ = ViewModel.NavigateToAsync(item.FullName);
+            }
+            else
+            {
+                _ = ViewModel.EditFileDefaultAsync(item);
+            }
+            e.Handled = true;
+        }
+        else if (e.Key == Key.Back && ViewModel != null)
+        {
+            _ = ViewModel.GoUpAsync();
+            e.Handled = true;
         }
     }
 
@@ -107,6 +152,29 @@ public partial class SftpPanel : UserControl
         if (FileListView.SelectedItem is SftpItem item)
         {
             try { Clipboard.SetText(item.FullName); } catch { }
+        }
+    }
+
+    private void ChmodMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel == null) return;
+        var selected = FileListView.SelectedItems.OfType<SftpItem>()
+            .Where(i => !i.IsParentDirectory && i.Name != "..")
+            .ToList();
+        if (selected.Count == 0) return;
+
+        string displayName = selected.Count == 1 ? selected[0].Name : LocalizationManager.Get("Str_ItemsCount", selected.Count);
+        string currentPerms = selected[0].Permissions;
+        bool hasDirectory = selected.Any(i => i.IsDirectory);
+
+        var dlg = new ChmodDialog(displayName, currentPerms, hasDirectory)
+        {
+            Owner = Window.GetWindow(this)
+        };
+
+        if (dlg.ShowDialog() == true)
+        {
+            _ = ViewModel.ChangePermissionsAsync(selected, dlg.PermissionsValue, dlg.IsRecursive);
         }
     }
 }

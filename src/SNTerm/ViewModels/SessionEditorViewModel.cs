@@ -17,7 +17,7 @@ public partial class SessionEditorViewModel : ObservableObject
     private readonly SessionInfo? _editingSession;
 
     [ObservableProperty]
-    private string dialogTitle = "Thêm VM";
+    private string dialogTitle = LocalizationManager.Get("Str_AddVmTitle");
 
     [ObservableProperty]
     private string name = "";
@@ -91,7 +91,7 @@ public partial class SessionEditorViewModel : ObservableObject
 
         if (_editingSession != null)
         {
-            DialogTitle = "Sửa VM";
+            DialogTitle = LocalizationManager.Get("Str_EditVmTitle");
             Name = _editingSession.Name;
             Group = _editingSession.Group;
             Host = _editingSession.Host;
@@ -124,7 +124,7 @@ public partial class SessionEditorViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(Host))
         {
-            HostError = "IP hoặc Hostname không được để trống";
+            HostError = LocalizationManager.Get("Str_HostError");
             valid = false;
         }
         else
@@ -134,7 +134,7 @@ public partial class SessionEditorViewModel : ObservableObject
 
         if (Port < 1 || Port > 65535)
         {
-            PortError = "Port phải từ 1 đến 65535";
+            PortError = LocalizationManager.Get("Str_PortError");
             valid = false;
         }
         else
@@ -144,7 +144,7 @@ public partial class SessionEditorViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(Username))
         {
-            UsernameError = "User không được để trống";
+            UsernameError = LocalizationManager.Get("Str_UserError");
             valid = false;
         }
         else

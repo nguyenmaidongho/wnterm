@@ -71,7 +71,8 @@ public class SshConnectionFactory
             session.Username.Trim(),
             authMethods.ToArray())
         {
-            Timeout = TimeSpan.FromSeconds(15)
+            Timeout = TimeSpan.FromSeconds(5),
+            RetryAttempts = 1
         };
 
         return connectionInfo;

@@ -1,10 +1,14 @@
-﻿using System;
+﻿using System.Windows.Media;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using SNTerm.Models;
 using SNTerm.ViewModels;
+using SNTerm.Services;
 
 namespace SNTerm.Views;
 
@@ -16,11 +20,15 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Loaded += MainWindow_Loaded;
-                Closing += MainWindow_Closing;
+        Closing += MainWindow_Closing;
     }
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
+        double targetWidth = ViewModel.LeftColumnWidth;
+        if (targetWidth < 140 || targetWidth > 600) targetWidth = 400;
+        LeftColumnDef.Width = new GridLength(targetWidth, GridUnitType.Pixel);
+
         ViewModel.Tabs.CollectionChanged += OnTabsCollectionChanged;
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         UpdateTerminalViews();
@@ -140,7 +148,8 @@ public partial class MainWindow : Window
             return;
         }
 
-        ViewModel.SaveWindowState(ActualWidth, ActualHeight, ViewModel.LeftColumnWidth);
+        double finalLeftWidth = LeftColumnDef.ActualWidth >= 140 ? LeftColumnDef.ActualWidth : 400;
+        ViewModel.SaveWindowState(ActualWidth, ActualHeight, finalLeftWidth);
     }
 
     private void Window_DragOver(object sender, DragEventArgs e)
@@ -148,7 +157,7 @@ public partial class MainWindow : Window
         if (e.Data.GetDataPresent(DataFormats.FileDrop))
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            if (files != null && files.Any(f => f.EndsWith(".snterm", StringComparison.OrdinalIgnoreCase)))
+            if (files != null && files.Any(f => f.EndsWith(".snterm", StringComparison.OrdinalIgnoreCase) || f.EndsWith(".mxtsessions", StringComparison.OrdinalIgnoreCase) || f.EndsWith(".ini", StringComparison.OrdinalIgnoreCase)))
             {
                 e.Effects = DragDropEffects.Copy;
                 e.Handled = true;
@@ -163,12 +172,99 @@ public partial class MainWindow : Window
         if (e.Data.GetDataPresent(DataFormats.FileDrop))
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            var sntermFile = files?.FirstOrDefault(f => f.EndsWith(".snterm", StringComparison.OrdinalIgnoreCase));
-            if (!string.IsNullOrEmpty(sntermFile))
+            var targetFile = files?.FirstOrDefault(f => f.EndsWith(".snterm", StringComparison.OrdinalIgnoreCase) || f.EndsWith(".mxtsessions", StringComparison.OrdinalIgnoreCase) || f.EndsWith(".ini", StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrEmpty(targetFile))
             {
-                ViewModel.Import(sntermFile);
+                ViewModel.Import(targetFile);
                 e.Handled = true;
             }
+        }
+    }
+
+
+
+    private void ListBoxItem_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is ListBoxItem item)
+        {
+            if (!item.IsSelected)
+            {
+                SessionsListBox.SelectedItems.Clear();
+                item.IsSelected = true;
+            }
+            SessionsListBox.SelectedItem = item.DataContext;
+            item.Focus();
+        }
+    }
+
+    private void SessionsListBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+    {
+        DependencyObject? dep = e.OriginalSource as DependencyObject;
+        while (dep != null && dep != SessionsListBox)
+        {
+            if (dep is ListBoxItem)
+            {
+                return;
+            }
+            dep = dep is Visual || dep is System.Windows.Media.Media3D.Visual3D
+                ? VisualTreeHelper.GetParent(dep)
+                : LogicalTreeHelper.GetParent(dep);
+        }
+
+        e.Handled = true;
+    }
+
+    private void ContextMenuConnect_Click(object sender, RoutedEventArgs e)
+    {
+        if (SessionsListBox.SelectedItems.Count > 1)
+        {
+            ViewModel.SessionList.ConnectMultiple(SessionsListBox.SelectedItems);
+        }
+        else if (SessionsListBox.SelectedItem is SessionInfo session)
+        {
+            ViewModel.SessionList.Connect(session);
+        }
+    }
+
+    private void ContextMenuEdit_Click(object sender, RoutedEventArgs e)
+    {
+        if (SessionsListBox.SelectedItem is SessionInfo session)
+        {
+            ViewModel.SessionList.EditSession(session);
+        }
+    }
+
+    private void ContextMenuMoveToGroup_Click(object sender, RoutedEventArgs e)
+    {
+        var selected = SessionsListBox.SelectedItems.OfType<SessionInfo>().ToList();
+        if (selected.Count > 1)
+        {
+            string currentGroup = selected[0].Group;
+            var dlg = new InputDialog(LocalizationManager.Get("Str_MoveToGroupTitle"), LocalizationManager.Get("Str_EnterGroupName"), currentGroup)
+            {
+                Owner = this
+            };
+            if (dlg.ShowDialog() == true && dlg.InputText != null)
+            {
+                ViewModel.SessionList.MoveSessionsToGroup(selected, dlg.InputText);
+            }
+        }
+        else if (SessionsListBox.SelectedItem is SessionInfo session)
+        {
+            ViewModel.SessionList.MoveToGroup(session);
+        }
+    }
+
+    private void ContextMenuExport_Click(object sender, RoutedEventArgs e)
+    {
+        var selected = SessionsListBox.SelectedItems.OfType<SessionInfo>().ToList();
+        if (selected.Count > 1)
+        {
+            ViewModel.Export(selected);
+        }
+        else if (SessionsListBox.SelectedItem is SessionInfo session)
+        {
+            ViewModel.Export(session);
         }
     }
 
@@ -178,7 +274,66 @@ public partial class MainWindow : Window
         {
             ViewModel.SessionList.DeleteSession(SessionsListBox.SelectedItems);
         }
+        else if (SessionsListBox.SelectedItem is SessionInfo session)
+        {
+            ViewModel.SessionList.DeleteSession(session);
+        }
+    }
+
+    private void GroupConnectAll_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement el)
+        {
+            string currentName = (el.DataContext as CollectionViewGroup)?.Name?.ToString()
+                                ?? el.DataContext?.ToString()
+                                ?? "";
+            if (!string.IsNullOrEmpty(currentName))
+            {
+                ViewModel.SessionList.ConnectAllInGroup(currentName);
+            }
+        }
+    }
+
+    private void GroupRename_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement el)
+        {
+            string currentName = (el.DataContext as CollectionViewGroup)?.Name?.ToString()
+                                ?? el.DataContext?.ToString()
+                                ?? "";
+            if (!string.IsNullOrEmpty(currentName))
+            {
+                var dlg = new InputDialog(LocalizationManager.Get("Str_RenameGroupTitle"), LocalizationManager.Get("Str_EnterNewGroupName"), currentName)
+                {
+                    Owner = this
+                };
+                if (dlg.ShowDialog() == true && !string.IsNullOrWhiteSpace(dlg.InputText))
+                {
+                    ViewModel.SessionList.RenameGroup(currentName, dlg.InputText);
+                }
+            }
+        }
+    }
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
+    {
+        base.OnPreviewKeyDown(e);
+        if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Tab)
+        {
+            ViewModel.SelectNextTab();
+            e.Handled = true;
+        }
+        else if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.Tab)
+        {
+            ViewModel.SelectPrevTab();
+            e.Handled = true;
+        }
+        else if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.W)
+        {
+            if (ViewModel.SelectedTab != null)
+            {
+                ViewModel.CloseTab(ViewModel.SelectedTab);
+                e.Handled = true;
+            }
+        }
     }
 }
-
-

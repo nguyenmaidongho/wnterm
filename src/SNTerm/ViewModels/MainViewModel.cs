@@ -1,3 +1,4 @@
+ï»¿using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,10 +30,10 @@ public partial class MainViewModel : ObservableObject
     private string windowTitle = "SN Term";
 
     [ObservableProperty]
-    private string statusMessage = "S?n sàng";
+    private string statusMessage = "Sáºµn sÃ ng";
 
     [ObservableProperty]
-    private double leftColumnWidth = 280;
+    private double leftColumnWidth = 400;
 
     [ObservableProperty]
     private TerminalTabViewModel? selectedTab;
@@ -57,6 +58,7 @@ public partial class MainViewModel : ObservableObject
 
         _settings = _settingsStore.Load();
         LeftColumnWidth = _settings.LeftColumnWidth;
+        if (LeftColumnWidth < 140 || LeftColumnWidth > 600) LeftColumnWidth = 400;
         _connectSemaphore = new SemaphoreSlim(_settings.MaxParallelConnects, _settings.MaxParallelConnects);
 
         SessionList = new SessionListViewModel(_sessionStore);
@@ -70,15 +72,15 @@ public partial class MainViewModel : ObservableObject
         if (newValue != null)
         {
             newValue.IsSelected = true;
-            WindowTitle = $"{newValue.Title} — SN Term";
-            StatusMessage = $"Ðang xem tab: {newValue.Title} ({newValue.TooltipText})";
+            WindowTitle = $"{newValue.Title} â€” SN Term";
+            StatusMessage = $"Äang xem tab: {newValue.Title} ({newValue.TooltipText})";
             CurrentSftp = newValue.Sftp;
             newValue.TerminalControl.PostFocus();
         }
         else
         {
             WindowTitle = "SN Term";
-            StatusMessage = "S?n sàng";
+            StatusMessage = "Sáºµn sÃ ng";
             CurrentSftp = null;
         }
     }
@@ -112,16 +114,39 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public void EditSelectedVm()
+    {
+        if (SessionList.SelectedSession != null)
+        {
+            SessionList.EditSession(SessionList.SelectedSession);
+        }
+        else if (SessionList.Sessions.Count > 0)
+        {
+            SessionList.EditSession(SessionList.Sessions[0]);
+        }
+    }
+
+    [RelayCommand]
     public void OpenSettings()
     {
+        var owner = Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive) 
+                    ?? Application.Current?.MainWindow;
         var dlg = new SettingsDialog(_settings)
         {
-            Owner = Application.Current?.MainWindow
+            Owner = owner,
+            ShowInTaskbar = false
+        };
+
+        dlg.Loaded += (s, e) =>
+        {
+            dlg.Activate();
         };
 
         if (dlg.ShowDialog() == true)
         {
             _settingsStore.Save(_settings);
+            ThemeManager.ApplyTheme(_settings.Theme);
+            LocalizationManager.ApplyLanguage(_settings.Language);
 
             foreach (var tab in Tabs)
             {
@@ -144,8 +169,8 @@ public partial class MainViewModel : ObservableObject
         if (connectedCount > 0)
         {
             var res = MessageBox.Show(
-                $"Ðang có {connectedCount} tab k?t n?i SSH. B?n có ch?c ch?n mu?n thoát SN Term?",
-                "Xác nh?n dóng ?ng d?ng",
+                LocalizationManager.Get("Str_ConfirmCloseApp", connectedCount),
+                LocalizationManager.Get("Str_ConfirmCloseTitle"),
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
@@ -181,10 +206,30 @@ public partial class MainViewModel : ObservableObject
     {
         if (string.IsNullOrEmpty(filePath))
         {
+            string initDir = Directory.GetCurrentDirectory();
+            string initFile = "";
+            try
+            {
+                var candidate = Directory.GetFiles(initDir, "*.mxtsessions").FirstOrDefault();
+                if (candidate == null)
+                {
+                    string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                    if (Directory.Exists(desktop))
+                    {
+                        candidate = Directory.GetFiles(desktop, "*.mxtsessions").FirstOrDefault();
+                        if (candidate != null) initDir = desktop;
+                    }
+                }
+                if (candidate != null) initFile = Path.GetFileName(candidate);
+            }
+            catch { }
+
             var ofd = new Microsoft.Win32.OpenFileDialog
             {
-                Title = "Ch?n file danh sách VM",
-                Filter = "SN Term Export (*.snterm)|*.snterm|T?t c? file (*.*)|*.*"
+                Title = LocalizationManager.Get("Str_ImportTitle"),
+                Filter = "Táº¥t cáº£ file há»— trá»£ (*.snterm;*.mxtsessions;*.ini)|*.snterm;*.mxtsessions;*.ini|SN Term Export (*.snterm)|*.snterm|MobaXterm Sessions (*.mxtsessions;*.ini;*.txt)|*.mxtsessions;*.ini;*.txt|Táº¥t cáº£ file (*.*)|*.*",
+                InitialDirectory = initDir,
+                FileName = initFile
             };
 
             if (ofd.ShowDialog(Application.Current?.MainWindow) == true)
@@ -223,8 +268,8 @@ public partial class MainViewModel : ObservableObject
         if (list.Count >= 10)
         {
             var res = MessageBox.Show(
-                $"B?n s?p m? d?ng th?i {list.Count} k?t n?i. B?n có mu?n ti?p t?c?",
-                "Xác nh?n m? nhi?u VM",
+                LocalizationManager.Get("Str_ConfirmOpenMany", list.Count),
+                LocalizationManager.Get("Str_ConfirmOpenManyTitle"),
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
@@ -391,4 +436,3 @@ public partial class MainViewModel : ObservableObject
         SelectedTab = Tabs[(idx - 1 + Tabs.Count) % Tabs.Count];
     }
 }
-

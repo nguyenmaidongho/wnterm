@@ -3,9 +3,95 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf">
     <Grid Background="#1E1E1E">
-        <wv2:WebView2 x:Name="WebView" />
-        <TextBlock x:Name="LoadingText" Text="Đang khởi tạo terminal..."
-                   Foreground="#8B949E" FontStyle="Italic"
-                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <wv2:WebView2 x:Name="WebView" />
+            <TextBlock x:Name="LoadingText" Text="Đang khởi tạo terminal..."
+                       Foreground="#8B949E" FontStyle="Italic"
+                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- Thanh trạng thái Server Monitor như MobaXterm -->
+        <Border Grid.Row="1" x:Name="MonitorBar" Background="#16181A" BorderBrush="#2D3139" BorderThickness="0,1,0,0" Height="26" Visibility="Collapsed">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0">
+                    <!-- 1. OS & Hostname -->
+                    <Border BorderBrush="#2D3139" BorderThickness="0,0,1,0" Padding="0,0,8,0" Margin="0,0,8,0">
+                        <StackPanel x:Name="OsInfoPanel" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Hand" Background="Transparent"
+                                    ToolTipService.InitialShowDelay="150" ToolTipService.ShowDuration="30000">
+                            <Image x:Name="OsIconImage" Width="15" Height="15" Margin="0,0,5,0" VerticalAlignment="Center"
+                                   RenderOptions.BitmapScalingMode="HighQuality" />
+                            <TextBlock x:Name="OsIconText" Text="🐧" Margin="0,0,4,0" VerticalAlignment="Center" FontSize="11" Visibility="Collapsed" />
+                            <TextBlock x:Name="HostnameText" Text="hostname" FontWeight="SemiBold" Foreground="#4BA3E3" VerticalAlignment="Center" FontSize="11" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 2. CPU & Chart CPU -->
+                    <Border BorderBrush="#2D3139" BorderThickness="0,0,1,0" Padding="0,0,8,0" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="🖳" Margin="0,0,4,0" Foreground="#FFA726" VerticalAlignment="Center" FontSize="11" />
+                            <TextBlock x:Name="CpuText" Text="0%" Foreground="#E6EDF3" VerticalAlignment="Center" FontSize="11" Margin="0,0,5,0" />
+                            <Border BorderBrush="#1B5E20" BorderThickness="1" Background="#0A1F0A" CornerRadius="2" VerticalAlignment="Center">
+                                <Polyline x:Name="CpuPolyline" Stroke="#00E676" StrokeThickness="1.5" Height="14" Width="40" />
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 3. RAM usage / total & Chart RAM -->
+                    <Border BorderBrush="#2D3139" BorderThickness="0,0,1,0" Padding="0,0,8,0" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="💾" Margin="0,0,4,0" Foreground="#42A5F5" VerticalAlignment="Center" FontSize="11" />
+                            <TextBlock x:Name="RamText" Text="0 MB / 0 MB" Foreground="#E6EDF3" VerticalAlignment="Center" FontSize="11" Margin="0,0,5,0" />
+                            <Border BorderBrush="#1565C0" BorderThickness="1" Background="#0A192F" CornerRadius="2" VerticalAlignment="Center">
+                                <Polyline x:Name="RamPolyline" Stroke="#42A5F5" StrokeThickness="1.5" Height="14" Width="40" />
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 4. Upload speed -->
+                    <Border BorderBrush="#2D3139" BorderThickness="0,0,1,0" Padding="0,0,8,0" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="⬆" Foreground="#00E676" Margin="0,0,4,0" FontWeight="Bold" VerticalAlignment="Center" FontSize="11" />
+                            <TextBlock x:Name="UploadText" Text="0.00 Mb/s" Foreground="#E6EDF3" VerticalAlignment="Center" FontSize="11" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 5. Download speed -->
+                    <Border BorderBrush="#2D3139" BorderThickness="0,0,1,0" Padding="0,0,8,0" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="⬇" Foreground="#29B6F6" Margin="0,0,4,0" FontWeight="Bold" VerticalAlignment="Center" FontSize="11" />
+                            <TextBlock x:Name="DownloadText" Text="0.00 Mb/s" Foreground="#E6EDF3" VerticalAlignment="Center" FontSize="11" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 6. Uptime -->
+                    <Border BorderBrush="#2D3139" BorderThickness="0,0,1,0" Padding="0,0,8,0" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="⏱" Margin="0,0,4,0" Foreground="#AB47BC" VerticalAlignment="Center" FontSize="11" />
+                            <TextBlock x:Name="UptimeText" Text="-- days" Foreground="#E6EDF3" VerticalAlignment="Center" FontSize="11" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 7. User logging -->
+                    <Border BorderBrush="#2D3139" BorderThickness="0,0,1,0" Padding="0,0,8,0" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="👤" Margin="0,0,4,0" Foreground="#FFCA28" VerticalAlignment="Center" FontSize="11" />
+                            <TextBlock x:Name="UserText" Text="root" Foreground="#E6EDF3" VerticalAlignment="Center" FontSize="11" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 8. Disk usage -->
+                    <StackPanel x:Name="DiskPanel" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Hand" Background="Transparent"
+                                ToolTipService.InitialShowDelay="150" ToolTipService.ShowDuration="60000">
+                        <TextBlock x:Name="DiskIcon" Text="🖴" Margin="0,0,4,0" Foreground="#26A69A" VerticalAlignment="Center" FontSize="11" />
+                        <TextBlock x:Name="DiskText" Text="/: --" Foreground="#E6EDF3" VerticalAlignment="Center" FontSize="11" />
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
     </Grid>
 </UserControl>

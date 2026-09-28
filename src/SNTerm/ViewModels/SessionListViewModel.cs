@@ -43,8 +43,6 @@ public partial class SessionListViewModel : ObservableObject
         _store = store ?? new SessionStore();
 
         _sessionsView = CollectionViewSource.GetDefaultView(Sessions);
-        _sessionsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(SessionInfo.EffectiveGroup)));
-        _sessionsView.SortDescriptions.Add(new SortDescription(nameof(SessionInfo.EffectiveGroup), ListSortDirection.Ascending));
         _sessionsView.SortDescriptions.Add(new SortDescription(nameof(SessionInfo.DisplayName), ListSortDirection.Ascending));
         _sessionsView.Filter = FilterSession;
 
@@ -142,6 +140,97 @@ public partial class SessionListViewModel : ObservableObject
         }
     }
 
+        [RelayCommand]
+    public void CreateGroup()
+    {
+        var inputDlg = new InputDialog("Tạo nhóm mới", "Nhập tên nhóm:");
+        inputDlg.Owner = Application.Current?.MainWindow;
+
+        if (inputDlg.ShowDialog() != true) return;
+        string groupName = inputDlg.InputText.Trim();
+        if (string.IsNullOrWhiteSpace(groupName)) return;
+
+        if (SelectedSession != null)
+        {
+            SelectedSession.Group = groupName;
+            _store.Save(Sessions);
+            _sessionsView.Refresh();
+        }
+        else
+        {
+            var existingGroups = Sessions.Select(s => s.Group).Distinct().ToList();
+            var editorVm = new SessionEditorViewModel(null, existingGroups)
+            {
+                Group = groupName
+            };
+            var dlg = new SessionEditorDialog(editorVm)
+            {
+                Owner = Application.Current?.MainWindow
+            };
+
+            if (dlg.ShowDialog() == true && editorVm.ResultSession != null)
+            {
+                Sessions.Add(editorVm.ResultSession);
+                _store.Save(Sessions);
+                _sessionsView.Refresh();
+
+                if (editorVm.ConnectImmediately)
+                {
+                    Connect(editorVm.ResultSession);
+                }
+            }
+        }
+    }
+
+    [RelayCommand]
+    public void MoveToGroup(SessionInfo? session)
+    {
+        session ??= SelectedSession;
+        if (session == null) return;
+
+        var dlg = new InputDialog("Chuyển sang nhóm", "Nhập tên nhóm mới hoặc nhóm đã có:", session.Group)
+        {
+            Owner = Application.Current?.MainWindow
+        };
+        if (dlg.ShowDialog() == true && dlg.InputText != null)
+        {
+            session.Group = dlg.InputText.Trim();
+            _store.Save(Sessions);
+            _sessionsView.Refresh();
+        }
+    }
+
+    public void MoveSessionsToGroup(IEnumerable<SessionInfo> sessions, string newGroup)
+    {
+        foreach (var s in sessions)
+        {
+            s.Group = newGroup.Trim();
+        }
+        _store.Save(Sessions);
+        _sessionsView.Refresh();
+    }
+
+    public void RenameGroup(string oldGroupName, string newGroupName)
+    {
+        if (string.IsNullOrWhiteSpace(newGroupName)) return;
+        var targets = Sessions.Where(s => s.EffectiveGroup.Equals(oldGroupName, StringComparison.OrdinalIgnoreCase)).ToList();
+        foreach (var s in targets)
+        {
+            s.Group = newGroupName.Trim();
+        }
+        _store.Save(Sessions);
+        _sessionsView.Refresh();
+    }
+
+    public void ConnectAllInGroup(string groupName)
+    {
+        var targets = Sessions.Where(s => s.EffectiveGroup.Equals(groupName, StringComparison.OrdinalIgnoreCase)).ToList();
+        if (targets.Count > 0)
+        {
+            RequestConnectMultiple?.Invoke(targets);
+        }
+    }
+
     [RelayCommand]
     public void DuplicateSession(SessionInfo? session)
     {
@@ -174,10 +263,10 @@ public partial class SessionListViewModel : ObservableObject
         if (toDelete.Count == 0) return;
 
         string message = toDelete.Count == 1
-            ? $"Bạn có chắc chắn muốn xóa VM '{toDelete[0].DisplayName}'?"
-            : $"Bạn có chắc chắn muốn xóa {toDelete.Count} VM đã chọn?\n" + string.Join("\n", toDelete.Take(5).Select(s => $"- {s.DisplayName}"));
+            ? LocalizationManager.Get("Str_ConfirmDeletePrompt", toDelete[0].DisplayName)
+            : LocalizationManager.Get("Str_ConfirmDeleteMultiplePrompt", toDelete.Count) + "\n" + string.Join("\n", toDelete.Take(5).Select(s => $"- {s.DisplayName}"));
 
-        var confirm = MessageBox.Show(message, "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        var confirm = MessageBox.Show(message, LocalizationManager.Get("Str_ConfirmDeleteTitle"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
         if (confirm == MessageBoxResult.Yes)
         {
             foreach (var item in toDelete)

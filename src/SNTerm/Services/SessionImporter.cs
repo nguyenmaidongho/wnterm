@@ -51,12 +51,40 @@ public class SessionImporter
             throw new InvalidDataException("Kích thước file vượt quá giới hạn 20MB.");
         }
 
-        string json = File.ReadAllText(filePath, Encoding.UTF8);
-        var exportFile = JsonSerializer.Deserialize<ExportFile>(json);
+        string content = File.ReadAllText(filePath, Encoding.UTF8);
+
+        if (filePath.EndsWith(".mxtsessions", StringComparison.OrdinalIgnoreCase) ||
+            MobaXtermImporter.IsMobaXtermFile(content))
+        {
+            var mobaSessions = MobaXtermImporter.Parse(content);
+            if (mobaSessions.Count == 0)
+            {
+                throw new InvalidDataException("Không tìm thấy cấu hình VM (SSH/SFTP) nào trong file MobaXterm.");
+            }
+
+            return new ExportFile
+            {
+                Format = "mobaxterm-sessions",
+                Version = 1,
+                ExportedAt = DateTime.UtcNow,
+                Sessions = mobaSessions,
+                Protection = null
+            };
+        }
+
+        ExportFile? exportFile = null;
+        try
+        {
+            exportFile = JsonSerializer.Deserialize<ExportFile>(content);
+        }
+        catch (JsonException)
+        {
+            throw new InvalidDataException("File không đúng định dạng SN Term hoặc MobaXterm.");
+        }
 
         if (exportFile == null || exportFile.Format != "snterm-sessions")
         {
-            throw new InvalidDataException("File không đúng định dạng SN Term.");
+            throw new InvalidDataException("File không đúng định dạng SN Term hoặc MobaXterm.");
         }
 
         if (exportFile.Version > 1)
@@ -174,12 +202,17 @@ public class SessionImporter
                     }
                 }
 
+                if (resolvedKeyFilePath == null && !string.IsNullOrEmpty(item.KeyFileName))
+                {
+                    resolvedKeyFilePath = item.KeyFileName;
+                }
+
                 // Check conflict: same Id OR (same Host + Port + Username)
                 var existing = currentSessions.FirstOrDefault(s =>
                     s.Id == item.Id ||
                     (string.Equals(s.Host, item.Host, StringComparison.OrdinalIgnoreCase) &&
                      s.Port == item.Port &&
-                     string.Equals(s.Username, item.Username, StringComparison.OrdinalIgnoreCase)));
+                     string.Equals(s.Username, item.Username, StringComparison.OrdinalIgnoreCase) && string.Equals(s.Name, item.Name, StringComparison.OrdinalIgnoreCase)));
 
                 if (existing != null)
                 {

@@ -12,6 +12,7 @@ public partial class SessionEditorDialog : Window
     public SessionEditorDialog(SessionEditorViewModel viewModel)
     {
         InitializeComponent();
+        MaxHeight = SystemParameters.WorkArea.Height * 0.95;
         _viewModel = viewModel;
         DataContext = _viewModel;
 
