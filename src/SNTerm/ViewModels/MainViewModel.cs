@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -35,6 +34,12 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private TerminalTabViewModel? selectedTab;
 
+    [ObservableProperty]
+    private SftpViewModel? currentSftp;
+
+    [ObservableProperty]
+    private int selectedLeftTabIndex = 0;
+
     public ObservableCollection<TerminalTabViewModel> Tabs { get; } = new();
 
     public SessionListViewModel SessionList { get; }
@@ -64,12 +69,14 @@ public partial class MainViewModel : ObservableObject
             newValue.IsSelected = true;
             WindowTitle = $"{newValue.Title} — SN Term";
             StatusMessage = $"Đang xem tab: {newValue.Title} ({newValue.TooltipText})";
+            CurrentSftp = newValue.Sftp;
             newValue.TerminalControl.PostFocus();
         }
         else
         {
             WindowTitle = "SN Term";
             StatusMessage = "Sẵn sàng";
+            CurrentSftp = null;
         }
     }
 
@@ -134,6 +141,13 @@ public partial class MainViewModel : ObservableObject
 
         tab.CloseRequested += CloseTab;
         tab.HotkeyAction += HandleHotkey;
+        tab.ConnectedSuccess += (t) =>
+        {
+            if (SelectedTab == t)
+            {
+                SelectedLeftTabIndex = 1;
+            }
+        };
 
         return tab;
     }

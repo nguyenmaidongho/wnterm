@@ -39,6 +39,8 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
     public SessionInfo Session { get; }
     public SshConnection Connection { get; }
     public TerminalView TerminalControl { get; }
+    public SftpViewModel Sftp { get; }
+    public event Action<TerminalTabViewModel>? ConnectedSuccess;
 
     private int _cols = 80;
     private int _rows = 24;
@@ -65,6 +67,7 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
 
         Connection = new SshConnection();
         TerminalControl = new TerminalView();
+        Sftp = new SftpViewModel(session, factory);
 
         TerminalControl.TerminalReady += OnTerminalReady;
         TerminalControl.TerminalInput += OnTerminalInput;
@@ -245,6 +248,8 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
                 UpdateStatusBrush();
 
                 Session.LastConnectedAt = DateTime.UtcNow;
+                _ = Sftp.InitializeAsync(_cachedPassword, _cachedPassphrase);
+                ConnectedSuccess?.Invoke(this);
                 _sessionStore.Save(new[] { Session });
                 return;
             }
@@ -302,8 +307,10 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
     public void Dispose()
     {
         Connection.Dispose();
+        Sftp.Dispose();
     }
 }
+
 
 
 

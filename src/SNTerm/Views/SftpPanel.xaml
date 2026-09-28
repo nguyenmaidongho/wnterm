@@ -1,0 +1,109 @@
+﻿<UserControl x:Class="SNTerm.Views.SftpPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:SNTerm.ViewModels"
+             mc:Ignorable="d"
+             FontFamily="Segoe UI" FontSize="12"
+             Background="#FFFFFF">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Thanh nút công cụ SFTP -->
+        <Border Grid.Row="0" Background="#F8F9FA" BorderBrush="#EAECF0" BorderThickness="0,0,0,1" Padding="4">
+            <WrapPanel Orientation="Horizontal">
+                <Button Content="⬆ Lên" Command="{Binding GoUpCommand}" Padding="6,2" Margin="2" Background="#FFFFFF" BorderBrush="#D0D5DD" ToolTip="Lên thư mục cha" />
+                <Button Content="⟳" Command="{Binding RefreshCommand}" Padding="6,2" Margin="2" Background="#FFFFFF" BorderBrush="#D0D5DD" ToolTip="Làm mới danh sách" />
+                <Button Content="🏠" Command="{Binding GoHomeCommand}" Padding="6,2" Margin="2" Background="#FFFFFF" BorderBrush="#D0D5DD" ToolTip="Về thư mục Home" />
+                <Button Content="+ Thư mục" Command="{Binding CreateDirectoryCommand}" Padding="6,2" Margin="2" Background="#FFFFFF" BorderBrush="#D0D5DD" />
+                <Button Content="Upload" Click="UploadButton_Click" Padding="6,2" Margin="2" Background="#FFFFFF" BorderBrush="#D0D5DD" />
+                <Button Content="Download" Click="DownloadButton_Click" Padding="6,2" Margin="2" Background="#FFFFFF" BorderBrush="#D0D5DD" />
+                <CheckBox Content="Hiện file ẩn" IsChecked="{Binding ShowHiddenFiles}" VerticalAlignment="Center" Margin="6,0,0,0" FontSize="11" />
+            </WrapPanel>
+        </Border>
+
+        <!-- Thanh đường dẫn -->
+        <Border Grid.Row="1" Background="#FFFFFF" BorderBrush="#EAECF0" BorderThickness="0,0,0,1" Padding="4">
+            <TextBox x:Name="PathTextBox" Text="{Binding CurrentPath, UpdateSourceTrigger=LostFocus}" KeyDown="PathTextBox_KeyDown" Padding="4,2" />
+        </Border>
+
+        <!-- Danh sách file/thư mục -->
+        <Grid Grid.Row="2">
+            <ListView x:Name="FileListView"
+                      ItemsSource="{Binding Items}"
+                      SelectedItem="{Binding SelectedItem}"
+                      SelectionMode="Extended"
+                      BorderThickness="0"
+                      MouseDoubleClick="FileListView_MouseDoubleClick"
+                      AllowDrop="True"
+                      DragOver="FileListView_DragOver"
+                      Drop="FileListView_Drop">
+
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Tên" Width="140">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Icon}" Margin="0,0,6,0" />
+                                        <TextBlock Text="{Binding Name}" FontWeight="Normal" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Kích thước" DisplayMemberBinding="{Binding SizeFormatted}" Width="70" />
+                        <GridViewColumn Header="Sửa đổi" DisplayMemberBinding="{Binding LastModifiedFormatted}" Width="105" />
+                    </GridView>
+                </ListView.View>
+
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Download" Click="DownloadButton_Click" />
+                        <MenuItem Header="Đổi tên" Command="{Binding RenameItemCommand}" />
+                        <MenuItem Header="Xóa" Click="ContextMenuDelete_Click" />
+                        <Separator />
+                        <MenuItem Header="Tạo thư mục" Command="{Binding CreateDirectoryCommand}" />
+                        <MenuItem Header="Làm mới" Command="{Binding RefreshCommand}" />
+                        <MenuItem Header="Copy đường dẫn" Click="CopyPath_Click" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+            </ListView>
+
+            <!-- Loading overlay -->
+            <Border Background="#80FFFFFF" Visibility="{Binding IsLoading, Converter={x:Static vm:SessionListViewModel.BoolToVisibilityConverter}}">
+                <TextBlock Text="Đang tải..." HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#475467" FontStyle="Italic" />
+            </Border>
+        </Grid>
+
+        <!-- Thanh tiến trình Upload/Download -->
+        <Border Grid.Row="3" Background="#F2F4F7" BorderBrush="#EAECF0" BorderThickness="0,1,0,0" Padding="6,4"
+                Visibility="{Binding TransferQueue.IsTransferring, Converter={x:Static vm:SessionListViewModel.BoolToVisibilityConverter}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="{Binding TransferQueue.CurrentFileName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxWidth="160" />
+                    <TextBlock Text="{Binding TransferQueue.SpeedFormatted, StringFormat=' ({0})'}" Foreground="#475467" FontSize="11" Margin="4,0,0,0" />
+                </StackPanel>
+
+                <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Content="Hủy" Command="{Binding TransferQueue.CancelCommand}" Padding="8,2" FontSize="11" Background="#FFFFFF" BorderBrush="#D0D5DD" VerticalAlignment="Center" />
+
+                <ProgressBar Grid.Row="1" Grid.Column="0" Value="{Binding TransferQueue.ProgressPercentage}" Height="6" Margin="0,4,8,0" Maximum="100" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

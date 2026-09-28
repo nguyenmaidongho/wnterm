@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:SNTerm.ViewModels"
+        xmlns:localViews="clr-namespace:SNTerm.Views"
         mc:Ignorable="d"
         Title="{Binding WindowTitle}"
         Width="1100" Height="700"
@@ -59,7 +60,7 @@
 
             <!-- Cột trái: TabControl Sessions / SFTP -->
             <Border Grid.Column="0" Background="{StaticResource SidebarBackground}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
-                <TabControl x:Name="LeftTabControl" BorderThickness="0" Background="Transparent">
+                <TabControl x:Name="LeftTabControl" SelectedIndex="{Binding SelectedLeftTabIndex}" BorderThickness="0" Background="Transparent">
                     <!-- Tab Sessions -->
                     <TabItem Header="Sessions" FontWeight="SemiBold">
                         <Grid Margin="6">
@@ -160,8 +161,28 @@
 
                     <!-- Tab SFTP -->
                     <TabItem Header="SFTP" FontWeight="SemiBold">
-                        <Grid Margin="10">
-                            <TextBlock Text="Chưa kết nối VM nào" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#98A2B3" FontStyle="Italic" />
+                        <Grid>
+                            <ContentControl Content="{Binding CurrentSftp}">
+                                <ContentControl.Resources>
+                                    <DataTemplate DataType="{x:Type vm:SftpViewModel}">
+                                        <localViews:SftpPanel />
+                                    </DataTemplate>
+                                </ContentControl.Resources>
+                            </ContentControl>
+
+                            <TextBlock Text="Chưa kết nối VM nào" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#98A2B3" FontStyle="Italic"
+                                       Visibility="{Binding CurrentSftp, Converter={x:Static vm:SessionListViewModel.NullToVisibilityConverter}}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CurrentSftp}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </Grid>
                     </TabItem>
                 </TabControl>
@@ -275,3 +296,5 @@
         </Border>
     </Grid>
 </Window>
+
+
