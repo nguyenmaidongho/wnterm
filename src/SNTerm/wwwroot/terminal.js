@@ -1,4 +1,4 @@
-﻿(async function () {
+(async function () {
     let settings = {
         copyOnSelect: true,
         rightClickAction: 'Paste'
@@ -47,12 +47,16 @@
     const container = document.getElementById('terminal-container');
     term.open(container);
     fitAddon.fit();
+    window.term = term;
+    window.fitAddon = fitAddon;
 
     let resizeTimer = null;
     function notifyResize() {
         if (resizeTimer) clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
             fitAddon.fit();
+    window.term = term;
+    window.fitAddon = fitAddon;
             post({ type: 'resize', cols: term.cols, rows: term.rows });
         }, 100);
     }
@@ -170,6 +174,8 @@
                     if (msg.copyOnSelect !== undefined) settings.copyOnSelect = msg.copyOnSelect;
                     if (msg.rightClickAction) settings.rightClickAction = msg.rightClickAction;
                     fitAddon.fit();
+    window.term = term;
+    window.fitAddon = fitAddon;
                     break;
                 case 'selectAll':
                     term.selectAll();
@@ -179,6 +185,7 @@
                     break;
                 case 'focus':
                     term.focus();
+                    fitAddon.fit();
                     break;
             }
         });
@@ -186,3 +193,5 @@
 
     post({ type: 'ready', cols: term.cols, rows: term.rows });
 })();
+
+

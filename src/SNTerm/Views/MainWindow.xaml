@@ -1,4 +1,4 @@
-﻿<Window x:Class="SNTerm.Views.MainWindow"
+<Window x:Class="SNTerm.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -44,6 +44,7 @@
         <!-- Thanh công cụ phía trên -->
         <Border Grid.Row="0" Background="{StaticResource ToolbarBackground}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="8,6">
             <StackPanel Orientation="Horizontal">
+                <Button Content="▶ Kết nối" Command="{Binding ConnectSelectedVmCommand}" Background="#EBF3FF" BorderBrush="#84ADFF" Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="+ Thêm VM" Command="{Binding AddVmCommand}" Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="⇪ Export" Command="{Binding ExportCommand}" Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="⇩ Import" Command="{Binding ImportCommand}" Style="{StaticResource ToolbarButtonStyle}" />
@@ -158,6 +159,7 @@
                                     </ContextMenu>
                                 </ListBox.ContextMenu>
                             </ListBox>
+                            <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="16" IsHitTestVisible="False"><StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding SessionList.Sessions.Count}" Value="0"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></StackPanel.Style><TextBlock Text="Chưa có VM nào" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#475467" Margin="0,0,0,4" /><TextBlock Text="Nhấn '+ Thêm VM' để tạo" FontSize="11" HorizontalAlignment="Center" Foreground="#98A2B3" /></StackPanel>
                         </Grid>
                     </TabItem>
 
@@ -260,7 +262,7 @@
                                 </ItemsControl>
 
                                 <!-- Nút thêm tab [+] -->
-                                <Button Content="+" Command="{Binding AddVmCommand}" Width="28" Height="28" Margin="4,0,4,2" Background="Transparent" Foreground="#C9D1D9" BorderThickness="0" FontWeight="Bold" FontSize="14" Cursor="Hand" ToolTip="Mở danh sách VM" />
+                                <Button Content="+" Command="{Binding OpenVmListCommand}" Width="28" Height="28" Margin="4,0,4,2" Background="Transparent" Foreground="#C9D1D9" BorderThickness="0" FontWeight="Bold" FontSize="14" Cursor="Hand" ToolTip="Mở danh sách VM (cột trái)" />
                             </StackPanel>
                         </ScrollViewer>
                     </Grid>

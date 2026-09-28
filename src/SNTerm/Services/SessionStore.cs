@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -87,6 +87,23 @@ public class SessionStore
         }
     }
 
+    public void UpdateSession(SessionInfo updatedSession)
+    {
+        lock (_lock)
+        {
+            var sessions = Load(out _);
+            int index = sessions.FindIndex(s => s.Id == updatedSession.Id);
+            if (index >= 0)
+            {
+                sessions[index] = updatedSession;
+            }
+            else
+            {
+                sessions.Add(updatedSession);
+            }
+            Save(sessions);
+        }
+    }
     public void Save(IEnumerable<SessionInfo> sessions)
     {
         lock (_lock)
@@ -154,3 +171,4 @@ public class SessionStore
         catch { }
     }
 }
+

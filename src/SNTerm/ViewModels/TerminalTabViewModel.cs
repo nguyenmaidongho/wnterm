@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -172,10 +172,10 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
             UpdateStatusBrush();
 
             string disconnectMsg = !string.IsNullOrEmpty(error)
-                ? $"\r\n\x1b[31m[Lỗi]: {error}\x1b[0m"
-                : "\r\n\x1b[33m[Đã ngắt kết nối]\x1b[0m";
+                ? $"\r\n\x1b[31m[L?i]: {error}\x1b[0m"
+                : "\r\n\x1b[33m[�� ng?t k?t n?i]\x1b[0m";
 
-            TerminalControl.PostStatus($"{disconnectMsg}\r\nNhấn Enter để kết nối lại...\r\n");
+            TerminalControl.PostStatus($"{disconnectMsg}\r\nNh?n Enter d? k?t n?i l?i...\r\n");
         });
     }
 
@@ -185,12 +185,12 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
 
         Status = ConnectionStatus.Connecting;
         UpdateStatusBrush();
-        TerminalControl.PostStatus($"Đang kết nối tới {Session.DisplayName} ({Session.Host}:{Session.Port})...");
+        TerminalControl.PostStatus($"�ang k?t n?i t?i {Session.DisplayName} ({Session.Host}:{Session.Port})...");
 
         bool authRetry = false;
         while (true)
         {
-            // Kiểm tra mật khẩu cần hỏi người dùng
+            // Ki?m tra m?t kh?u c?n h?i ngu?i d�ng
             if (string.IsNullOrEmpty(_cachedPassword))
             {
                 if (Session.SavePassword && !string.IsNullOrEmpty(Session.EncryptedPassword) && !authRetry)
@@ -216,7 +216,7 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
                                 {
                                     Session.SavePassword = true;
                                     Session.EncryptedPassword = SecretProtector.Encrypt(_cachedPassword);
-                                    _sessionStore.Save(new[] { Session });
+                                    _sessionStore.UpdateSession(Session);
                                 }
                                 prompted = true;
                             }
@@ -227,7 +227,7 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
                     {
                         Status = ConnectionStatus.Disconnected;
                         UpdateStatusBrush();
-                        TerminalControl.PostStatus("\r\nĐã hủy kết nối.\r\nNhấn Enter để kết nối lại...\r\n");
+                        TerminalControl.PostStatus("\r\n�� h?y k?t n?i.\r\nNh?n Enter d? k?t n?i l?i...\r\n");
                         return;
                     }
                 }
@@ -250,7 +250,7 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
                 Session.LastConnectedAt = DateTime.UtcNow;
                 _ = Sftp.InitializeAsync(_cachedPassword, _cachedPassphrase);
                 ConnectedSuccess?.Invoke(this);
-                _sessionStore.Save(new[] { Session });
+                _sessionStore.UpdateSession(Session);
                 return;
             }
             catch (SshAuthenticationException)
@@ -260,13 +260,13 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
                     // Stored password rejected
                     authRetry = true;
                     _cachedPassword = null;
-                    TerminalControl.PostStatus("\r\n\x1b[31mMật khẩu đã lưu không chính xác.\x1b[0m\r\n");
+                    TerminalControl.PostStatus("\r\n\x1b[31mM?t kh?u d� luu kh�ng ch�nh x�c.\x1b[0m\r\n");
                     continue;
                 }
 
                 Status = ConnectionStatus.Disconnected;
                 UpdateStatusBrush();
-                TerminalControl.PostStatus("\r\n\x1b[31mSai thông tin đăng nhập.\x1b[0m\r\nNhấn Enter để thử lại...\r\n");
+                TerminalControl.PostStatus("\r\n\x1b[31mSai th�ng tin dang nh?p.\x1b[0m\r\nNh?n Enter d? th? l?i...\r\n");
                 return;
             }
             catch (Exception ex)
@@ -274,7 +274,7 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
                 Status = ConnectionStatus.Disconnected;
                 UpdateStatusBrush();
                 string errorText = ErrorTranslator.Translate(ex, Session.Host, Session.Port);
-                TerminalControl.PostStatus($"\r\n\x1b[31m[Lỗi kết nối]: {errorText}\x1b[0m\r\nNhấn Enter để kết nối lại...\r\n");
+                TerminalControl.PostStatus($"\r\n\x1b[31m[L?i k?t n?i]: {errorText}\x1b[0m\r\nNh?n Enter d? k?t n?i l?i...\r\n");
                 return;
             }
         }
@@ -310,6 +310,7 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
         Sftp.Dispose();
     }
 }
+
 
 
 

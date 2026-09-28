@@ -229,11 +229,11 @@ public partial class SessionEditorViewModel : ObservableObject
             session.LastConnectedAt = _editingSession.LastConnectedAt;
         }
 
-        session.Name = Name.Trim();
-        session.Group = Group.Trim();
-        session.Host = Host.Trim();
+        session.Name = (Name ?? string.Empty).Trim();
+        session.Group = (Group ?? string.Empty).Trim();
+        session.Host = (Host ?? string.Empty).Trim();
         session.Port = Port;
-        session.Username = Username.Trim();
+        session.Username = (Username ?? string.Empty).Trim();
         session.SavePassword = SavePassword;
         session.KeyFilePath = string.IsNullOrWhiteSpace(KeyFilePath) ? null : KeyFilePath.Trim();
 

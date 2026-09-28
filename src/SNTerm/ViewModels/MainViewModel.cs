@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -29,7 +29,7 @@ public partial class MainViewModel : ObservableObject
     private string windowTitle = "SN Term";
 
     [ObservableProperty]
-    private string statusMessage = "Sẵn sàng";
+    private string statusMessage = "S?n s�ng";
 
     [ObservableProperty]
     private double leftColumnWidth = 280;
@@ -70,19 +70,41 @@ public partial class MainViewModel : ObservableObject
         if (newValue != null)
         {
             newValue.IsSelected = true;
-            WindowTitle = $"{newValue.Title} — SN Term";
-            StatusMessage = $"Đang xem tab: {newValue.Title} ({newValue.TooltipText})";
+            WindowTitle = $"{newValue.Title} � SN Term";
+            StatusMessage = $"�ang xem tab: {newValue.Title} ({newValue.TooltipText})";
             CurrentSftp = newValue.Sftp;
             newValue.TerminalControl.PostFocus();
         }
         else
         {
             WindowTitle = "SN Term";
-            StatusMessage = "Sẵn sàng";
+            StatusMessage = "S?n s�ng";
             CurrentSftp = null;
         }
     }
 
+    [RelayCommand]
+    public void ConnectSelectedVm()
+    {
+        if (SessionList.SelectedSession != null)
+        {
+            SessionList.Connect(SessionList.SelectedSession);
+        }
+        else if (SessionList.Sessions.Count > 0)
+        {
+            SessionList.Connect(SessionList.Sessions[0]);
+        }
+        else
+        {
+            AddVm();
+        }
+    }
+
+    [RelayCommand]
+    public void OpenVmList()
+    {
+        SelectedLeftTabIndex = 0;
+    }
     [RelayCommand]
     private void AddVm()
     {
@@ -122,8 +144,8 @@ public partial class MainViewModel : ObservableObject
         if (connectedCount > 0)
         {
             var res = MessageBox.Show(
-                $"Đang có {connectedCount} tab kết nối SSH. Bạn có chắc chắn muốn thoát SN Term?",
-                "Xác nhận đóng ứng dụng",
+                $"�ang c� {connectedCount} tab k?t n?i SSH. B?n c� ch?c ch?n mu?n tho�t SN Term?",
+                "X�c nh?n d�ng ?ng d?ng",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
@@ -161,8 +183,8 @@ public partial class MainViewModel : ObservableObject
         {
             var ofd = new Microsoft.Win32.OpenFileDialog
             {
-                Title = "Chọn file danh sách VM",
-                Filter = "SN Term Export (*.snterm)|*.snterm|Tất cả file (*.*)|*.*"
+                Title = "Ch?n file danh s�ch VM",
+                Filter = "SN Term Export (*.snterm)|*.snterm|T?t c? file (*.*)|*.*"
             };
 
             if (ofd.ShowDialog(Application.Current?.MainWindow) == true)
@@ -201,8 +223,8 @@ public partial class MainViewModel : ObservableObject
         if (list.Count >= 10)
         {
             var res = MessageBox.Show(
-                $"Bạn sắp mở đồng thời {list.Count} kết nối. Bạn có muốn tiếp tục?",
-                "Xác nhận mở nhiều VM",
+                $"B?n s?p m? d?ng th?i {list.Count} k?t n?i. B?n c� mu?n ti?p t?c?",
+                "X�c nh?n m? nhi?u VM",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
@@ -369,3 +391,4 @@ public partial class MainViewModel : ObservableObject
         SelectedTab = Tabs[(idx - 1 + Tabs.Count) % Tabs.Count];
     }
 }
+
