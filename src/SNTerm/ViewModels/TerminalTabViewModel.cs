@@ -306,3 +306,4 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
 }
 
 
+
