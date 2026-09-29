@@ -202,6 +202,35 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public void OpenCloudBackup()
+    {
+        var dlg = new CloudBackupDialog(_settings, _settingsStore, _sessionStore)
+        {
+            Owner = Application.Current?.MainWindow
+        };
+        dlg.ShowDialog();
+        if (dlg.Restored) SessionList.LoadSessions();
+    }
+
+    /// <summary>Tự backup lên cloud (nền, im lặng) nếu đã cấu hình và quá 20 giờ chưa backup.</summary>
+    public async void RunAutoCloudBackupIfDue()
+    {
+        try
+        {
+            if (!_settings.CloudAutoBackup || !CloudBackupService.IsConfigured(_settings)) return;
+            if (_settings.LastCloudBackupUtc is DateTime last && (DateTime.UtcNow - last).TotalHours < 20) return;
+
+            await new CloudBackupService(_settings, _sessionStore).BackupAsync();
+            _settingsStore.Save(_settings);
+            StatusMessage = "Đã tự động backup lên cloud.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = "Auto backup cloud lỗi: " + ex.Message;
+        }
+    }
+
+    [RelayCommand]
     public void Import(string? filePath = null)
     {
         if (string.IsNullOrEmpty(filePath))

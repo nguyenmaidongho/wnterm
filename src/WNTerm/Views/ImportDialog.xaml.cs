@@ -10,6 +10,9 @@ namespace WNTerm.Views;
 public partial class ImportDialog : Window
 {
     private string? _filePath;
+
+    /// <summary>Mật khẩu điền sẵn khi restore từ cloud (mật khẩu backup đã lưu).</summary>
+    public string? PrefillPassword { get; set; }
     private readonly SessionImporter _importer;
     private ExportFile? _exportFile;
 
@@ -66,6 +69,7 @@ public partial class ImportDialog : Window
                 {
                     ProtectionStatusBlock.Text = "🔒 File có mã hóa mật khẩu bảo vệ";
                     PasswordPanel.Visibility = Visibility.Visible;
+                    if (!string.IsNullOrEmpty(PrefillPassword)) ExportPasswordBox.Password = PrefillPassword;
                     ExportPasswordBox.Focus();
                 }
                 else

@@ -32,6 +32,7 @@ public partial class MainWindow : Window
         ViewModel.Tabs.CollectionChanged += OnTabsCollectionChanged;
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         UpdateTerminalViews();
+        ViewModel.RunAutoCloudBackupIfDue();
     }
 
     private void OnTabsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

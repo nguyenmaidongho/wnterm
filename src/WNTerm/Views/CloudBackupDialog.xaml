@@ -1,0 +1,101 @@
+<Window x:Class="WNTerm.Views.CloudBackupDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Cloud Backup (S3)"
+        Icon="/Assets/favicon.png"
+        Width="640" Height="720" MinWidth="560" MinHeight="560"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResizeWithGrip"
+        FontFamily="Segoe UI" FontSize="12"
+        Background="{DynamicResource ThemeWindowBackground}">
+    <Grid Margin="18,14">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Cấu hình -->
+        <Expander x:Name="ConfigExpander" Grid.Row="0" Header="Cấu hình S3" IsExpanded="True" Foreground="{DynamicResource ThemeForeground}" FontWeight="SemiBold" Margin="0,0,0,8">
+            <StackPanel Margin="0,8,0,0">
+                <TextBlock Text="Endpoint (để trống nếu dùng AWS S3; R2/MinIO/Wasabi thì nhập URL):" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" Margin="0,0,0,3" />
+                <TextBox x:Name="EndpointBox" Margin="0,0,0,6" />
+
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Bucket:" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" Margin="0,0,0,3" />
+                        <TextBox x:Name="BucketBox" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Region (R2 dùng auto):" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" Margin="0,0,0,3" />
+                        <TextBox x:Name="RegionBox" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="Thư mục trong bucket (prefix):" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" Margin="0,0,0,3" />
+                <TextBox x:Name="PrefixBox" Margin="0,0,0,6" />
+
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Access Key:" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" Margin="0,0,0,3" />
+                        <TextBox x:Name="AccessKeyBox" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Secret Key:" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" Margin="0,0,0,3" />
+                        <PasswordBox x:Name="SecretKeyBox" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="Mật khẩu backup (bắt buộc, dùng để mã hóa file — nhớ kỹ, mất là không khôi phục được):" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" TextWrapping="Wrap" Margin="0,0,0,3" />
+                <PasswordBox x:Name="BackupPasswordBox" Margin="0,0,0,6" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,2,0,8">
+                    <CheckBox x:Name="AutoBackupCheck" Content="Tự động backup mỗi ngày (khi mở app)" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" VerticalAlignment="Center" />
+                    <TextBlock Text="Giữ" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" VerticalAlignment="Center" Margin="16,0,4,0" />
+                    <TextBox x:Name="KeepBox" Width="44" />
+                    <TextBlock Text="bản gần nhất" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" VerticalAlignment="Center" Margin="4,0,0,0" />
+                    <CheckBox x:Name="PathStyleCheck" Content="Path-style" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" VerticalAlignment="Center" Margin="16,0,0,0" ToolTip="Bật cho MinIO/R2; tắt nếu nhà cung cấp yêu cầu virtual-host" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Lưu &amp; kiểm tra kết nối" Click="SaveTest_Click" Style="{StaticResource PrimaryButtonStyle}" />
+                    <TextBlock x:Name="TestResultText" VerticalAlignment="Center" Margin="10,0,0,0" TextWrapping="Wrap" FontWeight="Normal" />
+                </StackPanel>
+            </StackPanel>
+        </Expander>
+
+        <!-- Thanh hành động -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
+            <Button x:Name="BackupNowBtn" Content="⬆ Backup ngay" Click="BackupNow_Click" Style="{StaticResource PrimaryButtonStyle}" />
+            <Button x:Name="RestoreBtn" Content="⬇ Khôi phục bản đã chọn" Click="Restore_Click" Style="{StaticResource ToolbarButtonStyle}" Margin="8,0,0,0" />
+            <Button Content="Làm mới" Click="Refresh_Click" Style="{StaticResource ToolbarButtonStyle}" />
+            <Button Content="Xóa" Click="Delete_Click" Style="{StaticResource ToolbarButtonStyle}" />
+        </StackPanel>
+
+        <!-- Danh sách backup -->
+        <ListView x:Name="BackupsList" Grid.Row="2" SelectionMode="Single" MouseDoubleClick="BackupsList_DoubleClick"
+                  Background="{DynamicResource ThemeInputBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Thời gian" Width="150" DisplayMemberBinding="{Binding LastModifiedLocal}" />
+                    <GridViewColumn Header="Dung lượng" Width="80" DisplayMemberBinding="{Binding SizeText}" />
+                    <GridViewColumn Header="Tên file" Width="320" DisplayMemberBinding="{Binding FileName}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <TextBlock x:Name="StatusText" Grid.Row="3" Margin="0,8,0,0" Foreground="{DynamicResource ThemeForegroundMuted}" TextWrapping="Wrap" />
+    </Grid>
+</Window>

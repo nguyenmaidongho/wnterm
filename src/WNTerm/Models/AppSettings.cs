@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace WNTerm.Models;
 
@@ -20,6 +21,19 @@ public class AppSettings
     public string LastExportFolder { get; set; } = "";
     public string LastImportFolder { get; set; } = "";
     public int MaxParallelConnects { get; set; } = 4;
+
+    // Cloud backup (S3 / S3-compatible: AWS, Cloudflare R2, MinIO, Wasabi...)
+    public string S3Endpoint { get; set; } = "";
+    public string S3Region { get; set; } = "us-east-1";
+    public string S3Bucket { get; set; } = "";
+    public string S3Prefix { get; set; } = "wnterm-backups/";
+    public string S3AccessKey { get; set; } = "";
+    public string? S3SecretKeyEnc { get; set; }
+    public bool S3PathStyle { get; set; } = true;
+    public string? CloudBackupPasswordEnc { get; set; }
+    public bool CloudAutoBackup { get; set; } = true;
+    public int CloudKeepCount { get; set; } = 30;
+    public DateTime? LastCloudBackupUtc { get; set; }
 
     public double WindowWidth { get; set; } = 1100;
     public double WindowHeight { get; set; } = 700;
