@@ -248,6 +248,9 @@ public partial class SessionEditorViewModel : ObservableObject
             session.Id = _editingSession.Id;
             session.CreatedAt = _editingSession.CreatedAt;
             session.LastConnectedAt = _editingSession.LastConnectedAt;
+            session.IsPinned = _editingSession.IsPinned;
+            session.IsOnline = _editingSession.IsOnline;
+            session.PingMs = _editingSession.PingMs;
         }
 
         session.Name = (Name ?? string.Empty).Trim();

@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Data;
 using System;
+using System.Linq;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
@@ -33,6 +34,7 @@ public partial class MainWindow : Window
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         UpdateTerminalViews();
         ViewModel.RunAutoCloudBackupIfDue();
+        ViewModel.SessionList.StartStatusMonitor();
     }
 
     private void OnTabsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -227,6 +229,73 @@ public partial class MainWindow : Window
         }
     }
 
+    private static SessionInfo? RowSession(object sender) => (sender as FrameworkElement)?.DataContext as SessionInfo;
+
+    private void QuickConnect_Click(object sender, RoutedEventArgs e)
+    {
+        if (RowSession(sender) is SessionInfo s) ViewModel.SessionList.Connect(s);
+        e.Handled = true;
+    }
+
+    private void QuickSftp_Click(object sender, RoutedEventArgs e)
+    {
+        if (RowSession(sender) is SessionInfo s)
+        {
+            ViewModel.SessionList.Connect(s);
+            ViewModel.SelectedLeftTabIndex = 1;
+        }
+        e.Handled = true;
+    }
+
+    private void QuickCopy_Click(object sender, RoutedEventArgs e)
+    {
+        if (RowSession(sender) is SessionInfo s)
+        {
+            try { Clipboard.SetText(s.Host); ViewModel.StatusMessage = $"Đã copy {s.Host}"; } catch { }
+        }
+        e.Handled = true;
+    }
+
+    private void QuickEdit_Click(object sender, RoutedEventArgs e)
+    {
+        if (RowSession(sender) is SessionInfo s) ViewModel.SessionList.EditSession(s);
+        e.Handled = true;
+    }
+
+    private void ContextMenuPin_Click(object sender, RoutedEventArgs e)
+    {
+        foreach (var s in SessionsListBox.SelectedItems.OfType<SessionInfo>().ToList())
+            ViewModel.SessionList.TogglePin(s);
+    }
+
+    private void GroupHeader_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is System.Windows.Controls.Primitives.ToggleButton tb && tb.Tag is string name)
+            tb.IsChecked = !SessionListViewModel.CollapsedGroupNames.Contains(name);
+    }
+
+    private void GroupHeader_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is System.Windows.Controls.Primitives.ToggleButton tb && tb.Tag is string name)
+        {
+            if (tb.IsChecked == true) SessionListViewModel.CollapsedGroupNames.Remove(name);
+            else SessionListViewModel.CollapsedGroupNames.Add(name);
+        }
+    }
+
+    private void OpenPalette_Click(object sender, RoutedEventArgs e) => OpenPalette();
+
+    private void OpenPalette()
+    {
+        var dlg = new CommandPaletteDialog(ViewModel.SessionList.Sessions) { Owner = this };
+        dlg.ShowDialog();
+        if (dlg.Chosen != null)
+        {
+            ViewModel.SessionList.Connect(dlg.Chosen);
+            if (dlg.OpenSftp) ViewModel.SelectedLeftTabIndex = 1;
+        }
+    }
+
     private void ContextMenuEdit_Click(object sender, RoutedEventArgs e)
     {
         if (SessionsListBox.SelectedItem is SessionInfo session)
@@ -318,6 +387,12 @@ public partial class MainWindow : Window
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
         base.OnPreviewKeyDown(e);
+        if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.K)
+        {
+            OpenPalette();
+            e.Handled = true;
+            return;
+        }
         if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Tab)
         {
             ViewModel.SelectNextTab();

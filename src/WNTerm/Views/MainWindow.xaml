@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="{Binding WindowTitle}"
         Icon="/Assets/favicon.png"
-        Width="1100" Height="700"
+        Width="1155" Height="700"
         MinWidth="800" MinHeight="500"
         WindowStartupLocation="CenterScreen"
         AllowDrop="True" Drop="Window_Drop" DragOver="Window_DragOver"
@@ -115,6 +115,57 @@
             </Setter>
         </Style>
 
+        <Style x:Key="ChipToggleStyle" TargetType="ToggleButton">
+            <Setter Property="Margin" Value="0,0,4,4" />
+            <Setter Property="Padding" Value="9,2" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundMuted}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="b" CornerRadius="11" BorderThickness="1" Background="Transparent"
+                                BorderBrush="{DynamicResource ThemeBorderBrush}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="b" Property="Background" Value="{DynamicResource ThemeItemHover}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="b" Property="Background" Value="#33C42030" />
+                                <Setter TargetName="b" Property="BorderBrush" Value="#88C42030" />
+                                <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="QuickActionButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="26" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="Margin" Value="1,0" />
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="b" CornerRadius="5" Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="b" Property="Background" Value="{DynamicResource ThemeButtonHover}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -173,6 +224,12 @@
                         <TextBlock Text="Cloud" Margin="7,0,0,0" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
+                <Button Click="OpenPalette_Click" Style="{StaticResource ToolbarButtonStyle}" ToolTip="Ctrl+K">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" />
+                        <TextBlock Text="Tìm nhanh" Margin="7,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
                 <Button Command="{Binding OpenSettingsCommand}" Style="{StaticResource ToolbarButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <Canvas Width="14" Height="14" VerticalAlignment="Center">
@@ -206,7 +263,9 @@
                         <Grid Margin="6">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <!-- Ô tìm kiếm -->
@@ -218,12 +277,35 @@
                                 <TextBox Grid.Column="0" Background="{DynamicResource ThemeInputBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}"
                                          VerticalContentAlignment="Center"
                                          Text="{Binding SessionList.SearchText, UpdateSourceTrigger=PropertyChanged}" />
-                                <ComboBox Grid.Column="1" Margin="6,0,0,0" MinWidth="96" MaxWidth="140"
-                                          ToolTip="{DynamicResource Str_TagFilterTooltip}"
-                                          ItemsSource="{Binding SessionList.TagFilterOptions}"
-                                          SelectedItem="{Binding SessionList.SelectedTagFilter}" />
+                                <Button Grid.Column="1" Margin="6,0,0,0" Padding="9,0" Click="OpenPalette_Click" ToolTip="Tìm nhanh (Ctrl+K)"
+                                        Background="{DynamicResource ThemeButtonBackground}" Foreground="{DynamicResource ThemeForegroundMuted}" BorderBrush="{DynamicResource ThemeBorderBrush}" Cursor="Hand">
+                                    <TextBlock Text="Ctrl+K" FontSize="11" />
+                                </Button>
                             </Grid>
-                            <ListBox x:Name="SessionsListBox" Grid.Row="1"
+                            <!-- Chip lọc tag -->
+                            <Grid Grid.Row="1" Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <ToggleButton Style="{StaticResource ChipToggleStyle}" Content="Tất cả" Command="{Binding SessionList.ClearTagFilterCommand}"
+                                                  IsChecked="{Binding SessionList.HasNoActiveTag, Mode=OneWay}" />
+                                    <ItemsControl ItemsSource="{Binding SessionList.TagChips}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <ToggleButton Style="{StaticResource ChipToggleStyle}" Content="{Binding Label}" IsChecked="{Binding IsActive, Mode=TwoWay}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                                <ToggleButton Grid.Column="1" Style="{StaticResource ChipToggleStyle}" Margin="4,0,0,4" Content="Nhóm" ToolTip="Gom VM theo tag"
+                                              IsChecked="{Binding SessionList.IsGrouped, Mode=TwoWay}" />
+                            </Grid>
+                            <ListBox x:Name="SessionsListBox" Grid.Row="2"
                                      ItemsSource="{Binding SessionList.SessionsView}"
                                      SelectedItem="{Binding SessionList.SelectedSession}"
                                      SelectionMode="Extended"
@@ -236,6 +318,7 @@
                                     <ContextMenu>
                                         <MenuItem Header="{DynamicResource Str_ConnectMenu}" Click="ContextMenuConnect_Click" />
                                         <MenuItem Header="{DynamicResource Str_EditVm}" Click="ContextMenuEdit_Click" InputGestureText="F2" />
+                                        <MenuItem Header="Ghim / bỏ ghim" Click="ContextMenuPin_Click" />
                                         <MenuItem Header="{DynamicResource Str_ExportVm}" Click="ContextMenuExport_Click" />
                                         <Separator />
                                         <MenuItem Header="{DynamicResource Str_Delete}" Click="ContextMenuDelete_Click" />
@@ -271,18 +354,71 @@
                                     </Style>
                                 </ListBox.ItemContainerStyle>
 
+                                <ListBox.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.ContainerStyle>
+                                            <Style TargetType="GroupItem">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="GroupItem">
+                                                            <StackPanel>
+                                                                <ToggleButton x:Name="Hdr" IsChecked="True" Cursor="Hand" Loaded="GroupHeader_Loaded" Click="GroupHeader_Click" Tag="{Binding Name}">
+                                                                    <ToggleButton.Template>
+                                                                        <ControlTemplate TargetType="ToggleButton">
+                                                                            <Border Background="{DynamicResource ThemeToolbarBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="0,1,0,1" Padding="8,5" Margin="0,4,0,0">
+                                                                                <ContentPresenter />
+                                                                            </Border>
+                                                                        </ControlTemplate>
+                                                                    </ToggleButton.Template>
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="16" />
+                                                                            <ColumnDefinition Width="*" />
+                                                                            <ColumnDefinition Width="Auto" />
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="9" VerticalAlignment="Center" Foreground="{DynamicResource ThemeForegroundMuted}"
+                                                                                   Text="&#xE70D;">
+                                                                            <TextBlock.Style>
+                                                                                <Style TargetType="TextBlock">
+                                                                                    <Style.Triggers>
+                                                                                        <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=ToggleButton}}" Value="False">
+                                                                                            <Setter Property="Text" Value="&#xE76C;" />
+                                                                                        </DataTrigger>
+                                                                                    </Style.Triggers>
+                                                                                </Style>
+                                                                            </TextBlock.Style>
+                                                                        </TextBlock>
+                                                                        <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource ThemeForegroundMuted}" VerticalAlignment="Center" />
+                                                                        <TextBlock Grid.Column="2" Text="{Binding Items, Converter={x:Static vm:SessionListViewModel.GroupHeaderConverter}}" FontSize="11" Foreground="{DynamicResource ThemeForegroundMuted}" VerticalAlignment="Center" />
+                                                                    </Grid>
+                                                                </ToggleButton>
+                                                                <ItemsPresenter x:Name="Items" />
+                                                            </StackPanel>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger SourceName="Hdr" Property="IsChecked" Value="False">
+                                                                    <Setter TargetName="Items" Property="Visibility" Value="Collapsed" />
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.ContainerStyle>
+                                    </GroupStyle>
+                                </ListBox.GroupStyle>
+
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Margin="2,1" Background="Transparent">
+                                        <Grid Margin="2,1" Background="Transparent" ToolTip="{Binding TagsText}">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
-                                            <!-- Icon máy chủ trước tên VM: đổi màu theo trạng thái kết nối
-                                                 (xanh = đang kết nối, vàng = đang kết nối/reconnect, xám = chưa kết nối) -->
-                                            <Grid Grid.Column="0" Width="18" Height="18" Margin="0,0,6,0" VerticalAlignment="Center">
+                                            <!-- Icon máy chủ (màu theo kết nối đang mở) + chấm online/offline -->
+                                            <Grid Grid.Column="0" Width="20" Height="20" Margin="0,0,7,0" VerticalAlignment="Center">
                                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                                     <Border Width="14" Height="10" CornerRadius="1.5" BorderThickness="1.3"
                                                             BorderBrush="{Binding LiveStatus, Converter={x:Static vm:SessionListViewModel.LiveStatusToIconBrushConverter}}"
@@ -290,29 +426,53 @@
                                                     <Rectangle Width="3" Height="2" Fill="{Binding LiveStatus, Converter={x:Static vm:SessionListViewModel.LiveStatusToIconBrushConverter}}" HorizontalAlignment="Center" />
                                                     <Rectangle Width="9" Height="1.3" RadiusX="0.6" RadiusY="0.6" Fill="{Binding LiveStatus, Converter={x:Static vm:SessionListViewModel.LiveStatusToIconBrushConverter}}" HorizontalAlignment="Center" Margin="0,1,0,0" />
                                                 </StackPanel>
+                                                <Ellipse Width="8" Height="8" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                                         Fill="{Binding IsOnline, Converter={x:Static vm:SessionListViewModel.OnlineToBrushConverter}}"
+                                                         Stroke="{DynamicResource ThemeSidebarBackground}" StrokeThickness="1.2" />
                                             </Grid>
 
-                                            <!-- Tên VM (đậm) + user@host (mờ, nhỏ hơn) bên dưới để phân cấp rõ ràng -->
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource ThemeForeground}" TextTrimming="CharacterEllipsis" />
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE735;" FontFamily="Segoe MDL2 Assets" FontSize="10" Foreground="#F5A623" VerticalAlignment="Center" Margin="0,0,4,0"
+                                                               Visibility="{Binding IsPinned, Converter={x:Static vm:SessionListViewModel.BoolToVisibilityConverter}}" />
+                                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource ThemeForeground}" TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
                                                 <TextBlock Text="{Binding Subtitle}" FontSize="11" Foreground="{DynamicResource ThemeForegroundMuted}" TextTrimming="CharacterEllipsis" Margin="0,1,0,0" />
-                                                <ItemsControl ItemsSource="{Binding Tags}" Margin="0,3,0,0"
-                                                              Visibility="{Binding Tags.Count, Converter={x:Static vm:SessionListViewModel.CountToVisibilityConverter}}">
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <Border CornerRadius="8" Padding="6,0" Margin="0,0,4,2" Background="#33C42030" BorderBrush="#66C42030" BorderThickness="1">
-                                                                <TextBlock Text="{Binding}" FontSize="10" Foreground="{DynamicResource ThemeForeground}" />
-                                                            </Border>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
                                             </StackPanel>
 
-                                            <!-- Biểu tượng cảnh báo thiếu file key -->
-                                            <TextBlock Grid.Column="2" Text="⚠" Foreground="#F79009" FontWeight="Bold" ToolTip="{DynamicResource Str_MissingKeyTooltip}"
+                                            <!-- Ping + lần kết nối gần nhất (ẩn khi rê chuột) -->
+                                            <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="8,0,0,0">
+                                                <StackPanel.Style>
+                                                    <Style TargetType="StackPanel">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </StackPanel.Style>
+                                                <TextBlock Text="{Binding PingText}" FontSize="11" HorizontalAlignment="Right" Foreground="{DynamicResource ThemeForegroundMuted}" />
+                                                <TextBlock Text="{Binding LastConnectedText}" FontSize="10" HorizontalAlignment="Right" Foreground="{DynamicResource ThemeForegroundMuted}" Opacity="0.75" />
+                                            </StackPanel>
+
+                                            <!-- Thao tác nhanh khi rê chuột -->
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="8,0,0,0" Visibility="Collapsed">
+                                                <StackPanel.Style>
+                                                    <Style TargetType="StackPanel">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </StackPanel.Style>
+                                                <Button Style="{StaticResource QuickActionButtonStyle}" Content="&#xE768;" ToolTip="Kết nối" Click="QuickConnect_Click" />
+                                                <Button Style="{StaticResource QuickActionButtonStyle}" Content="&#xE8B7;" ToolTip="Kết nối và mở SFTP" Click="QuickSftp_Click" />
+                                                <Button Style="{StaticResource QuickActionButtonStyle}" Content="&#xE8C8;" ToolTip="Copy IP/host" Click="QuickCopy_Click" />
+                                                <Button Style="{StaticResource QuickActionButtonStyle}" Content="&#xE70F;" ToolTip="Sửa" Click="QuickEdit_Click" />
+                                            </StackPanel>
+
+                                            <TextBlock Grid.Column="3" Text="⚠" Foreground="#F79009" FontWeight="Bold" ToolTip="{DynamicResource Str_MissingKeyTooltip}"
                                                        Visibility="{Binding IsKeyFileMissing, Converter={x:Static vm:SessionListViewModel.BoolToVisibilityConverter}}"
                                                        VerticalAlignment="Center" Margin="4,0,0,0" />
                                         </Grid>
@@ -321,7 +481,20 @@
 
 
                             </ListBox>
-                            <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="16" IsHitTestVisible="False"><StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding SessionList.Sessions.Count}" Value="0"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></StackPanel.Style><TextBlock Text="{DynamicResource Str_NoVmsYet}" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource ThemeForeground}" Margin="0,0,0,4" /><TextBlock Text="{DynamicResource Str_ClickAddVm}" FontSize="11" HorizontalAlignment="Center" Foreground="{DynamicResource ThemeForegroundMuted}" /></StackPanel>
+                            <StackPanel Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="16" IsHitTestVisible="False"><StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding SessionList.Sessions.Count}" Value="0"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></StackPanel.Style><TextBlock Text="{DynamicResource Str_NoVmsYet}" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource ThemeForeground}" Margin="0,0,0,4" /><TextBlock Text="{DynamicResource Str_ClickAddVm}" FontSize="11" HorizontalAlignment="Center" Foreground="{DynamicResource ThemeForegroundMuted}" /></StackPanel>
+                            <!-- Thanh tóm tắt / thao tác theo ngữ cảnh -->
+                            <Border Grid.Row="3" Margin="0,6,0,0" Padding="8,5" CornerRadius="6" Background="{DynamicResource ThemeToolbarBackground}">
+                                <DockPanel LastChildFill="True">
+                                    <Button DockPanel.Dock="Right" Command="{Binding SessionList.ConnectAllWithTagCommand}" Padding="8,1" FontSize="11" Cursor="Hand"
+                                            Background="{DynamicResource ThemeButtonBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}"
+                                            Visibility="{Binding SessionList.TagForGroupAction, Converter={x:Static vm:SessionListViewModel.NullToVisibilityConverter}}">
+                                        <TextBlock FontSize="11">
+                                            <Run Text="Mở tất cả VM tag " /><Run Text="{Binding SessionList.TagForGroupAction, Mode=OneWay}" FontWeight="SemiBold" />
+                                        </TextBlock>
+                                    </Button>
+                                    <TextBlock Text="{Binding SessionList.SummaryText}" FontSize="11" Foreground="{DynamicResource ThemeForegroundMuted}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                </DockPanel>
+                            </Border>
                         </Grid>
                     </TabItem>
 

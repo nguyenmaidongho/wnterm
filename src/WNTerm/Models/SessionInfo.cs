@@ -12,6 +12,7 @@ public class SessionInfo : INotifyPropertyChanged
     public string Name { get; set; } = "";
     public string Group { get; set; } = "";
     public List<string> Tags { get; set; } = new();
+    public bool IsPinned { get; set; }
     public string Host { get; set; } = "";
     public int Port { get; set; } = 22;
     public string Username { get; set; } = "";
@@ -31,6 +32,59 @@ public class SessionInfo : INotifyPropertyChanged
 
     [JsonIgnore]
     public string EffectiveGroup => string.IsNullOrWhiteSpace(Group) ? "Chưa phân nhóm" : Group.Trim();
+
+    [JsonIgnore]
+    public string PrimaryTag => Tags.Count > 0 ? Tags[0] : "Chưa có tag";
+
+    /// <summary>Khóa nhóm hiển thị trong danh sách: ghim lên đầu, sau đó theo tag đầu tiên.</summary>
+    [JsonIgnore]
+    public string GroupKey => IsPinned ? PinnedGroupName : PrimaryTag;
+
+    public const string PinnedGroupName = "★ Ghim";
+
+    [JsonIgnore]
+    public string GroupSortKey => IsPinned ? "0" : (Tags.Count > 0 ? "1|" + Tags[0].ToLowerInvariant() : "2");
+
+    private bool? _isOnline;
+    private int? _pingMs;
+
+    /// <summary>Kết quả kiểm tra TCP tới cổng SSH (null = chưa biết). Chỉ trong phiên chạy.</summary>
+    [JsonIgnore]
+    public bool? IsOnline
+    {
+        get => _isOnline;
+        set { if (_isOnline == value) return; _isOnline = value; Notify(nameof(IsOnline)); Notify(nameof(PingText)); }
+    }
+
+    [JsonIgnore]
+    public int? PingMs
+    {
+        get => _pingMs;
+        set { if (_pingMs == value) return; _pingMs = value; Notify(nameof(PingMs)); Notify(nameof(PingText)); }
+    }
+
+    [JsonIgnore]
+    public string PingText => IsOnline switch { true => PingMs is int ms ? $"{ms} ms" : "online", false => "offline", _ => "" };
+
+    [JsonIgnore]
+    public string LastConnectedText
+    {
+        get
+        {
+            if (LastConnectedAt is not DateTime t) return "";
+            var d = DateTime.UtcNow - t.ToUniversalTime();
+            if (d.TotalMinutes < 1) return "vừa xong";
+            if (d.TotalHours < 1) return $"{(int)d.TotalMinutes} phút trước";
+            if (d.TotalDays < 1) return $"{(int)d.TotalHours} giờ trước";
+            if (d.TotalDays < 2) return "hôm qua";
+            if (d.TotalDays < 30) return $"{(int)d.TotalDays} ngày trước";
+            return t.ToLocalTime().ToString("dd/MM/yyyy");
+        }
+    }
+
+    public void RefreshRelativeTime() => Notify(nameof(LastConnectedText));
+
+    private void Notify(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
     [JsonIgnore]
     public string TagsText => string.Join(", ", Tags);
@@ -80,6 +134,7 @@ public class SessionInfo : INotifyPropertyChanged
             Name = string.IsNullOrWhiteSpace(Name) ? "" : $"{Name} (bản sao)",
             Group = Group,
             Tags = new List<string>(Tags),
+            IsPinned = IsPinned,
             Host = Host,
             Port = Port,
             Username = Username,

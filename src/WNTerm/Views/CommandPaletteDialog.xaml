@@ -1,0 +1,42 @@
+<Window x:Class="WNTerm.Views.CommandPaletteDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:WNTerm.ViewModels"
+        Title="Tìm nhanh"
+        Width="520" SizeToContent="Height"
+        WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False"
+        WindowStartupLocation="Manual"
+        FontFamily="Segoe UI" FontSize="13"
+        Background="{DynamicResource ThemeWindowBackground}"
+        Deactivated="Window_Deactivated" PreviewKeyDown="Window_PreviewKeyDown">
+    <Border BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="1" Padding="8">
+        <StackPanel>
+            <TextBox x:Name="QueryBox" Height="34" FontSize="14" VerticalContentAlignment="Center" Padding="6,0"
+                     Background="{DynamicResource ThemeInputBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}"
+                     TextChanged="QueryBox_TextChanged" />
+            <ListBox x:Name="ResultsList" Margin="0,6,0,0" MaxHeight="320" BorderThickness="0" Background="Transparent"
+                     MouseDoubleClick="ResultsList_MouseDoubleClick">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="2,3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Ellipse Width="8" Height="8" Margin="0,0,8,0" VerticalAlignment="Center"
+                                     Fill="{Binding IsOnline, Converter={x:Static vm:SessionListViewModel.OnlineToBrushConverter}}" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" Foreground="{DynamicResource ThemeForeground}" />
+                                <TextBlock Text="{Binding Subtitle}" Margin="8,0,0,0" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource ThemeForegroundMuted}" />
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="{Binding PrimaryTag}" FontSize="11" Foreground="{DynamicResource ThemeForegroundMuted}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock Margin="4,6,0,0" FontSize="11" Foreground="{DynamicResource ThemeForegroundMuted}"
+                       Text="Enter: kết nối · Shift+Enter: kết nối và mở SFTP · Esc: đóng · #tag để lọc theo tag" />
+        </StackPanel>
+    </Border>
+</Window>
