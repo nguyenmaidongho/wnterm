@@ -308,14 +308,14 @@ EC2 App=#109#0%ec2.example.com%22%ec2-user%%-1%-1%%/home/user/app.pem%%%22%%0%0%
         // 1. Default to English
         LocalizationManager.ApplyLanguage("en");
         Assert.Equal("en", LocalizationManager.CurrentLanguage);
-        Assert.Equal("▶ Connect", LocalizationManager.Get("Str_Connect"));
+        Assert.Equal("Connect", LocalizationManager.Get("Str_Connect"));
         Assert.Equal("Permissions (chmod)...", LocalizationManager.Get("Str_Chmod"));
         Assert.DoesNotContain("?", LocalizationManager.Get("Str_Chmod"));
 
         // 2. Switch to Vietnamese
         LocalizationManager.ApplyLanguage("vi");
         Assert.Equal("vi", LocalizationManager.CurrentLanguage);
-        Assert.Equal("▶ Kết nối", LocalizationManager.Get("Str_Connect"));
+        Assert.Equal("Kết nối", LocalizationManager.Get("Str_Connect"));
         Assert.Equal("Phân quyền (chmod)...", LocalizationManager.Get("Str_Chmod"));
         Assert.DoesNotContain("?", LocalizationManager.Get("Str_Chmod"));
         Assert.Equal("+ Thư mục", LocalizationManager.Get("Str_NewFolderBtn"));
