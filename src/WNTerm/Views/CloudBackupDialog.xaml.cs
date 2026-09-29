@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -50,8 +50,8 @@ public partial class CloudBackupDialog : Window
     private void UpdateLastBackupText()
     {
         StatusText.Text = _settings.LastCloudBackupUtc is DateTime t
-            ? $"Backup gần nhất: {t.ToLocalTime():dd/MM/yyyy HH:mm}"
-            : "Chưa có backup nào từ máy này.";
+            ? string.Format(WNTerm.Services.LocalizationManager.Tr("Last backup: {0}", "Backup gần nhất: {0}"), t.ToLocalTime().ToString("dd/MM/yyyy HH:mm"))
+            : WNTerm.Services.LocalizationManager.Tr("No backup from this computer yet.", "Chưa có backup nào từ máy này.");
     }
 
     private bool ReadConfig()
@@ -59,12 +59,12 @@ public partial class CloudBackupDialog : Window
         if (string.IsNullOrWhiteSpace(BucketBox.Text) || string.IsNullOrWhiteSpace(AccessKeyBox.Text) ||
             string.IsNullOrEmpty(SecretKeyBox.Password))
         {
-            ShowTest("Nhập đủ Bucket, Access Key, Secret Key.", false);
+            ShowTest(WNTerm.Services.LocalizationManager.Tr("Enter Bucket, Access Key and Secret Key.", "Nhập đủ Bucket, Access Key, Secret Key."), false);
             return false;
         }
         if (string.IsNullOrEmpty(BackupPasswordBox.Password))
         {
-            ShowTest("Cần đặt mật khẩu backup.", false);
+            ShowTest(WNTerm.Services.LocalizationManager.Tr("A backup password is required.", "Cần đặt mật khẩu backup."), false);
             return false;
         }
 
@@ -91,16 +91,16 @@ public partial class CloudBackupDialog : Window
     private async void SaveTest_Click(object sender, RoutedEventArgs e)
     {
         if (!ReadConfig()) return;
-        ShowTest("Đang kiểm tra...", true);
+        ShowTest(WNTerm.Services.LocalizationManager.Tr("Testing...", "Đang kiểm tra..."), true);
         try
         {
             await Service.TestAsync();
-            ShowTest("Kết nối OK, đã lưu cấu hình.", true);
+            ShowTest(WNTerm.Services.LocalizationManager.Tr("Connection OK, settings saved.", "Kết nối OK, đã lưu cấu hình."), true);
             await RefreshListAsync();
         }
         catch (Exception ex)
         {
-            ShowTest("Lỗi: " + ex.Message, false);
+            ShowTest(WNTerm.Services.LocalizationManager.Tr("Error: ", "Lỗi: ") + ex.Message, false);
         }
     }
 
@@ -109,16 +109,16 @@ public partial class CloudBackupDialog : Window
         if (!CloudBackupService.IsConfigured(_settings)) return;
         try
         {
-            StatusText.Text = "Đang tải danh sách...";
+            StatusText.Text = WNTerm.Services.LocalizationManager.Tr("Loading list...", "Đang tải danh sách...");
             var items = await Service.ListAsync();
             BackupsList.ItemsSource = items;
             if (items.Count > 0) BackupsList.SelectedIndex = 0;
             UpdateLastBackupText();
-            StatusText.Text += $"  |  {items.Count} bản trên cloud.";
+            StatusText.Text += "  |  " + string.Format(WNTerm.Services.LocalizationManager.Tr("{0} backups in the cloud.", "{0} bản trên cloud."), items.Count);
         }
         catch (Exception ex)
         {
-            StatusText.Text = "Không tải được danh sách: " + ex.Message;
+            StatusText.Text = WNTerm.Services.LocalizationManager.Tr("Could not load the list: ", "Không tải được danh sách: ") + ex.Message;
         }
     }
 
@@ -128,17 +128,17 @@ public partial class CloudBackupDialog : Window
     {
         if (!ReadConfig()) { ConfigExpander.IsExpanded = true; return; }
         BackupNowBtn.IsEnabled = false;
-        StatusText.Text = "Đang backup...";
+        StatusText.Text = WNTerm.Services.LocalizationManager.Tr("Backing up...", "Đang backup...");
         try
         {
             string key = await Service.BackupAsync();
             _settingsStore.Save(_settings);
             await RefreshListAsync();
-            StatusText.Text = $"Backup thành công: {System.IO.Path.GetFileName(key)}";
+            StatusText.Text = WNTerm.Services.LocalizationManager.Tr("Backup successful: ", "Backup thành công: ") + System.IO.Path.GetFileName(key);
         }
         catch (Exception ex)
         {
-            StatusText.Text = "Backup lỗi: " + ex.Message;
+            StatusText.Text = WNTerm.Services.LocalizationManager.Tr("Backup failed: ", "Backup lỗi: ") + ex.Message;
         }
         finally
         {
@@ -155,12 +155,12 @@ public partial class CloudBackupDialog : Window
     {
         if (BackupsList.SelectedItem is not CloudBackupItem item)
         {
-            StatusText.Text = "Chọn một bản backup trong danh sách.";
+            StatusText.Text = WNTerm.Services.LocalizationManager.Tr("Select a backup in the list.", "Chọn một bản backup trong danh sách.");
             return;
         }
         if (!CloudBackupService.IsConfigured(_settings)) return;
 
-        StatusText.Text = "Đang tải bản backup...";
+        StatusText.Text = WNTerm.Services.LocalizationManager.Tr("Downloading backup...", "Đang tải bản backup...");
         string? file = null;
         try
         {
@@ -175,12 +175,12 @@ public partial class CloudBackupDialog : Window
             if (dlg.ShowDialog() == true)
             {
                 Restored = true;
-                StatusText.Text = "Đã khôi phục xong.";
+                StatusText.Text = WNTerm.Services.LocalizationManager.Tr("Restore complete.", "Đã khôi phục xong.");
             }
         }
         catch (Exception ex)
         {
-            StatusText.Text = "Khôi phục lỗi: " + ex.Message;
+            StatusText.Text = WNTerm.Services.LocalizationManager.Tr("Restore failed: ", "Khôi phục lỗi: ") + ex.Message;
         }
         finally
         {
@@ -191,7 +191,7 @@ public partial class CloudBackupDialog : Window
     private async void Delete_Click(object sender, RoutedEventArgs e)
     {
         if (BackupsList.SelectedItem is not CloudBackupItem item) return;
-        if (MessageBox.Show(this, $"Xóa bản backup {item.FileName} trên cloud?", "Xóa backup",
+        if (MessageBox.Show(this, string.Format(WNTerm.Services.LocalizationManager.Tr("Delete backup {0} from the cloud?", "Xóa bản backup {0} trên cloud?"), item.FileName), WNTerm.Services.LocalizationManager.Tr("Delete backup", "Xóa backup"),
                 MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
         try
         {
@@ -200,7 +200,7 @@ public partial class CloudBackupDialog : Window
         }
         catch (Exception ex)
         {
-            StatusText.Text = "Xóa lỗi: " + ex.Message;
+            StatusText.Text = WNTerm.Services.LocalizationManager.Tr("Delete failed: ", "Xóa lỗi: ") + ex.Message;
         }
     }
 }

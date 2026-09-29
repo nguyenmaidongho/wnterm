@@ -363,7 +363,7 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
 
         UpdateStatusBrush();
 
-        TerminalControl.PostStatus($"Đang kết nối tới {Session.DisplayName} ({Session.Host})...");
+        TerminalControl.PostStatus(WNTerm.Services.LocalizationManager.Get("Str_ConnectingTo", Session.DisplayName, Session.Host));
 
 
         bool authRetry = false;
@@ -445,7 +445,7 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
 
                         UpdateStatusBrush();
 
-                        TerminalControl.PostStatus("\r\nĐã hủy kết nối.\r\nNhấn Enter để kết nối lại...\r\n");
+                        TerminalControl.PostStatus("\r\n" + WNTerm.Services.LocalizationManager.Get("Str_ConnectionCanceled") + "\r\n");
 
                         return;
 
@@ -510,7 +510,7 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
 
                     _cachedPassword = null;
 
-                    TerminalControl.PostStatus("\r\n\x1b[31mMật khẩu đã lưu không chính xác.\x1b[0m\r\n");
+                    TerminalControl.PostStatus("\r\n\x1b[31m" + WNTerm.Services.LocalizationManager.Get("Str_WrongSavedPassword") + "\x1b[0m\r\n");
 
                     continue;
 
@@ -521,7 +521,7 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
 
                 UpdateStatusBrush();
 
-                TerminalControl.PostStatus("\r\n\x1b[31mSai thông tin đăng nhập.\x1b[0m\r\nNhấn Enter để thử lại...\r\n");
+                TerminalControl.PostStatus("\r\n\x1b[31m" + WNTerm.Services.LocalizationManager.Get("Str_InvalidCredentials") + "\x1b[0m\r\n");
 
                 return;
 

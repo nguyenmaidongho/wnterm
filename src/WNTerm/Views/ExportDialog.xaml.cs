@@ -54,7 +54,7 @@ public partial class ExportDialog : Window
         var selected = SessionsList.SelectedItems.OfType<SessionInfo>().ToList();
         if (selected.Count == 0)
         {
-            MessageBox.Show("Vui lòng chọn ít nhất một VM để export.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(WNTerm.Services.LocalizationManager.Tr("Select at least one VM to export.", "Vui lòng chọn ít nhất một VM để export."), WNTerm.Services.LocalizationManager.Tr("Notice", "Thông báo"), MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
@@ -66,13 +66,13 @@ public partial class ExportDialog : Window
 
             if (string.IsNullOrEmpty(pass1) || pass1.Length < 8)
             {
-                MessageBox.Show("Mật khẩu Export phải có tối thiểu 8 ký tự.", "Lỗi mật khẩu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(WNTerm.Services.LocalizationManager.Tr("The export password must be at least 8 characters.", "Mật khẩu Export phải có tối thiểu 8 ký tự."), WNTerm.Services.LocalizationManager.Tr("Password error", "Lỗi mật khẩu"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (pass1 != pass2)
             {
-                MessageBox.Show("Mật khẩu xác nhận không khớp.", "Lỗi mật khẩu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(WNTerm.Services.LocalizationManager.Tr("Password confirmation does not match.", "Mật khẩu xác nhận không khớp."), WNTerm.Services.LocalizationManager.Tr("Password error", "Lỗi mật khẩu"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -81,7 +81,7 @@ public partial class ExportDialog : Window
 
         var dlg = new SaveFileDialog
         {
-            Title = "Lưu file Export VM",
+            Title = WNTerm.Services.LocalizationManager.Tr("Save VM export file", "Lưu file Export VM"),
             Filter = "WN Term Export (*.wnterm)|*.wnterm",
             FileName = $"wnterm_backup_{DateTime.Now:yyyyMMdd_HHmmss}.wnterm"
         };
@@ -97,13 +97,13 @@ public partial class ExportDialog : Window
                     exportPassword,
                     IncludeKeyFileCheckBox.IsChecked == true);
 
-                MessageBox.Show($"Export thành công {selected.Count} VM!", "Hoàn tất", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(string.Format(WNTerm.Services.LocalizationManager.Tr("Exported {0} VMs successfully!", "Export thành công {0} VM!"), selected.Count), WNTerm.Services.LocalizationManager.Tr("Done", "Hoàn tất"), MessageBoxButton.OK, MessageBoxImage.Information);
                 DialogResult = true;
                 Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi export: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(string.Format(WNTerm.Services.LocalizationManager.Tr("Export failed: {0}", "Lỗi khi export: {0}"), ex.Message), WNTerm.Services.LocalizationManager.Tr("Error", "Lỗi"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

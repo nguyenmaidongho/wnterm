@@ -251,7 +251,7 @@ public partial class MainWindow : Window
     {
         if (RowSession(sender) is SessionInfo s)
         {
-            try { Clipboard.SetText(s.Host); ViewModel.StatusMessage = $"Đã copy {s.Host}"; } catch { }
+            try { Clipboard.SetText(s.Host); ViewModel.StatusMessage = string.Format(WNTerm.Services.LocalizationManager.Tr("Copied {0}", "Đã copy {0}"), s.Host); } catch { }
         }
         e.Handled = true;
     }

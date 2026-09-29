@@ -11,8 +11,8 @@ public partial class PasswordPromptDialog : Window
     {
         InitializeComponent();
 
-        Title = $"{vmName} — Nhập mật khẩu";
-        TitleBlock.Text = $"{vmName} — Nhập mật khẩu";
+        Title = $"{vmName} — " + WNTerm.Services.LocalizationManager.Tr("Enter password", "Nhập mật khẩu");
+        TitleBlock.Text = Title;
         // Không hiện port để tránh lộ ra khi ai đó nhìn màn hình lúc nhập mật khẩu.
         SubtitleBlock.Text = $"{user}@{host}";
 

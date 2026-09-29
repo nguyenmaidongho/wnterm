@@ -127,7 +127,7 @@ public partial class SftpViewModel : ObservableObject, IDisposable
         if (_client != null && _client.IsConnected) return;
 
         IsLoading = true;
-        StatusMessage = "Đang kết nối SFTP...";
+        StatusMessage = WNTerm.Services.LocalizationManager.Tr("Connecting to SFTP...", "Đang kết nối SFTP...");
 
         try
         {
@@ -159,7 +159,7 @@ public partial class SftpViewModel : ObservableObject, IDisposable
         if (_client == null || !_client.IsConnected) return;
 
         IsLoading = true;
-        StatusMessage = "Đang tải danh sách file...";
+        StatusMessage = WNTerm.Services.LocalizationManager.Tr("Loading file list...", "Đang tải danh sách file...");
 
         try
         {
@@ -324,7 +324,7 @@ public partial class SftpViewModel : ObservableObject, IDisposable
     {
         if (_client == null || !_client.IsConnected) return;
 
-        var inputDlg = new InputDialog("Tạo thư mục mới", "Nhập tên thư mục:");
+        var inputDlg = new InputDialog(WNTerm.Services.LocalizationManager.Tr("New folder", "Tạo thư mục mới"), WNTerm.Services.LocalizationManager.Tr("Enter folder name:", "Nhập tên thư mục:"));
         inputDlg.Owner = Application.Current?.MainWindow;
 
         if (inputDlg.ShowDialog() != true) return;
@@ -414,7 +414,7 @@ public partial class SftpViewModel : ObservableObject, IDisposable
         item ??= SelectedItem;
         if (_client == null || !_client.IsConnected || item == null || item.IsParentDirectory || item.Name == "..") return;
 
-        var inputDlg = new InputDialog("Đổi tên", "Nhập tên mới:", item.Name);
+        var inputDlg = new InputDialog(WNTerm.Services.LocalizationManager.Tr("Rename", "Đổi tên"), WNTerm.Services.LocalizationManager.Tr("Enter new name:", "Nhập tên mới:"), item.Name);
         inputDlg.Owner = Application.Current?.MainWindow;
 
         if (inputDlg.ShowDialog() != true) return;
@@ -517,8 +517,8 @@ public partial class SftpViewModel : ObservableObject, IDisposable
 
         var dlg = new OpenFileDialog
         {
-            Title = "Chọn ứng dụng để sửa file",
-            Filter = "Chương trình (*.exe)|*.exe|Tất cả file (*.*)|*.*"
+            Title = WNTerm.Services.LocalizationManager.Tr("Choose an application to edit the file", "Chọn ứng dụng để sửa file"),
+            Filter = WNTerm.Services.LocalizationManager.Get("Str_ExeFilter")
         };
 
         if (dlg.ShowDialog(Application.Current?.MainWindow) == true)
@@ -532,7 +532,7 @@ public partial class SftpViewModel : ObservableObject, IDisposable
         if (_client == null || !_client.IsConnected) return;
 
         IsLoading = true;
-        StatusMessage = $"Đang tải {item.Name} để sửa...";
+        StatusMessage = string.Format(WNTerm.Services.LocalizationManager.Tr("Downloading {0} for editing...", "Đang tải {0} để sửa..."), item.Name);
 
         try
         {

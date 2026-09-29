@@ -146,7 +146,7 @@ public class SessionStoreTests : IDisposable
         var clone = original.Clone();
 
         Assert.NotEqual(original.Id, clone.Id);
-        Assert.Equal("web-01 (bản sao)", clone.Name);
+        Assert.Contains(clone.Name, new[] { "web-01 (copy)", "web-01 (bản sao)" });
         Assert.Equal(original.Host, clone.Host);
         Assert.Equal(original.Port, clone.Port);
         Assert.Equal(original.Username, clone.Username);

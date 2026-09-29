@@ -124,7 +124,7 @@ public partial class SessionEditorViewModel : ObservableObject
     {
         if (!string.IsNullOrWhiteSpace(value) && !File.Exists(value))
         {
-            KeyFileWarning = "Không tìm thấy file key";
+            KeyFileWarning = WNTerm.Services.LocalizationManager.Tr("Key file not found", "Không tìm thấy file key");
         }
         else
         {
@@ -223,12 +223,12 @@ public partial class SessionEditorViewModel : ObservableObject
             await Task.Run(() => client.Connect());
             client.Disconnect();
 
-            MessageBox.Show("Kết nối SSH thành công!", "Kiểm tra kết nối", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(WNTerm.Services.LocalizationManager.Tr("SSH connection successful!", "Kết nối SSH thành công!"), WNTerm.Services.LocalizationManager.Tr("Test connection", "Kiểm tra kết nối"), MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
             string msg = ErrorTranslator.Translate(ex, Host, Port);
-            MessageBox.Show(msg, "Kiểm tra kết nối thất bại", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(msg, WNTerm.Services.LocalizationManager.Tr("Connection test failed", "Kiểm tra kết nối thất bại"), MessageBoxButton.OK, MessageBoxImage.Warning);
         }
         finally
         {

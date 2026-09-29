@@ -227,7 +227,7 @@
                 <Button Click="OpenPalette_Click" Style="{StaticResource ToolbarButtonStyle}" ToolTip="Ctrl+K">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" />
-                        <TextBlock Text="Tìm nhanh" Margin="7,0,0,0" VerticalAlignment="Center" />
+                        <TextBlock Text="{DynamicResource Str_QuickFind}" Margin="7,0,0,0" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
                 <Button Command="{Binding OpenSettingsCommand}" Style="{StaticResource ToolbarButtonStyle}">
@@ -277,7 +277,7 @@
                                 <TextBox Grid.Column="0" Background="{DynamicResource ThemeInputBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}"
                                          VerticalContentAlignment="Center"
                                          Text="{Binding SessionList.SearchText, UpdateSourceTrigger=PropertyChanged}" />
-                                <Button Grid.Column="1" Margin="6,0,0,0" Padding="9,0" Click="OpenPalette_Click" ToolTip="Tìm nhanh (Ctrl+K)"
+                                <Button Grid.Column="1" Margin="6,0,0,0" Padding="9,0" Click="OpenPalette_Click" ToolTip="{DynamicResource Str_QuickFindTip}"
                                         Background="{DynamicResource ThemeButtonBackground}" Foreground="{DynamicResource ThemeForegroundMuted}" BorderBrush="{DynamicResource ThemeBorderBrush}" Cursor="Hand">
                                     <TextBlock Text="Ctrl+K" FontSize="11" />
                                 </Button>
@@ -289,7 +289,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                    <ToggleButton Style="{StaticResource ChipToggleStyle}" Content="Tất cả" Command="{Binding SessionList.ClearTagFilterCommand}"
+                                    <ToggleButton Style="{StaticResource ChipToggleStyle}" Content="{DynamicResource Str_AllChip}" Command="{Binding SessionList.ClearTagFilterCommand}"
                                                   IsChecked="{Binding SessionList.HasNoActiveTag, Mode=OneWay}" />
                                     <ItemsControl ItemsSource="{Binding SessionList.TagChips}">
                                         <ItemsControl.ItemsPanel>
@@ -302,7 +302,7 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </StackPanel>
-                                <ToggleButton Grid.Column="1" Style="{StaticResource ChipToggleStyle}" Margin="4,0,0,4" Content="Nhóm" ToolTip="Gom VM theo tag"
+                                <ToggleButton Grid.Column="1" Style="{StaticResource ChipToggleStyle}" Margin="4,0,0,4" Content="{DynamicResource Str_GroupChip}" ToolTip="{DynamicResource Str_GroupChipTip}"
                                               IsChecked="{Binding SessionList.IsGrouped, Mode=TwoWay}" />
                             </Grid>
                             <ListBox x:Name="SessionsListBox" Grid.Row="2"
@@ -318,7 +318,7 @@
                                     <ContextMenu>
                                         <MenuItem Header="{DynamicResource Str_ConnectMenu}" Click="ContextMenuConnect_Click" />
                                         <MenuItem Header="{DynamicResource Str_EditVm}" Click="ContextMenuEdit_Click" InputGestureText="F2" />
-                                        <MenuItem Header="Ghim / bỏ ghim" Click="ContextMenuPin_Click" />
+                                        <MenuItem Header="{DynamicResource Str_PinToggle}" Click="ContextMenuPin_Click" />
                                         <MenuItem Header="{DynamicResource Str_ExportVm}" Click="ContextMenuExport_Click" />
                                         <Separator />
                                         <MenuItem Header="{DynamicResource Str_Delete}" Click="ContextMenuDelete_Click" />
@@ -466,10 +466,10 @@
                                                         </Style.Triggers>
                                                     </Style>
                                                 </StackPanel.Style>
-                                                <Button Style="{StaticResource QuickActionButtonStyle}" Content="&#xE768;" ToolTip="Kết nối" Click="QuickConnect_Click" />
-                                                <Button Style="{StaticResource QuickActionButtonStyle}" Content="&#xE8B7;" ToolTip="Kết nối và mở SFTP" Click="QuickSftp_Click" />
-                                                <Button Style="{StaticResource QuickActionButtonStyle}" Content="&#xE8C8;" ToolTip="Copy IP/host" Click="QuickCopy_Click" />
-                                                <Button Style="{StaticResource QuickActionButtonStyle}" Content="&#xE70F;" ToolTip="Sửa" Click="QuickEdit_Click" />
+                                                <Button Style="{StaticResource QuickActionButtonStyle}" Content="&#xE768;" ToolTip="{DynamicResource Str_QaConnect}" Click="QuickConnect_Click" />
+                                                <Button Style="{StaticResource QuickActionButtonStyle}" Content="&#xE8B7;" ToolTip="{DynamicResource Str_QaSftp}" Click="QuickSftp_Click" />
+                                                <Button Style="{StaticResource QuickActionButtonStyle}" Content="&#xE8C8;" ToolTip="{DynamicResource Str_QaCopy}" Click="QuickCopy_Click" />
+                                                <Button Style="{StaticResource QuickActionButtonStyle}" Content="&#xE70F;" ToolTip="{DynamicResource Str_QaEdit}" Click="QuickEdit_Click" />
                                             </StackPanel>
 
                                             <TextBlock Grid.Column="3" Text="⚠" Foreground="#F79009" FontWeight="Bold" ToolTip="{DynamicResource Str_MissingKeyTooltip}"
@@ -489,7 +489,7 @@
                                             Background="{DynamicResource ThemeButtonBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}"
                                             Visibility="{Binding SessionList.TagForGroupAction, Converter={x:Static vm:SessionListViewModel.NullToVisibilityConverter}}">
                                         <TextBlock FontSize="11">
-                                            <Run Text="Mở tất cả VM tag " /><Run Text="{Binding SessionList.TagForGroupAction, Mode=OneWay}" FontWeight="SemiBold" />
+                                            <Run Text="{DynamicResource Str_OpenAllTag}" /><Run Text="{Binding SessionList.TagForGroupAction, Mode=OneWay}" FontWeight="SemiBold" />
                                         </TextBlock>
                                     </Button>
                                     <TextBlock Text="{Binding SessionList.SummaryText}" FontSize="11" Foreground="{DynamicResource ThemeForegroundMuted}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />

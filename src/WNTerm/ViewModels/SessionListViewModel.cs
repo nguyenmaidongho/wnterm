@@ -114,14 +114,14 @@ public partial class SessionListViewModel : ObservableObject
     {
         if (SelectedSession != null)
         {
-            SummaryText = $"Đã chọn: {SelectedSession.DisplayName}";
+            SummaryText = WNTerm.Services.LocalizationManager.Tr("Selected: ", "Đã chọn: ") + SelectedSession.DisplayName;
             return;
         }
         var visible = _sessionsView.Cast<SessionInfo>().ToList();
         int online = visible.Count(v => v.IsOnline == true);
         SummaryText = visible.Any(v => v.IsOnline != null)
-            ? $"{visible.Count} VM · {online} online"
-            : $"{visible.Count} VM";
+            ? string.Format(WNTerm.Services.LocalizationManager.Tr("{0} VMs · {1} online", "{0} VM · {1} online"), visible.Count, online)
+            : string.Format(WNTerm.Services.LocalizationManager.Tr("{0} VMs", "{0} VM"), visible.Count);
     }
 
     [RelayCommand]
@@ -239,8 +239,8 @@ public partial class SessionListViewModel : ObservableObject
     private bool FilterSession(object item)
     {
         if (item is not SessionInfo s) return false;
-        foreach (var at in _activeTags)
-            if (!s.Tags.Contains(at, StringComparer.OrdinalIgnoreCase)) return false;
+        // Nhiều tag được chọn => hiện VM thuộc BẤT KỲ tag nào (OR).
+        if (_activeTags.Count > 0 && !s.Tags.Any(t => _activeTags.Contains(t))) return false;
         if (string.IsNullOrWhiteSpace(SearchText)) return true;
 
         string query = SearchText.Trim();
@@ -324,7 +324,7 @@ public partial class SessionListViewModel : ObservableObject
         [RelayCommand]
     public void CreateGroup()
     {
-        var inputDlg = new InputDialog("Tạo nhóm mới", "Nhập tên nhóm:");
+        var inputDlg = new InputDialog(WNTerm.Services.LocalizationManager.Tr("Create new group", "Tạo nhóm mới"), WNTerm.Services.LocalizationManager.Get("Str_EnterGroupName"));
         inputDlg.Owner = Application.Current?.MainWindow;
 
         if (inputDlg.ShowDialog() != true) return;
@@ -369,7 +369,7 @@ public partial class SessionListViewModel : ObservableObject
         session ??= SelectedSession;
         if (session == null) return;
 
-        var dlg = new InputDialog("Chuyển sang nhóm", "Nhập tên nhóm mới hoặc nhóm đã có:", session.Group)
+        var dlg = new InputDialog(WNTerm.Services.LocalizationManager.Get("Str_MoveToGroupTitle"), WNTerm.Services.LocalizationManager.Get("Str_EnterGroupName"), session.Group)
         {
             Owner = Application.Current?.MainWindow
         };
@@ -528,7 +528,7 @@ public partial class SessionListViewModel : ObservableObject
             var list = items.OfType<SessionInfo>().ToList();
             return list.Any(v => v.IsOnline != null)
                 ? $"{list.Count(v => v.IsOnline == true)}/{list.Count} online"
-                : $"{list.Count} VM";
+                : string.Format(WNTerm.Services.LocalizationManager.Tr("{0} VMs", "{0} VM"), list.Count);
         }
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotImplementedException();
     }

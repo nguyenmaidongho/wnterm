@@ -94,7 +94,7 @@ public partial class TerminalView : UserControl
         var osPanel = new StackPanel();
         osPanel.Children.Add(new TextBlock
         {
-            Text = "Thông tin hệ thống",
+            Text = WNTerm.Services.LocalizationManager.Tr("System information", "Thông tin hệ thống"),
             FontWeight = FontWeights.Bold,
             Foreground = new SolidColorBrush(Color.FromRgb(0x61, 0xAF, 0xEF)),
             FontSize = 12,
@@ -109,7 +109,7 @@ public partial class TerminalView : UserControl
         for (int i = 0; i < 4; i++)
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-        string[] labels = ["Hostname:", "Hệ điều hành:", "Kernel:", "Kiến trúc:"];
+        string[] labels = ["Hostname:", WNTerm.Services.LocalizationManager.Tr("OS:", "Hệ điều hành:"), "Kernel:", WNTerm.Services.LocalizationManager.Tr("Architecture:", "Kiến trúc:")];
         TextBlock[] values = [_tipHostname, _tipOs, _tipKernel, _tipArch];
 
         for (int i = 0; i < 4; i++)
@@ -151,7 +151,7 @@ public partial class TerminalView : UserControl
             Margin = new Thickness(0, 0, 0, 6)
         });
 
-        _tipDiskDf.Text = "Đang tải dữ liệu...";
+        _tipDiskDf.Text = WNTerm.Services.LocalizationManager.Tr("Loading data...", "Đang tải dữ liệu...");
         var scroll = new ScrollViewer
         {
             MaxHeight = 450,
@@ -447,7 +447,7 @@ public partial class TerminalView : UserControl
         _tipOs.Text = string.IsNullOrEmpty(osPretty) ? (string.IsNullOrEmpty(osGroup) ? "--" : osGroup) : osPretty;
         _tipKernel.Text = string.IsNullOrEmpty(kernel) ? "--" : kernel;
         _tipArch.Text = string.IsNullOrEmpty(arch) ? "--" : arch;
-        _tipDiskDf.Text = string.IsNullOrWhiteSpace(dfOutput) ? "Không có dữ liệu df" : dfOutput.TrimEnd();
+        _tipDiskDf.Text = string.IsNullOrWhiteSpace(dfOutput) ? WNTerm.Services.LocalizationManager.Tr("No df data", "Không có dữ liệu df") : dfOutput.TrimEnd();
 
         _cpuHistory.Add(cpuPercent);
         while (_cpuHistory.Count > 8)

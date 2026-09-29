@@ -43,12 +43,12 @@ public class SessionImporter
         var fileInfo = new FileInfo(filePath);
         if (!fileInfo.Exists)
         {
-            throw new FileNotFoundException("Không tìm thấy file import.", filePath);
+            throw new FileNotFoundException(WNTerm.Services.LocalizationManager.Tr("Import file not found.", "Không tìm thấy file import."), filePath);
         }
 
         if (fileInfo.Length > 20 * 1024 * 1024)
         {
-            throw new InvalidDataException("Kích thước file vượt quá giới hạn 20MB.");
+            throw new InvalidDataException(WNTerm.Services.LocalizationManager.Tr("File size exceeds the 20MB limit.", "Kích thước file vượt quá giới hạn 20MB."));
         }
 
         string content = File.ReadAllText(filePath, Encoding.UTF8);
@@ -59,7 +59,7 @@ public class SessionImporter
             var mobaSessions = MobaXtermImporter.Parse(content);
             if (mobaSessions.Count == 0)
             {
-                throw new InvalidDataException("Không tìm thấy cấu hình VM (SSH/SFTP) nào trong file MobaXterm.");
+                throw new InvalidDataException(WNTerm.Services.LocalizationManager.Tr("No VM (SSH/SFTP) configuration found in the MobaXterm file.", "Không tìm thấy cấu hình VM (SSH/SFTP) nào trong file MobaXterm."));
             }
 
             return new ExportFile
@@ -79,17 +79,17 @@ public class SessionImporter
         }
         catch (JsonException)
         {
-            throw new InvalidDataException("File không đúng định dạng WN Term hoặc MobaXterm.");
+            throw new InvalidDataException(WNTerm.Services.LocalizationManager.Tr("File is not a valid WN Term or MobaXterm file.", "File không đúng định dạng WN Term hoặc MobaXterm."));
         }
 
         if (exportFile == null || exportFile.Format != "wnterm-sessions")
         {
-            throw new InvalidDataException("File không đúng định dạng WN Term hoặc MobaXterm.");
+            throw new InvalidDataException(WNTerm.Services.LocalizationManager.Tr("File is not a valid WN Term or MobaXterm file.", "File không đúng định dạng WN Term hoặc MobaXterm."));
         }
 
         if (exportFile.Version > 1)
         {
-            throw new NotSupportedException("File được tạo bởi phiên bản WN Term mới hơn, hãy cập nhật ứng dụng.");
+            throw new NotSupportedException(WNTerm.Services.LocalizationManager.Tr("This file was created by a newer version of WN Term. Please update the app.", "File được tạo bởi phiên bản WN Term mới hơn, hãy cập nhật ứng dụng."));
         }
 
         return exportFile;
@@ -150,7 +150,7 @@ public class SessionImporter
             {
                 if (string.IsNullOrEmpty(exportPassword) || !VerifyPassword(exportFile, exportPassword, out derivedKey) || derivedKey == null)
                 {
-                    throw new CryptographicException("Sai mật khẩu file.");
+                    throw new CryptographicException(WNTerm.Services.LocalizationManager.Tr("Wrong file password.", "Sai mật khẩu file."));
                 }
             }
 
@@ -164,7 +164,7 @@ public class SessionImporter
                 if (string.IsNullOrWhiteSpace(item.Host) || item.Port < 1 || item.Port > 65535 || string.IsNullOrWhiteSpace(item.Username))
                 {
                     result.SkippedCount++;
-                    result.Messages.Add($"Bỏ qua VM '{item.Name}' do thông tin không hợp lệ.");
+                    result.Messages.Add(string.Format(WNTerm.Services.LocalizationManager.Tr("Skipped VM '{0}': invalid data.", "Bỏ qua VM '{0}' do thông tin không hợp lệ."), item.Name));
                     continue;
                 }
 
@@ -198,7 +198,7 @@ public class SessionImporter
                     catch (Exception)
                     {
                         result.CorruptSecretsCount++;
-                        result.Messages.Add($"VM '{item.Name}': Không thể giải mã mật khẩu (dữ liệu bí mật bị hỏng hoặc đã bị sửa).");
+                        result.Messages.Add(string.Format(WNTerm.Services.LocalizationManager.Tr("VM '{0}': cannot decrypt the password (secret data is corrupted or was modified).", "VM '{0}': Không thể giải mã mật khẩu (dữ liệu bí mật bị hỏng hoặc đã bị sửa)."), item.Name));
                     }
                 }
 
@@ -249,7 +249,7 @@ public class SessionImporter
                             var newCopy = new SessionInfo
                             {
                                 Id = Guid.NewGuid(),
-                                Name = $"{item.Name} (nhập)",
+                                Name = $"{item.Name} " + WNTerm.Services.LocalizationManager.Tr("(imported)", "(nhập)"),
                                 Group = item.Group,
                                 Tags = item.Tags != null ? new List<string>(item.Tags) : new List<string>(),
                                 Host = item.Host.Trim(),

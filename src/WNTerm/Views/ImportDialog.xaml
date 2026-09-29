@@ -27,7 +27,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <TextBlock x:Name="FileSummaryBlock" Text="File: backup.wnterm" FontWeight="SemiBold" Foreground="{DynamicResource ThemeForeground}" Margin="0,0,0,4" TextTrimming="CharacterEllipsis" />
-                    <TextBlock x:Name="ProtectionStatusBlock" Text="Không có mật khẩu bảo vệ" Foreground="{DynamicResource ThemeForegroundMuted}" FontSize="12" TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="ProtectionStatusBlock" Text="{DynamicResource Str_ImNoPw}" Foreground="{DynamicResource ThemeForegroundMuted}" FontSize="12" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
                 <Button Grid.Column="1" Content="{DynamicResource Str_BrowseBtn}" Click="BrowseFile_Click" VerticalAlignment="Center" Margin="8,0,0,0" Padding="12,5" Style="{StaticResource ToolbarButtonStyle}" />
             </Grid>
@@ -36,7 +36,7 @@
         <!-- Ô nhập mật khẩu nếu có bảo vệ -->
         <Border x:Name="PasswordPanel" Grid.Row="1" Background="{DynamicResource ThemeSidebarBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12" Visibility="Collapsed">
             <StackPanel>
-                <TextBlock Text="File này được bảo vệ bằng mật khẩu Export:" FontWeight="SemiBold" Foreground="#F04438" Margin="0,0,0,6" />
+                <TextBlock Text="{DynamicResource Str_ImPwPrompt}" FontWeight="SemiBold" Foreground="#F04438" Margin="0,0,0,6" />
                 <PasswordBox x:Name="ExportPasswordBox" Background="{DynamicResource ThemeInputBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}" />
             </StackPanel>
         </Border>

@@ -30,7 +30,7 @@ public partial class MainViewModel : ObservableObject
     private string windowTitle = "WN Term";
 
     [ObservableProperty]
-    private string statusMessage = "Sẵn sàng";
+    private string statusMessage = WNTerm.Services.LocalizationManager.Get("Str_Ready");
 
     [ObservableProperty]
     private double leftColumnWidth = 400;
@@ -73,14 +73,14 @@ public partial class MainViewModel : ObservableObject
         {
             newValue.IsSelected = true;
             WindowTitle = $"{newValue.Title} — WN Term";
-            StatusMessage = $"Đang xem tab: {newValue.Title} ({newValue.Session.Username}@{newValue.Session.Host})";
+            StatusMessage = string.Format(WNTerm.Services.LocalizationManager.Tr("Viewing tab: {0} ({1}@{2})", "Đang xem tab: {0} ({1}@{2})"), newValue.Title, newValue.Session.Username, newValue.Session.Host);
             CurrentSftp = newValue.Sftp;
             newValue.TerminalControl.PostFocus();
         }
         else
         {
             WindowTitle = "WN Term";
-            StatusMessage = "Sẵn sàng";
+            StatusMessage = WNTerm.Services.LocalizationManager.Get("Str_Ready");
             CurrentSftp = null;
         }
     }
@@ -222,11 +222,11 @@ public partial class MainViewModel : ObservableObject
 
             await new CloudBackupService(_settings, _sessionStore).BackupAsync();
             _settingsStore.Save(_settings);
-            StatusMessage = "Đã tự động backup lên cloud.";
+            StatusMessage = WNTerm.Services.LocalizationManager.Tr("Automatic cloud backup done.", "Đã tự động backup lên cloud.");
         }
         catch (Exception ex)
         {
-            StatusMessage = "Auto backup cloud lỗi: " + ex.Message;
+            StatusMessage = WNTerm.Services.LocalizationManager.Tr("Cloud auto backup failed: ", "Auto backup cloud lỗi: ") + ex.Message;
         }
     }
 
@@ -256,7 +256,7 @@ public partial class MainViewModel : ObservableObject
             var ofd = new Microsoft.Win32.OpenFileDialog
             {
                 Title = LocalizationManager.Get("Str_ImportTitle"),
-                Filter = "Tất cả file hỗ trợ (*.wnterm;*.mxtsessions;*.ini)|*.wnterm;*.mxtsessions;*.ini|WN Term Export (*.wnterm)|*.wnterm|MobaXterm Sessions (*.mxtsessions;*.ini;*.txt)|*.mxtsessions;*.ini;*.txt|Tất cả file (*.*)|*.*",
+                Filter = WNTerm.Services.LocalizationManager.Tr("All supported files", "Tất cả file hỗ trợ") + " (*.wnterm;*.mxtsessions;*.ini)|*.wnterm;*.mxtsessions;*.ini|WN Term Export (*.wnterm)|*.wnterm|MobaXterm Sessions (*.mxtsessions;*.ini;*.txt)|*.mxtsessions;*.ini;*.txt|" + WNTerm.Services.LocalizationManager.Tr("All files", "Tất cả file") + " (*.*)|*.*",
                 InitialDirectory = initDir,
                 FileName = initFile
             };

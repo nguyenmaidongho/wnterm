@@ -91,7 +91,7 @@ public class SshConnection : IDisposable
         int keepAliveSeconds = 5)
     {
         Status = ConnectionStatus.Connecting;
-        StatusChanged?.Invoke("Đang kết nối SSH...");
+        StatusChanged?.Invoke(WNTerm.Services.LocalizationManager.Tr("Connecting SSH...", "Đang kết nối SSH..."));
 
         _host = session.Host;
         _port = session.Port;
@@ -131,7 +131,7 @@ public class SshConnection : IDisposable
         };
 
         Status = ConnectionStatus.Connected;
-        StatusChanged?.Invoke("Đã kết nối");
+        StatusChanged?.Invoke(WNTerm.Services.LocalizationManager.Get("Str_Connected"));
 
         _readCts = new CancellationTokenSource();
         _readTask = Task.Run(() => ReadLoopAsync(_shellStream, _readCts.Token));

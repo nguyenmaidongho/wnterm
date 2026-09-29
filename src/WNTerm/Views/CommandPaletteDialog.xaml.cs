@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -12,6 +12,7 @@ namespace WNTerm.Views;
 public partial class CommandPaletteDialog : Window
 {
     private readonly List<SessionInfo> _all;
+    private bool _closing;
 
     public SessionInfo? Chosen { get; private set; }
     public bool OpenSftp { get; private set; }
@@ -20,6 +21,7 @@ public partial class CommandPaletteDialog : Window
     {
         InitializeComponent();
         _all = sessions.ToList();
+        Closing += (_, _) => _closing = true;
         Loaded += (_, _) =>
         {
             if (Owner != null)
@@ -64,7 +66,7 @@ public partial class CommandPaletteDialog : Window
 
     private void Window_Deactivated(object? sender, EventArgs e)
     {
-        if (Chosen == null && IsVisible) Close();
+        if (!_closing && IsVisible) Close();
     }
 
     private void Accept(bool sftp)

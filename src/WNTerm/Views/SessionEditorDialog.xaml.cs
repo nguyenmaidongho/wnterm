@@ -76,8 +76,8 @@ public partial class SessionEditorDialog : Window
     {
         var dlg = new OpenFileDialog
         {
-            Title = "Chọn file SSH Key",
-            Filter = "Key file (*.pem;*.key;*.ppk;id_*)|*.pem;*.key;*.ppk;id_*|Tất cả file (*.*)|*.*"
+            Title = WNTerm.Services.LocalizationManager.Tr("Select SSH key file", "Chọn file SSH Key"),
+            Filter = "Key file (*.pem;*.key;*.ppk;id_*)|*.pem;*.key;*.ppk;id_*|" + WNTerm.Services.LocalizationManager.Tr("All files", "Tất cả file") + " (*.*)|*.*"
         };
 
         if (dlg.ShowDialog(this) == true)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -91,7 +91,7 @@ public class CloudBackupService
     {
         string? password = SecretProtector.Decrypt(_settings.CloudBackupPasswordEnc);
         if (string.IsNullOrEmpty(password))
-            throw new InvalidOperationException("Chưa đặt mật khẩu backup.");
+            throw new InvalidOperationException(WNTerm.Services.LocalizationManager.Tr("Backup password is not set.", "Chưa đặt mật khẩu backup."));
 
         var sessions = _store.Load(out _);
         string tmp = Path.Combine(Path.GetTempPath(), $"wnterm-{Guid.NewGuid():N}.wnterm");

@@ -34,13 +34,13 @@ public class SessionInfo : INotifyPropertyChanged
     public string EffectiveGroup => string.IsNullOrWhiteSpace(Group) ? "Chưa phân nhóm" : Group.Trim();
 
     [JsonIgnore]
-    public string PrimaryTag => Tags.Count > 0 ? Tags[0] : "Chưa có tag";
+    public string PrimaryTag => Tags.Count > 0 ? Tags[0] : WNTerm.Services.LocalizationManager.Tr("No tag", "Chưa có tag");
 
     /// <summary>Khóa nhóm hiển thị trong danh sách: ghim lên đầu, sau đó theo tag đầu tiên.</summary>
     [JsonIgnore]
     public string GroupKey => IsPinned ? PinnedGroupName : PrimaryTag;
 
-    public const string PinnedGroupName = "★ Ghim";
+    public static string PinnedGroupName => WNTerm.Services.LocalizationManager.Tr("★ Pinned", "★ Ghim");
 
     [JsonIgnore]
     public string GroupSortKey => IsPinned ? "0" : (Tags.Count > 0 ? "1|" + Tags[0].ToLowerInvariant() : "2");
@@ -73,11 +73,11 @@ public class SessionInfo : INotifyPropertyChanged
         {
             if (LastConnectedAt is not DateTime t) return "";
             var d = DateTime.UtcNow - t.ToUniversalTime();
-            if (d.TotalMinutes < 1) return "vừa xong";
-            if (d.TotalHours < 1) return $"{(int)d.TotalMinutes} phút trước";
-            if (d.TotalDays < 1) return $"{(int)d.TotalHours} giờ trước";
-            if (d.TotalDays < 2) return "hôm qua";
-            if (d.TotalDays < 30) return $"{(int)d.TotalDays} ngày trước";
+            if (d.TotalMinutes < 1) return WNTerm.Services.LocalizationManager.Tr("just now", "vừa xong");
+            if (d.TotalHours < 1) return string.Format(WNTerm.Services.LocalizationManager.Tr("{0} min ago", "{0} phút trước"), (int)d.TotalMinutes);
+            if (d.TotalDays < 1) return string.Format(WNTerm.Services.LocalizationManager.Tr("{0} h ago", "{0} giờ trước"), (int)d.TotalHours);
+            if (d.TotalDays < 2) return WNTerm.Services.LocalizationManager.Tr("yesterday", "hôm qua");
+            if (d.TotalDays < 30) return string.Format(WNTerm.Services.LocalizationManager.Tr("{0} days ago", "{0} ngày trước"), (int)d.TotalDays);
             return t.ToLocalTime().ToString("dd/MM/yyyy");
         }
     }
@@ -131,7 +131,7 @@ public class SessionInfo : INotifyPropertyChanged
         return new SessionInfo
         {
             Id = Guid.NewGuid(),
-            Name = string.IsNullOrWhiteSpace(Name) ? "" : $"{Name} (bản sao)",
+            Name = string.IsNullOrWhiteSpace(Name) ? "" : $"{Name} " + WNTerm.Services.LocalizationManager.Tr("(copy)", "(bản sao)"),
             Group = Group,
             Tags = new List<string>(Tags),
             IsPinned = IsPinned,

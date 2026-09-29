@@ -42,8 +42,8 @@ public partial class ImportDialog : Window
             }
             else
             {
-                FileSummaryBlock.Text = "Chưa chọn file nào";
-                ProtectionStatusBlock.Text = "Nhấn 'Chọn...' hoặc 'Quét MobaXterm' để tải file cấu hình";
+                FileSummaryBlock.Text = WNTerm.Services.LocalizationManager.Tr("No file selected", "Chưa chọn file nào");
+                ProtectionStatusBlock.Text = WNTerm.Services.LocalizationManager.Tr("Click 'Browse...' or 'Scan MobaXterm' to load a config file", "Nhấn 'Chọn...' hoặc 'Quét MobaXterm' để tải file cấu hình");
             }
         }
     }
@@ -57,8 +57,8 @@ public partial class ImportDialog : Window
 
             if (_exportFile.Format == "mobaxterm-sessions")
             {
-                FileSummaryBlock.Text = $"{Path.GetFileName(_filePath)} ({_exportFile.Sessions.Count} VM từ MobaXterm)";
-                ProtectionStatusBlock.Text = "Nhập từ MobaXterm (không kèm mật khẩu)";
+                FileSummaryBlock.Text = string.Format(WNTerm.Services.LocalizationManager.Tr("{0} ({1} VMs from MobaXterm)", "{0} ({1} VM từ MobaXterm)"), Path.GetFileName(_filePath), _exportFile.Sessions.Count);
+                ProtectionStatusBlock.Text = WNTerm.Services.LocalizationManager.Tr("Import from MobaXterm (no passwords)", "Nhập từ MobaXterm (không kèm mật khẩu)");
                 PasswordPanel.Visibility = Visibility.Collapsed;
             }
             else
@@ -67,21 +67,21 @@ public partial class ImportDialog : Window
 
                 if (_exportFile.Protection != null)
                 {
-                    ProtectionStatusBlock.Text = "🔒 File có mã hóa mật khẩu bảo vệ";
+                    ProtectionStatusBlock.Text = WNTerm.Services.LocalizationManager.Tr("🔒 File is password-protected", "🔒 File có mã hóa mật khẩu bảo vệ");
                     PasswordPanel.Visibility = Visibility.Visible;
                     if (!string.IsNullOrEmpty(PrefillPassword)) ExportPasswordBox.Password = PrefillPassword;
                     ExportPasswordBox.Focus();
                 }
                 else
                 {
-                    ProtectionStatusBlock.Text = "File không kèm mật khẩu bảo vệ";
+                    ProtectionStatusBlock.Text = WNTerm.Services.LocalizationManager.Tr("File has no password protection", "File không kèm mật khẩu bảo vệ");
                     PasswordPanel.Visibility = Visibility.Collapsed;
                 }
             }
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message, "Lỗi đọc file", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(ex.Message, WNTerm.Services.LocalizationManager.Tr("File read error", "Lỗi đọc file"), MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
@@ -97,7 +97,7 @@ public partial class ImportDialog : Window
         var ofd = new Microsoft.Win32.OpenFileDialog
         {
             Title = LocalizationManager.Get("Str_ImportTitle"),
-            Filter = "Tất cả file hỗ trợ (*.wnterm;*.mxtsessions;*.ini)|*.wnterm;*.mxtsessions;*.ini|WN Term Export (*.wnterm)|*.wnterm|MobaXterm Sessions (*.mxtsessions;*.ini;*.txt)|*.mxtsessions;*.ini;*.txt|Tất cả file (*.*)|*.*",
+            Filter = WNTerm.Services.LocalizationManager.Tr("All supported files", "Tất cả file hỗ trợ") + " (*.wnterm;*.mxtsessions;*.ini)|*.wnterm;*.mxtsessions;*.ini|WN Term Export (*.wnterm)|*.wnterm|MobaXterm Sessions (*.mxtsessions;*.ini;*.txt)|*.mxtsessions;*.ini;*.txt|" + WNTerm.Services.LocalizationManager.Tr("All files", "Tất cả file") + " (*.*)|*.*",
             InitialDirectory = initDir
         };
 
@@ -111,7 +111,7 @@ public partial class ImportDialog : Window
     {
         if (_exportFile == null)
         {
-            MessageBox.Show("Vui lòng chọn hoặc quét file trước khi Import.", "Chưa có file", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(WNTerm.Services.LocalizationManager.Tr("Select or scan a file before importing.", "Vui lòng chọn hoặc quét file trước khi Import."), WNTerm.Services.LocalizationManager.Tr("No file", "Chưa có file"), MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
@@ -121,7 +121,7 @@ public partial class ImportDialog : Window
             password = ExportPasswordBox.Password;
             if (string.IsNullOrEmpty(password))
             {
-                MessageBox.Show("Vui lòng nhập mật khẩu của file.", "Cần mật khẩu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(WNTerm.Services.LocalizationManager.Tr("Enter the file password.", "Vui lòng nhập mật khẩu của file."), WNTerm.Services.LocalizationManager.Tr("Password required", "Cần mật khẩu"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
         }
@@ -134,25 +134,25 @@ public partial class ImportDialog : Window
         {
             Result = _importer.Import(_exportFile, password, resolution);
 
-            string summary = $"Kết quả Import:\n- Tổng số VM trong file: {Result.TotalInFile}\n- Đã nhập mới: {Result.ImportedCount}\n- Ghi đè: {Result.OverwrittenCount}\n- Bỏ qua: {Result.SkippedCount}";
+            string summary = string.Format(WNTerm.Services.LocalizationManager.Tr("Import result:\n- Total VMs in file: {0}\n- Newly imported: {1}\n- Overwritten: {2}\n- Skipped: {3}", "Kết quả Import:\n- Tổng số VM trong file: {0}\n- Đã nhập mới: {1}\n- Ghi đè: {2}\n- Bỏ qua: {3}"), Result.TotalInFile, Result.ImportedCount, Result.OverwrittenCount, Result.SkippedCount);
             if (Result.CorruptSecretsCount > 0)
             {
-                summary += $"\n- Mật khẩu hỏng không giải mã được: {Result.CorruptSecretsCount}";
+                summary += "\n- " + string.Format(WNTerm.Services.LocalizationManager.Tr("Passwords that could not be decrypted: {0}", "Mật khẩu hỏng không giải mã được: {0}"), Result.CorruptSecretsCount);
             }
 
-            MessageBox.Show(summary, "Import hoàn tất", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(summary, WNTerm.Services.LocalizationManager.Tr("Import complete", "Import hoàn tất"), MessageBoxButton.OK, MessageBoxImage.Information);
             DialogResult = true;
             Close();
         }
         catch (System.Security.Cryptography.CryptographicException)
         {
-            MessageBox.Show("Sai mật khẩu file. Vui lòng thử lại.", "Sai mật khẩu", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(WNTerm.Services.LocalizationManager.Tr("Wrong file password. Please try again.", "Sai mật khẩu file. Vui lòng thử lại."), WNTerm.Services.LocalizationManager.Tr("Wrong password", "Sai mật khẩu"), MessageBoxButton.OK, MessageBoxImage.Warning);
             ExportPasswordBox.SelectAll();
             ExportPasswordBox.Focus();
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Lỗi khi import: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(string.Format(WNTerm.Services.LocalizationManager.Tr("Import failed: {0}", "Lỗi khi import: {0}"), ex.Message), WNTerm.Services.LocalizationManager.Tr("Error", "Lỗi"), MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
@@ -164,16 +164,16 @@ public partial class ImportDialog : Window
             LoadFile(candidate);
             if (_exportFile != null)
             {
-                ProtectionStatusBlock.Text = $"Đã tìm thấy tự động từ {Path.GetFileName(candidate)}";
-                MessageBox.Show($"Tìm thấy {_exportFile.Sessions.Count} VM từ MobaXterm trong '{Path.GetFileName(candidate)}'. Nhấn 'Import' để lưu vào danh sách.", "Quét thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                ProtectionStatusBlock.Text = string.Format(WNTerm.Services.LocalizationManager.Tr("Found automatically from {0}", "Đã tìm thấy tự động từ {0}"), Path.GetFileName(candidate));
+                MessageBox.Show(string.Format(WNTerm.Services.LocalizationManager.Tr("Found {0} VMs from MobaXterm in '{1}'. Click 'Import' to save them to the list.", "Tìm thấy {0} VM từ MobaXterm trong '{1}'. Nhấn 'Import' để lưu vào danh sách."), _exportFile.Sessions.Count, Path.GetFileName(candidate)), WNTerm.Services.LocalizationManager.Tr("Scan successful", "Quét thành công"), MessageBoxButton.OK, MessageBoxImage.Information);
             }
             return;
         }
 
         var ofd = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "Chọn file MobaXterm (.mxtsessions hoặc .ini)",
-            Filter = "MobaXterm Sessions (*.mxtsessions;*.ini;*.txt)|*.mxtsessions;*.ini;*.txt|Tất cả file (*.*)|*.*",
+            Title = WNTerm.Services.LocalizationManager.Tr("Select MobaXterm file (.mxtsessions or .ini)", "Chọn file MobaXterm (.mxtsessions hoặc .ini)"),
+            Filter = "MobaXterm Sessions (*.mxtsessions;*.ini;*.txt)|*.mxtsessions;*.ini;*.txt|" + WNTerm.Services.LocalizationManager.Tr("All files", "Tất cả file") + " (*.*)|*.*",
             InitialDirectory = Directory.GetCurrentDirectory()
         };
 

@@ -16,7 +16,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="PromptBlock" Text="Nhập giá trị:" Margin="0,0,0,8" FontWeight="SemiBold" Foreground="{DynamicResource ThemeForeground}" />
+        <TextBlock x:Name="PromptBlock" Text="{DynamicResource Str_EnterValue}" Margin="0,0,0,8" FontWeight="SemiBold" Foreground="{DynamicResource ThemeForeground}" />
         <TextBox x:Name="InputBox" Grid.Row="1" Padding="8,6" VerticalAlignment="Top" Background="{DynamicResource ThemeInputBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}" CaretBrush="{DynamicResource ThemeForeground}" />
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">

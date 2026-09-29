@@ -1,4 +1,5 @@
-﻿<Window x:Class="WNTerm.Views.SessionEditorDialog"
+﻿<Window ShowInTaskbar="False"
+        x:Class="WNTerm.Views.SessionEditorDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -25,7 +26,7 @@
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,0,6,0">
             <StackPanel>
                 <!-- Tên hiển thị -->
-                <TextBlock Text="Tên hiển thị (tùy chọn):" Margin="0,0,0,3" Foreground="{DynamicResource ThemeForeground}" />
+                <TextBlock Text="{DynamicResource Str_EdName}" Margin="0,0,0,3" Foreground="{DynamicResource ThemeForeground}" />
                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,6" />
 
                 <!-- Tags -->
@@ -111,14 +112,14 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBox Grid.Column="0" Text="{Binding KeyFilePath, UpdateSourceTrigger=PropertyChanged}" />
-                    <Button Grid.Column="1" Content="Chọn..." Margin="4,0,0,0" Padding="10,4" Click="BrowseKeyFile_Click"
+                    <Button Grid.Column="1" Content="{DynamicResource Str_EdBrowse}" Margin="4,0,0,0" Padding="10,4" Click="BrowseKeyFile_Click"
                             Background="{DynamicResource ThemeButtonBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}" />
                 </Grid>
                 <TextBlock Text="{Binding KeyFileWarning}" Foreground="#F79009" FontSize="11" Margin="0,0,0,6"
                            Visibility="{Binding KeyFileWarning, Converter={x:Static vm:SessionListViewModel.NullToVisibilityConverter}}" />
 
                 <!-- Passphrase -->
-                <TextBlock Text="Passphrase key:" Margin="0,0,0,3" Foreground="{DynamicResource ThemeForeground}" />
+                <TextBlock Text="{DynamicResource Str_EdPassphrase}" Margin="0,0,0,3" Foreground="{DynamicResource ThemeForeground}" />
                 <PasswordBox x:Name="PassphraseBoxControl" PasswordChanged="PassphraseBox_PasswordChanged" Margin="0,0,0,6" />
             </StackPanel>
         </ScrollViewer>
@@ -134,7 +135,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Content="Kiểm tra kết nối" IsEnabled="{Binding CanTestConnection}" Padding="10,5"
+                <Button Grid.Column="0" Content="{DynamicResource Str_EdTest}" IsEnabled="{Binding CanTestConnection}" Padding="10,5"
                         Background="{DynamicResource ThemeButtonBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}" Command="{Binding TestConnectionCommand}" />
 
                 <Button Grid.Column="2" Content="{DynamicResource Str_SaveAndConnect}" IsDefault="True" Command="{Binding SaveAndCloseCommand}" CommandParameter="{x:Static vm:SessionListViewModel.TrueBox}" Margin="0,0,6,0" Style="{StaticResource PrimaryButtonStyle}" />

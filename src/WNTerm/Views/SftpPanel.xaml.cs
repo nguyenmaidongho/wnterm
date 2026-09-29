@@ -87,7 +87,7 @@ public partial class SftpPanel : UserControl
 
         var dlg = new OpenFileDialog
         {
-            Title = "Chọn file upload lên SFTP",
+            Title = WNTerm.Services.LocalizationManager.Tr("Select files to upload to SFTP", "Chọn file upload lên SFTP"),
             Multiselect = true
         };
 
@@ -105,7 +105,7 @@ public partial class SftpPanel : UserControl
 
         var dlg = new OpenFolderDialog
         {
-            Title = "Chọn thư mục lưu file tải về"
+            Title = WNTerm.Services.LocalizationManager.Tr("Select download folder", "Chọn thư mục lưu file tải về")
         };
 
         if (dlg.ShowDialog() == true && !string.IsNullOrEmpty(dlg.FolderName))

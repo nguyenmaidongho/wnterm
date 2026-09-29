@@ -234,7 +234,7 @@ public class ExportImportTests : IDisposable
         Assert.Equal(1, resCopy.AddedCopyCount);
         loaded = _sessionStore.Load(out _);
         Assert.Equal(2, loaded.Count);
-        Assert.Contains(loaded, s => s.Name == "Renamed VM (nhập)");
+        Assert.Contains(loaded, s => s.Name == "Renamed VM (imported)" || s.Name == "Renamed VM (nhập)");
     }
 
     [Fact]

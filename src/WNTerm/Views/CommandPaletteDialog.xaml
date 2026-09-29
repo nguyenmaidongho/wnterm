@@ -1,8 +1,8 @@
-<Window x:Class="WNTerm.Views.CommandPaletteDialog"
+﻿<Window x:Class="WNTerm.Views.CommandPaletteDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:WNTerm.ViewModels"
-        Title="Tìm nhanh"
+        Title="{DynamicResource Str_QuickFind}"
         Width="520" SizeToContent="Height"
         WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False"
         WindowStartupLocation="Manual"
@@ -36,7 +36,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
             <TextBlock Margin="4,6,0,0" FontSize="11" Foreground="{DynamicResource ThemeForegroundMuted}"
-                       Text="Enter: kết nối · Shift+Enter: kết nối và mở SFTP · Esc: đóng · #tag để lọc theo tag" />
+                       Text="{DynamicResource Str_QfHint}" />
         </StackPanel>
     </Border>
 </Window>

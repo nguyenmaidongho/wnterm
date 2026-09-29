@@ -24,10 +24,10 @@ public partial class HostKeyDialog : Window
 
         if (isChanged)
         {
-            TitleBlock.Text = "Cảnh báo thay đổi Host Key";
+            TitleBlock.Text = WNTerm.Services.LocalizationManager.Tr("Host key changed warning", "Cảnh báo thay đổi Host Key");
             TitleBlock.Foreground = new SolidColorBrush(Color.FromRgb(180, 35, 24));
             WarningBox.Visibility = Visibility.Visible;
-            TrustAndSaveButton.Content = "Vẫn kết nối & Cập nhật";
+            TrustAndSaveButton.Content = WNTerm.Services.LocalizationManager.Tr("Connect anyway & update", "Vẫn kết nối & Cập nhật");
             TrustAndSaveButton.Background = new SolidColorBrush(Color.FromRgb(217, 45, 32));
             TrustOnceButton.Visibility = Visibility.Collapsed;
             CancelButton.IsDefault = true;

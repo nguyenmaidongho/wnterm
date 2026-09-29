@@ -29,8 +29,8 @@ public partial class App : Application
         catch (Microsoft.Web.WebView2.Core.WebView2RuntimeNotFoundException)
         {
             MessageBox.Show(
-                "Máy tính chưa cài đặt WebView2 Runtime. Vui lòng cài đặt Microsoft Edge WebView2 Runtime để chạy terminal.",
-                "Thiếu WebView2 Runtime",
+                WNTerm.Services.LocalizationManager.Tr("WebView2 Runtime is not installed. Please install the Microsoft Edge WebView2 Runtime to run the terminal.", "Máy tính chưa cài đặt WebView2 Runtime. Vui lòng cài đặt Microsoft Edge WebView2 Runtime để chạy terminal."),
+                WNTerm.Services.LocalizationManager.Tr("WebView2 Runtime missing", "Thiếu WebView2 Runtime"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
             Shutdown();
@@ -42,7 +42,7 @@ public partial class App : Application
     {
         LogError("DispatcherUnhandledException", e.Exception);
         e.Handled = true; // Ngăn app bị crash đột ngột
-        MessageBox.Show($"Đã xảy ra sự cố: {e.Exception.Message}\nChi tiết đã được ghi vào log.", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Warning);
+        MessageBox.Show(string.Format(WNTerm.Services.LocalizationManager.Tr("An error occurred: {0}\nDetails were written to the log.", "Đã xảy ra sự cố: {0}\nChi tiết đã được ghi vào log."), e.Exception.Message), WNTerm.Services.LocalizationManager.Tr("System error", "Lỗi hệ thống"), MessageBoxButton.OK, MessageBoxImage.Warning);
     }
 
     private void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
