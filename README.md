@@ -1,4 +1,4 @@
-﻿# SN Term
+﻿# WN Term
 
 Ứng dụng Windows quản lý kết nối SSH và SFTP tới máy chủ ảo (VM), giao diện gọn nhẹ 2 cột phong cách MobaXterm.
 
@@ -16,8 +16,8 @@
   - Duyệt file/thư mục, tạo thư mục mới, đổi tên, xóa.
   - Kéo thả file từ Windows Explorer vào panel để upload trực tiếp.
   - Tải file/thư mục về máy với thanh tiến trình % và tốc độ truyền.
-- **Export & Import danh sách VM an toàn (`.snterm`)**:
-  - Xuất ra file `.snterm` được bảo vệ bằng chuẩn mã hóa cao cấp AES-256-GCM (PBKDF2 600.000 vòng).
+- **Export & Import danh sách VM an toàn (`.wnterm`)**:
+  - Xuất ra file `.wnterm` được bảo vệ bằng chuẩn mã hóa cao cấp AES-256-GCM (PBKDF2 600.000 vòng).
   - Dễ dàng chuyển toàn bộ danh sách VM sang máy tính khác mà vẫn giữ nguyên mật khẩu.
   - Tự động phát hiện trùng lặp với 3 tùy chọn: Bỏ qua, Ghi đè, Thêm bản sao.
 - **Sao lưu tự động**:
@@ -30,16 +30,16 @@
 ## 2. Hướng dẫn cài đặt & Chạy ứng dụng
 
 ### Chạy trực tiếp (Bản Portable)
-1. Tải hoặc giải nén file `SNTerm-portable.zip`.
-2. Chạy file `SNTerm.exe`.
+1. Tải hoặc giải nén file `WNTerm-portable.zip`.
+2. Chạy file `WNTerm.exe`.
 
-*(Lưu ý: Đây là bản framework-dependent (nhẹ) — máy đích cần đã cài sẵn **.NET 10 Desktop Runtime** (tải tại https://dotnet.microsoft.com/download/dotnet/10.0, mục "Desktop Runtime"). Nếu chưa có, Windows sẽ tự hiện thông báo và link tải khi chạy `SNTerm.exe`. Nếu máy tính chưa có Microsoft Edge WebView2 Runtime, ứng dụng sẽ hiện thông báo hướng dẫn cài đặt riêng).*
+*(Lưu ý: Đây là bản framework-dependent (nhẹ) — máy đích cần đã cài sẵn **.NET 10 Desktop Runtime** (tải tại https://dotnet.microsoft.com/download/dotnet/10.0, mục "Desktop Runtime"). Nếu chưa có, Windows sẽ tự hiện thông báo và link tải khi chạy `WNTerm.exe`. Nếu máy tính chưa có Microsoft Edge WebView2 Runtime, ứng dụng sẽ hiện thông báo hướng dẫn cài đặt riêng).*
 
 ### Chạy từ mã nguồn (Dành cho lập trình viên)
 Yêu cầu: .NET 10 SDK
 ```powershell
-dotnet build SNTerm.slnx
-dotnet run --project src/SNTerm
+dotnet build WNTerm.slnx
+dotnet run --project src/WNTerm
 ```
 
 ---
@@ -62,18 +62,18 @@ dotnet run --project src/SNTerm
 
 ### Chuyển danh sách VM sang máy khác (Export / Import)
 1. Trên máy cũ: Bấm nút **"⇪ Export"**, chọn các VM cần xuất, chọn **"Kèm mật khẩu, bảo vệ bằng mật khẩu Export"**, nhập mật khẩu bảo vệ file và bấm **Export...**.
-2. Chép file `.snterm` sang máy tính mới.
-3. Trên máy mới: Mở SN Term, bấm nút **"⇩ Import"** (hoặc kéo thả file `.snterm` vào cửa sổ ứng dụng), nhập mật khẩu Export và bấm **Import**. Mọi thông tin và mật khẩu sẽ tự động được giải mã và mã hóa lại an toàn theo tài khoản máy mới.
+2. Chép file `.wnterm` sang máy tính mới.
+3. Trên máy mới: Mở WN Term, bấm nút **"⇩ Import"** (hoặc kéo thả file `.wnterm` vào cửa sổ ứng dụng), nhập mật khẩu Export và bấm **Import**. Mọi thông tin và mật khẩu sẽ tự động được giải mã và mã hóa lại an toàn theo tài khoản máy mới.
 
 ---
 
 ## 4. Vị trí lưu trữ dữ liệu & Sao lưu
 
-- **Danh sách cấu hình VM**: `%APPDATA%\SNTerm\sessions.json`
-- **Bản sao lưu tự động**: `%APPDATA%\SNTerm\backups\`
-- **Cài đặt người dùng**: `%APPDATA%\SNTerm\settings.json`
-- **Khóa máy chủ đã tin cậy (Host Keys)**: `%APPDATA%\SNTerm\known_hosts.json`
-- **File nhật ký sự cố (Logs)**: `%LOCALAPPDATA%\SNTerm\logs\`
+- **Danh sách cấu hình VM**: `%APPDATA%\WNTerm\sessions.json`
+- **Bản sao lưu tự động**: `%APPDATA%\WNTerm\backups\`
+- **Cài đặt người dùng**: `%APPDATA%\WNTerm\settings.json`
+- **Khóa máy chủ đã tin cậy (Host Keys)**: `%APPDATA%\WNTerm\known_hosts.json`
+- **File nhật ký sự cố (Logs)**: `%LOCALAPPDATA%\WNTerm\logs\`
 
 ---
 

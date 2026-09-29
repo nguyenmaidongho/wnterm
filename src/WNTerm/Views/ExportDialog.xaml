@@ -1,0 +1,74 @@
+﻿<Window x:Class="WNTerm.Views.ExportDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{DynamicResource Str_ExportTitle}"
+        Icon="/Assets/favicon.png"
+        Width="520" Height="600" MinWidth="480" MinHeight="520"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResizeWithGrip"
+        FontFamily="Segoe UI" FontSize="12"
+        Background="{DynamicResource ThemeWindowBackground}">
+
+    <Grid Margin="18,14">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="180" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="{DynamicResource Str_ExportSelectPrompt}" FontWeight="SemiBold" Foreground="{DynamicResource ThemeForeground}" Margin="0,0,0,8" />
+
+        <!-- Danh sách checkbox VM -->
+        <Border Grid.Row="1" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="1" CornerRadius="4" Background="{DynamicResource ThemeInputBackground}">
+            <ListBox x:Name="SessionsList" BorderThickness="0" Background="Transparent" SelectionMode="Multiple">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Margin="4,2" Foreground="{DynamicResource ThemeForeground}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" Foreground="{DynamicResource ThemeForeground}" Margin="0,0,8,0" />
+                                <TextBlock Text="{Binding Subtitle}" Foreground="{DynamicResource ThemeForegroundMuted}" FontSize="11" />
+                            </StackPanel>
+                        </CheckBox>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+
+        <!-- Nút chọn / bỏ chọn -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,6,0,12">
+            <Button Content="{DynamicResource Str_SelectAll}" Click="SelectAll_Click" Padding="8,4" Margin="0,0,6,0" FontSize="11"
+                    Background="{DynamicResource ThemeButtonBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}" />
+            <Button Content="{DynamicResource Str_DeselectAll}" Click="DeselectAll_Click" Padding="8,4" FontSize="11"
+                    Background="{DynamicResource ThemeButtonBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}" />
+        </StackPanel>
+
+        <!-- Tùy chọn bảo mật -->
+        <Border Grid.Row="3" Background="{DynamicResource ThemeToolbarBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12">
+            <StackPanel>
+                <TextBlock Text="{DynamicResource Str_PasswordLabel}" FontWeight="Bold" Margin="0,0,0,6" Foreground="{DynamicResource ThemeForeground}" />
+                <RadioButton x:Name="NoPasswordRadio" Content="{DynamicResource Str_NoPasswordExport}" IsChecked="True" Checked="PasswordMode_Changed" Margin="0,0,0,6" Foreground="{DynamicResource ThemeForeground}" />
+                <RadioButton x:Name="WithPasswordRadio" Content="{DynamicResource Str_WithPasswordExport}" Checked="PasswordMode_Changed" Margin="0,0,0,8" Foreground="{DynamicResource ThemeForeground}" />
+
+                <StackPanel x:Name="PasswordFieldsPanel" IsEnabled="False" Margin="16,0,0,0">
+                    <TextBlock Text="{DynamicResource Str_ExportPasswordPrompt}" FontSize="11" Margin="0,0,0,2" Foreground="{DynamicResource ThemeForegroundMuted}" />
+                    <PasswordBox x:Name="ExportPasswordBox" Margin="0,0,0,6" />
+
+                    <TextBlock Text="{DynamicResource Str_ConfirmPasswordPrompt}" FontSize="11" Margin="0,0,0,2" Foreground="{DynamicResource ThemeForegroundMuted}" />
+                    <PasswordBox x:Name="ConfirmPasswordBox" Margin="0,0,0,6" />
+
+                    <CheckBox x:Name="IncludeKeyFileCheckBox" Content="{DynamicResource Str_IncludeKeyFile}" IsChecked="True" FontSize="11" Margin="0,4,0,0" Foreground="{DynamicResource ThemeForeground}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Nút Export / Hủy -->
+        <Border Grid.Row="4" Padding="0,14,0,0" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="0,1,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="{DynamicResource Str_ExportAction}" Click="Export_Click" Margin="0,0,8,0" Style="{StaticResource PrimaryButtonStyle}" />
+                <Button Content="{DynamicResource Str_Cancel}" Click="Cancel_Click" Padding="14,5" Background="{DynamicResource ThemeButtonBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}" Cursor="Hand" IsCancel="True" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

@@ -44,8 +44,8 @@ Desktop.ini
 
 ## Publish & Installers
 publish/
-SNTerm-Setup.exe
-SNTerm-portable.zip
+WNTerm-Setup.exe
+WNTerm-portable.zip
 *.zip
 
 ## User session backups & dumps
