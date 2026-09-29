@@ -11,7 +11,9 @@ public static class ErrorTranslator
     {
         string lang = language ?? LocalizationManager.CurrentLanguage;
         bool isVi = string.Equals(lang, "vi", StringComparison.OrdinalIgnoreCase);
-        string hostPort = (host != null && port != null) ? $"{host}:{port}" : (isVi ? "máy chủ" : "server");
+        // Không ghép kèm port vào chuỗi hiển thị (host, không host:port) để tránh
+        // lộ port khi ai đó nhìn lướt qua màn hình terminal.
+        string hostPort = !string.IsNullOrWhiteSpace(host) ? host! : (isVi ? "máy chủ" : "server");
 
         if (ex is SshAuthenticationException)
         {

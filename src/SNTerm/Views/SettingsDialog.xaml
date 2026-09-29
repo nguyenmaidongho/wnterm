@@ -22,14 +22,14 @@
 
                 <!-- Language -->
                 <TextBlock Text="{DynamicResource Str_LanguageLabel}" Foreground="{DynamicResource ThemeForeground}" Margin="0,0,0,4" />
-                <ComboBox x:Name="LanguageCombo" Padding="6,4" Margin="0,0,0,10">
+                <ComboBox x:Name="LanguageCombo" Margin="0,0,0,10">
                     <ComboBoxItem Content="English (Default)" Tag="en" />
                     <ComboBoxItem Content="Tiếng Việt" Tag="vi" />
                 </ComboBox>
 
                 <!-- Font -->
                 <TextBlock Text="{DynamicResource Str_FontLabel}" Foreground="{DynamicResource ThemeForeground}" Margin="0,0,0,4" />
-                <ComboBox x:Name="FontFamilyCombo" Padding="6,4" Margin="0,0,0,10">
+                <ComboBox x:Name="FontFamilyCombo" Margin="0,0,0,10">
                     <ComboBoxItem Content="JetBrains Mono" IsSelected="True" />
                     <ComboBoxItem Content="Cascadia Mono" />
                     <ComboBoxItem Content="Consolas" />
@@ -37,7 +37,7 @@
 
                 <!-- Font size -->
                 <TextBlock Text="{DynamicResource Str_FontSizeLabel}" Foreground="{DynamicResource ThemeForeground}" Margin="0,0,0,4" />
-                <ComboBox x:Name="FontSizeCombo" Padding="6,4" Margin="0,0,0,10">
+                <ComboBox x:Name="FontSizeCombo" Margin="0,0,0,10">
                     <ComboBoxItem Content="11" />
                     <ComboBoxItem Content="12" />
                     <ComboBoxItem Content="13" />
@@ -49,7 +49,7 @@
 
                 <!-- Theme -->
                 <TextBlock Text="{DynamicResource Str_ThemeLabel}" Foreground="{DynamicResource ThemeForeground}" Margin="0,0,0,4" />
-                <ComboBox x:Name="ThemeCombo" Padding="6,4" Margin="0,0,0,14">
+                <ComboBox x:Name="ThemeCombo" Margin="0,0,0,14">
                     <ComboBoxItem Content="Dark" IsSelected="True" />
                     <ComboBoxItem Content="Light" />
                 </ComboBox>
@@ -62,7 +62,7 @@
 
                 <!-- Right click -->
                 <TextBlock Text="{DynamicResource Str_RightClickLabel}" Foreground="{DynamicResource ThemeForeground}" Margin="0,2,0,4" />
-                <ComboBox x:Name="RightClickCombo" Padding="6,4" Margin="0,0,0,10">
+                <ComboBox x:Name="RightClickCombo" Margin="0,0,0,10">
                     <ComboBoxItem Content="{DynamicResource Str_RightClickPaste}" IsSelected="True" Tag="Paste" />
                     <ComboBoxItem Content="{DynamicResource Str_RightClickMenu}" Tag="Menu" />
                 </ComboBox>
@@ -83,7 +83,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="CustomEditorBox" Grid.Column="0" Padding="6,4" />
+                    <TextBox x:Name="CustomEditorBox" Grid.Column="0" />
                     <Button Grid.Column="1" Content="{DynamicResource Str_BrowseBtn}" Margin="4,0,0,0" Padding="10,4" Click="BrowseEditor_Click"
                             Background="{DynamicResource ThemeButtonBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}" />
                 </Grid>
@@ -95,7 +95,7 @@
                         <ColumnDefinition Width="80" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="{DynamicResource Str_KeepAliveLabel}" VerticalAlignment="Center" Foreground="{DynamicResource ThemeForeground}" />
-                    <TextBox x:Name="KeepAliveBox" Grid.Column="1" Text="30" Padding="6,4" HorizontalContentAlignment="Center" />
+                    <TextBox x:Name="KeepAliveBox" Grid.Column="1" Text="30" HorizontalContentAlignment="Center" />
                 </Grid>
             </StackPanel>
         </ScrollViewer>

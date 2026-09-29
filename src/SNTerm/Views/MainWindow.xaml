@@ -42,7 +42,7 @@
                         <Border x:Name="border" Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4" SnapsToDevicePixels="True">
+                                CornerRadius="6" SnapsToDevicePixels="True">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
                                               Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" />
                         </Border>
@@ -80,7 +80,7 @@
                         <Border x:Name="border" Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4" SnapsToDevicePixels="True">
+                                CornerRadius="6" SnapsToDevicePixels="True">
                             <ContentPresenter x:Name="contentPresenter" HorizontalAlignment="Center" VerticalAlignment="Center"
                                               Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" />
                         </Border>
@@ -93,8 +93,8 @@
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="{DynamicResource ThemeItemSelected}" />
-                                <Setter Property="Foreground" Value="#FFFFFF" />
-                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FFFFFF" />
+                                <Setter Property="Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
+                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="border" Property="Opacity" Value="0.5" />
@@ -166,13 +166,54 @@
         </Grid.RowDefinitions>
 
         <!-- Thanh công cụ phía trên -->
-        <Border Grid.Row="0" Background="{DynamicResource ThemeToolbarBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="0,0,0,1" Padding="8,6">
+        <Border Grid.Row="0" Background="{DynamicResource ThemeToolbarBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="0,0,0,1" Padding="10,8">
             <StackPanel Orientation="Horizontal">
-                <Button Content="{DynamicResource Str_Connect}" Command="{Binding ConnectSelectedVmCommand}" Style="{StaticResource ConnectToolbarButtonStyle}" />
-                <Button Content="{DynamicResource Str_AddVm}" Command="{Binding AddVmCommand}" Style="{StaticResource ToolbarButtonStyle}" />
-                <Button Content="{DynamicResource Str_Export}" Command="{Binding ExportCommand}" Style="{StaticResource ToolbarButtonStyle}" />
-                <Button Content="{DynamicResource Str_Import}" Command="{Binding ImportCommand}" Style="{StaticResource ToolbarButtonStyle}" />
-                <Button Content="{DynamicResource Str_Settings}" Command="{Binding OpenSettingsCommand}" Style="{StaticResource ToolbarButtonStyle}" />
+                <Button Command="{Binding ConnectSelectedVmCommand}" Style="{StaticResource ConnectToolbarButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="M 3 2 L 13 8 L 3 14 Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              Width="14" Height="14" Stretch="Uniform" VerticalAlignment="Center" />
+                        <TextBlock Text="{DynamicResource Str_Connect}" Margin="7,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding AddVmCommand}" Style="{StaticResource ToolbarButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="M 7 1 L 7 13 M 1 7 L 13 7" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                              Width="14" Height="14" Stretch="Uniform" VerticalAlignment="Center" />
+                        <TextBlock Text="{DynamicResource Str_AddVm}" Margin="7,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ExportCommand}" Style="{StaticResource ToolbarButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="M 7 9 L 7 1 M 3.5 4.5 L 7 1 L 10.5 4.5 M 2 13 L 12 13"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                              Width="14" Height="14" Stretch="Uniform" VerticalAlignment="Center" />
+                        <TextBlock Text="{DynamicResource Str_Export}" Margin="7,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ImportCommand}" Style="{StaticResource ToolbarButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="M 7 1 L 7 9 M 3.5 5.5 L 7 9 L 10.5 5.5 M 2 13 L 12 13"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                              Width="14" Height="14" Stretch="Uniform" VerticalAlignment="Center" />
+                        <TextBlock Text="{DynamicResource Str_Import}" Margin="7,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding OpenSettingsCommand}" Style="{StaticResource ToolbarButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Canvas Width="14" Height="14" VerticalAlignment="Center">
+                            <Line X1="1" Y1="3" X2="13" Y2="3" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                            <Ellipse Canvas.Left="7.5" Canvas.Top="1.5" Width="3" Height="3" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                            <Line X1="1" Y1="7" X2="13" Y2="7" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                            <Ellipse Canvas.Left="3.5" Canvas.Top="5.5" Width="3" Height="3" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                            <Line X1="1" Y1="11" X2="13" Y2="11" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                            <Ellipse Canvas.Left="9" Canvas.Top="9.5" Width="3" Height="3" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                        </Canvas>
+                        <TextBlock Text="{DynamicResource Str_Settings}" Margin="7,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Border>
 
@@ -196,7 +237,7 @@
                             </Grid.RowDefinitions>
 
                             <!-- Ô tìm kiếm -->
-                            <TextBox Grid.Row="0" Margin="0,0,0,8" Padding="6,4" Background="{DynamicResource ThemeInputBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}"
+                            <TextBox Grid.Row="0" Margin="0,0,0,8" Background="{DynamicResource ThemeInputBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}"
                                      Text="{Binding SessionList.SearchText, UpdateSourceTrigger=PropertyChanged}" />
                             <ListBox x:Name="SessionsListBox" Grid.Row="1"
                                      ItemsSource="{Binding SessionList.SessionsView}"
@@ -221,23 +262,23 @@
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="ListBoxItem">
                                         <EventSetter Event="PreviewMouseRightButtonDown" Handler="ListBoxItem_PreviewMouseRightButtonDown" />
-                                        <Setter Property="Padding" Value="6,4" />
+                                        <Setter Property="Padding" Value="8,7" />
                                         <Setter Property="Margin" Value="0,1" />
                                         <Setter Property="Cursor" Value="Hand" />
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="ListBoxItem">
-                                                    <Border x:Name="Bd" Padding="{TemplateBinding Padding}" CornerRadius="4" Background="Transparent" SnapsToDevicePixels="true">
+                                                    <Border x:Name="Bd" Padding="{TemplateBinding Padding}" CornerRadius="6" Background="Transparent" SnapsToDevicePixels="true">
                                                         <ContentPresenter />
                                                     </Border>
                                                     <ControlTemplate.Triggers>
                                                         <Trigger Property="IsMouseOver" Value="true">
                                                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ThemeItemHover}" />
-                                                            <Setter Property="Foreground" Value="#FFFFFF" />
+                                                            <Setter Property="Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
                                                         </Trigger>
                                                         <Trigger Property="IsSelected" Value="true">
                                                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ThemeItemSelected}" />
-                                                            <Setter Property="Foreground" Value="#FFFFFF" />
+                                                            <Setter Property="Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
                                                         </Trigger>
                                                     </ControlTemplate.Triggers>
                                                 </ControlTemplate>
@@ -250,14 +291,31 @@
                                     <DataTemplate>
                                         <Grid Margin="2,1" Background="Transparent">
                                             <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
-                                            <TextBlock Grid.Column="0" Text="{Binding DisplayName}" FontWeight="SemiBold" Foreground="{DynamicResource ThemeForeground}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                            <!-- Icon máy chủ trước tên VM: đổi màu theo trạng thái kết nối
+                                                 (xanh = đang kết nối, vàng = đang kết nối/reconnect, xám = chưa kết nối) -->
+                                            <Grid Grid.Column="0" Width="18" Height="18" Margin="0,0,6,0" VerticalAlignment="Center">
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Border Width="14" Height="10" CornerRadius="1.5" BorderThickness="1.3"
+                                                            BorderBrush="{Binding LiveStatus, Converter={x:Static vm:SessionListViewModel.LiveStatusToIconBrushConverter}}"
+                                                            Background="Transparent" />
+                                                    <Rectangle Width="3" Height="2" Fill="{Binding LiveStatus, Converter={x:Static vm:SessionListViewModel.LiveStatusToIconBrushConverter}}" HorizontalAlignment="Center" />
+                                                    <Rectangle Width="9" Height="1.3" RadiusX="0.6" RadiusY="0.6" Fill="{Binding LiveStatus, Converter={x:Static vm:SessionListViewModel.LiveStatusToIconBrushConverter}}" HorizontalAlignment="Center" Margin="0,1,0,0" />
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <!-- Tên VM (đậm) + user@host (mờ, nhỏ hơn) bên dưới để phân cấp rõ ràng -->
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource ThemeForeground}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Subtitle}" FontSize="11" Foreground="{DynamicResource ThemeForegroundMuted}" TextTrimming="CharacterEllipsis" Margin="0,1,0,0" />
+                                            </StackPanel>
 
                                             <!-- Biểu tượng cảnh báo thiếu file key -->
-                                            <TextBlock Grid.Column="1" Text="⚠" Foreground="#F79009" FontWeight="Bold" ToolTip="{DynamicResource Str_MissingKeyTooltip}"
+                                            <TextBlock Grid.Column="2" Text="⚠" Foreground="#F79009" FontWeight="Bold" ToolTip="{DynamicResource Str_MissingKeyTooltip}"
                                                        Visibility="{Binding IsKeyFileMissing, Converter={x:Static vm:SessionListViewModel.BoolToVisibilityConverter}}"
                                                        VerticalAlignment="Center" Margin="4,0,0,0" />
                                         </Grid>
@@ -327,7 +385,7 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border x:Name="TabBorder" Margin="2,0,2,0" Padding="10,6" CornerRadius="4,4,0,0"
+                                            <Border x:Name="TabBorder" Margin="2,0,2,0" Padding="10,6" CornerRadius="6,6,0,0"
                                                     Cursor="Hand" ToolTip="{Binding TooltipText}"
                                                     MouseLeftButtonDown="Tab_MouseLeftButtonDown"
                                                     MouseDown="Tab_MouseDown">

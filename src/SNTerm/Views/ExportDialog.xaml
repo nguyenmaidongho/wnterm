@@ -53,10 +53,10 @@
 
                 <StackPanel x:Name="PasswordFieldsPanel" IsEnabled="False" Margin="16,0,0,0">
                     <TextBlock Text="{DynamicResource Str_ExportPasswordPrompt}" FontSize="11" Margin="0,0,0,2" Foreground="{DynamicResource ThemeForegroundMuted}" />
-                    <PasswordBox x:Name="ExportPasswordBox" Padding="6,4" Margin="0,0,0,6" />
+                    <PasswordBox x:Name="ExportPasswordBox" Margin="0,0,0,6" />
 
                     <TextBlock Text="{DynamicResource Str_ConfirmPasswordPrompt}" FontSize="11" Margin="0,0,0,2" Foreground="{DynamicResource ThemeForegroundMuted}" />
-                    <PasswordBox x:Name="ConfirmPasswordBox" Padding="6,4" Margin="0,0,0,6" />
+                    <PasswordBox x:Name="ConfirmPasswordBox" Margin="0,0,0,6" />
 
                     <CheckBox x:Name="IncludeKeyFileCheckBox" Content="{DynamicResource Str_IncludeKeyFile}" IsChecked="True" FontSize="11" Margin="0,4,0,0" Foreground="{DynamicResource ThemeForeground}" />
                 </StackPanel>

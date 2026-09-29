@@ -62,7 +62,8 @@ public class SshServiceTests : IDisposable
 
         var sockEx = new SocketException(10061);
         string sockMsg = ErrorTranslator.Translate(sockEx, "192.168.1.1", 22, language: "vi");
-        Assert.Contains("192.168.1.1:22", sockMsg);
+        Assert.Contains("192.168.1.1", sockMsg);
+        Assert.DoesNotContain("192.168.1.1:22", sockMsg); // Không lộ port trong thông báo hiển thị
         Assert.Contains("Không kết nối được", sockMsg);
 
         var timeoutEx = new SshOperationTimeoutException("Timeout");

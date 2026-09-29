@@ -74,7 +74,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="{DynamicResource Str_OctalLabel}" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource ThemeForeground}" />
-            <TextBox x:Name="OctalBox" Grid.Column="1" Width="70" Padding="6,4" TextAlignment="Center" FontWeight="Bold" FontSize="14"
+            <TextBox x:Name="OctalBox" Grid.Column="1" Width="70" TextAlignment="Center" FontWeight="Bold" FontSize="14"
                      Background="{DynamicResource ThemeInputBackground}" Foreground="{DynamicResource ThemeForeground}"
                      BorderBrush="{DynamicResource ThemeBorderBrush}" CaretBrush="{DynamicResource ThemeForeground}" />
         </Grid>

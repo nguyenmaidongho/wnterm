@@ -6,8 +6,10 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SNTerm.Connections;
 using SNTerm.Models;
 using SNTerm.Services;
 using SNTerm.Views;
@@ -23,6 +25,7 @@ public partial class SessionListViewModel : ObservableObject
     public static readonly object FalseBox = false;
     public static readonly IValueConverter NullToVisibilityConverter = new NullToVisibilityConverterImpl();
     public static readonly IValueConverter BoolToVisibilityConverter = new BoolToVisibilityConverterImpl();
+    public static readonly IValueConverter LiveStatusToIconBrushConverter = new LiveStatusToIconBrushConverterImpl();
 
     public ObservableCollection<SessionInfo> Sessions { get; } = new();
     public ObservableCollection<SessionInfo> RecentSessions { get; } = new();
@@ -320,6 +323,37 @@ public partial class SessionListViewModel : ObservableObject
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             return (value is bool b && b) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotImplementedException();
+    }
+
+    // Tô màu icon VM theo trạng thái kết nối "sống" (SessionInfo.LiveStatus), dùng
+    // cùng bảng màu với chấm trạng thái ở tab (TerminalTabViewModel.UpdateStatusBrush)
+    // để nhất quán trong toàn bộ ứng dụng: xanh = đang kết nối, vàng = đang kết nối/
+    // reconnect, xám = chưa kết nối (off).
+    private class LiveStatusToIconBrushConverterImpl : IValueConverter
+    {
+        private static readonly SolidColorBrush ConnectedBrush = CreateFrozen(0x52, 0xC4, 0x1A);
+        private static readonly SolidColorBrush ConnectingBrush = CreateFrozen(0xFA, 0xAD, 0x14);
+        private static readonly SolidColorBrush OffBrush = CreateFrozen(0x8C, 0x8C, 0x8C);
+
+        private static SolidColorBrush CreateFrozen(byte r, byte g, byte b)
+        {
+            var brush = new SolidColorBrush(Color.FromRgb(r, g, b));
+            brush.Freeze();
+            return brush;
+        }
+
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            return (value as ConnectionStatus?) switch
+            {
+                ConnectionStatus.Connected => ConnectedBrush,
+                ConnectionStatus.Connecting => ConnectingBrush,
+                ConnectionStatus.Reconnecting => ConnectingBrush,
+                _ => OffBrush
+            };
         }
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotImplementedException();

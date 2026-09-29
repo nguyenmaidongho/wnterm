@@ -239,7 +239,7 @@ public class SshConnection : IDisposable
                     }
                 }
 
-                // 2. Active probe
+                // 2. Active probe (có giới hạn thời gian chờ)
                 var client = _sshClient;
                 if (client != null && _disconnectedFlag == 0)
                 {
@@ -249,20 +249,51 @@ public class SshConnection : IDisposable
                         break;
                     }
 
-                    try
+                    if (!ProbeKeepAliveOrTimeout(client, out var probeError))
                     {
-                        #pragma warning disable CS0618
-                        client.SendKeepAlive();
-#pragma warning restore CS0618
-                    }
-                    catch (Exception ex)
-                    {
-                        TriggerDisconnect(ErrorTranslator.Translate(ex, _host, _port));
+                        TriggerDisconnect(ErrorTranslator.Translate(probeError ?? new SocketException((int)SocketError.TimedOut), _host, _port));
                         break;
                     }
                 }
             }
         }, token);
+    }
+
+    private static readonly TimeSpan KeepAliveProbeTimeout = TimeSpan.FromSeconds(3);
+
+    /// <summary>
+    /// Gọi SendKeepAlive() trên luồng nền và chờ có giới hạn thời gian.
+    /// Nếu mạng bị rớt kiểu "im lặng" (không có RST/FIN, chỉ mất gói),
+    /// SendKeepAlive() có thể không trả về (hoặc không ném lỗi) trong thời
+    /// gian dài, khiến việc dò mất kết nối bị "treo" vô thời hạn. Giới hạn
+    /// thời gian chờ ở đây đảm bảo mất kết nối luôn được phát hiện trong vài
+    /// giây, bất kể hành vi bên trong SSH.NET/OS ra sao.
+    /// </summary>
+    private bool ProbeKeepAliveOrTimeout(SshClient client, out Exception? error)
+    {
+        Exception? captured = null;
+        var probeTask = Task.Run(() =>
+        {
+            try
+            {
+                #pragma warning disable CS0618
+                client.SendKeepAlive();
+#pragma warning restore CS0618
+            }
+            catch (Exception ex)
+            {
+                captured = ex;
+            }
+        });
+
+        if (!probeTask.Wait(KeepAliveProbeTimeout))
+        {
+            error = new TimeoutException();
+            return false;
+        }
+
+        error = captured;
+        return captured == null;
     }
 
     public void CheckHealthNow()
@@ -296,15 +327,9 @@ public class SshConnection : IDisposable
                 return;
             }
 
-            try
+            if (!ProbeKeepAliveOrTimeout(client, out var probeError))
             {
-                #pragma warning disable CS0618
-                        client.SendKeepAlive();
-#pragma warning restore CS0618
-            }
-            catch (Exception ex)
-            {
-                TriggerDisconnect(ErrorTranslator.Translate(ex, _host, _port));
+                TriggerDisconnect(ErrorTranslator.Translate(probeError ?? new SocketException((int)SocketError.TimedOut), _host, _port));
                 return;
             }
         }
@@ -397,27 +422,56 @@ public class SshConnection : IDisposable
 
         Status = ConnectionStatus.Disconnected;
 
-        try { _healthCts?.Cancel(); } catch { }
-        try { _readCts?.Cancel(); } catch { }
-        try { _shellStream?.Dispose(); } catch { }
-        try
-        {
-            if (_sshClient?.IsConnected == true)
-            {
-                _sshClient.Disconnect();
-            }
-            _sshClient?.Dispose();
-        }
-        catch { }
+        // Lấy tạm (snapshot) rồi xoá field ngay lập tức. Nếu người dùng bấm R
+        // để reconnect trong lúc việc dọn dẹp kết nối cũ bên dưới còn đang chạy
+        // (có thể chậm/treo), field của SshConnection sẽ không bị luồng dọn dẹp
+        // cũ ghi đè null lên kết nối MỚI vừa tạo.
+        var healthCts = _healthCts;
+        var readCts = _readCts;
+        var shellStream = _shellStream;
+        var sshClient = _sshClient;
+        var socket = _socket;
 
+        _healthCts = null;
+        _readCts = null;
         _shellStream = null;
         _sshClient = null;
         _socket = null;
 
+        try { healthCts?.Cancel(); } catch { }
+        try { readCts?.Cancel(); } catch { }
+
+        // Báo mất kết nối cho UI NGAY, KHÔNG chờ dọn dẹp socket/SSH client cũ.
+        // Khi mất mạng kiểu "im lặng" (không có RST/FIN, chỉ rớt gói), việc gọi
+        // SshClient.Disconnect()/Dispose() bên dưới cố gắng gửi gói ngắt kết nối
+        // lịch sự qua 1 socket đã chết và có thể bị OS chặn (block) rất lâu chờ
+        // timeout TCP. Nếu để việc đó chạy trước, UI sẽ "treo" không hiện được
+        // thông báo mất kết nối / phím R.
         if (!isExplicit)
         {
             Disconnected?.Invoke(reason);
         }
+
+        // Dọn dẹp kết nối cũ ở luồng nền (fire-and-forget). Có thể chậm nhưng
+        // không còn ảnh hưởng gì tới UI hay tới kết nối mới (nếu người dùng đã
+        // reconnect) vì các field đã được xoá/thay thế ở trên.
+        Task.Run(() =>
+        {
+            try { shellStream?.Dispose(); } catch { }
+            // Đóng thẳng socket TCP (nhanh, không cần bắt tay) trước, để nếu
+            // SshClient cố gắng đóng "lịch sự" thì cũng phát hiện socket đã
+            // đóng ngay thay vì tiếp tục chờ mạng.
+            try { socket?.Close(); } catch { }
+            try
+            {
+                if (sshClient?.IsConnected == true)
+                {
+                    sshClient.Disconnect();
+                }
+            }
+            catch { }
+            try { sshClient?.Dispose(); } catch { }
+        });
     }
 
     public void Disconnect() => Dispose();
