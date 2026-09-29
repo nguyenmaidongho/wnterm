@@ -26,16 +26,11 @@
             <StackPanel>
                 <!-- Tên hiển thị -->
                 <TextBlock Text="Tên hiển thị (tùy chọn):" Margin="0,0,0,3" Foreground="{DynamicResource ThemeForeground}" />
-                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Padding="6,4" Margin="0,0,0,6" />
-
-                <!-- Nhóm -->
-                <TextBlock Text="{DynamicResource Str_GroupLabel}" Margin="0,0,0,3" Foreground="{DynamicResource ThemeForeground}" />
-                <ComboBox IsEditable="True" Text="{Binding Group, UpdateSourceTrigger=PropertyChanged}"
-                          ItemsSource="{Binding ExistingGroups}" Padding="4,4" Margin="0,0,0,6" />
+                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,6" />
 
                 <!-- IP / Hostname -->
                 <TextBlock Text="{DynamicResource Str_HostLabel}" Margin="0,0,0,3" FontWeight="SemiBold" Foreground="{DynamicResource ThemeForeground}" />
-                <TextBox Text="{Binding Host, UpdateSourceTrigger=PropertyChanged}" Padding="6,4" Margin="0,0,0,2" />
+                <TextBox Text="{Binding Host, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,2" />
                 <TextBlock Text="{Binding HostError}" Foreground="#D92D20" FontSize="11" Margin="0,0,0,6"
                            Visibility="{Binding HostError, Converter={x:Static vm:SessionListViewModel.NullToVisibilityConverter}}" />
 
@@ -49,14 +44,18 @@
 
                     <StackPanel Grid.Column="0">
                         <TextBlock Text="{DynamicResource Str_PortLabel}" Margin="0,0,0,3" FontWeight="SemiBold" Foreground="{DynamicResource ThemeForeground}" />
-                        <TextBox Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" Padding="6,4" />
+                        <TextBox Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" MaxLength="5"
+                                 PreviewTextInput="PortTextBox_PreviewTextInput"
+                                 DataObject.Pasting="PortTextBox_Pasting"
+                                 GotFocus="SelectAllOnFocus_GotFocus"
+                                 PreviewMouseLeftButtonDown="SelectAllOnFocus_PreviewMouseLeftButtonDown" />
                         <TextBlock Text="{Binding PortError}" Foreground="#D92D20" FontSize="11" Margin="0,2,0,0"
                                    Visibility="{Binding PortError, Converter={x:Static vm:SessionListViewModel.NullToVisibilityConverter}}" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="2">
                         <TextBlock Text="{DynamicResource Str_UserLabel}" Margin="0,0,0,3" FontWeight="SemiBold" Foreground="{DynamicResource ThemeForeground}" />
-                        <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Padding="6,4" />
+                        <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Text="{Binding UsernameError}" Foreground="#D92D20" FontSize="11" Margin="0,2,0,0"
                                    Visibility="{Binding UsernameError, Converter={x:Static vm:SessionListViewModel.NullToVisibilityConverter}}" />
                     </StackPanel>
@@ -72,8 +71,8 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <PasswordBox x:Name="PasswordBoxControl" Grid.Column="0" Padding="6,4" PasswordChanged="PasswordBox_PasswordChanged" />
-                    <TextBox x:Name="PasswordRevealBox" Grid.Column="0" Padding="6,4" Visibility="Collapsed" TextChanged="PasswordRevealBox_TextChanged" />
+                    <PasswordBox x:Name="PasswordBoxControl" Grid.Column="0" PasswordChanged="PasswordBox_PasswordChanged" />
+                    <TextBox x:Name="PasswordRevealBox" Grid.Column="0" Visibility="Collapsed" TextChanged="PasswordRevealBox_TextChanged" />
                     <Button Grid.Column="1" Content="👁" Width="30" Margin="4,0,0,0" Click="TogglePasswordVisibility_Click"
                             Background="{DynamicResource ThemeButtonBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}" />
                 </Grid>
@@ -93,7 +92,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" Text="{Binding KeyFilePath, UpdateSourceTrigger=PropertyChanged}" Padding="6,4" />
+                    <TextBox Grid.Column="0" Text="{Binding KeyFilePath, UpdateSourceTrigger=PropertyChanged}" />
                     <Button Grid.Column="1" Content="Chọn..." Margin="4,0,0,0" Padding="10,4" Click="BrowseKeyFile_Click"
                             Background="{DynamicResource ThemeButtonBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}" />
                 </Grid>
@@ -102,7 +101,7 @@
 
                 <!-- Passphrase -->
                 <TextBlock Text="Passphrase key:" Margin="0,0,0,3" Foreground="{DynamicResource ThemeForeground}" />
-                <PasswordBox x:Name="PassphraseBoxControl" Padding="6,4" PasswordChanged="PassphraseBox_PasswordChanged" Margin="0,0,0,6" />
+                <PasswordBox x:Name="PassphraseBoxControl" PasswordChanged="PassphraseBox_PasswordChanged" Margin="0,0,0,6" />
             </StackPanel>
         </ScrollViewer>
 

@@ -73,7 +73,7 @@ public partial class MainViewModel : ObservableObject
         {
             newValue.IsSelected = true;
             WindowTitle = $"{newValue.Title} — SN Term";
-            StatusMessage = $"Đang xem tab: {newValue.Title} ({newValue.TooltipText})";
+            StatusMessage = $"Đang xem tab: {newValue.Title} ({newValue.Session.Username}@{newValue.Session.Host})";
             CurrentSftp = newValue.Sftp;
             newValue.TerminalControl.PostFocus();
         }
@@ -315,8 +315,44 @@ public partial class MainViewModel : ObservableObject
                 SelectedLeftTabIndex = 1;
             }
         };
+        tab.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(TerminalTabViewModel.Status))
+            {
+                RefreshSessionLiveStatus(tab.Session);
+            }
+        };
 
         return tab;
+    }
+
+    /// <summary>
+    /// Tính lại trạng thái kết nối "sống" của 1 VM dựa trên tất cả tab đang mở
+    /// cho VM đó (có thể mở nhiều tab cùng 1 VM qua Duplicate Tab), rồi cập nhật
+    /// SessionInfo.LiveStatus để icon trong danh sách VM đổi màu on/off.
+    /// </summary>
+    private void RefreshSessionLiveStatus(SessionInfo session)
+    {
+        var relevantTabs = Tabs.Where(t => ReferenceEquals(t.Session, session)).ToList();
+
+        ConnectionStatus? aggregate = null;
+        if (relevantTabs.Any(t => t.Status == ConnectionStatus.Connected))
+        {
+            aggregate = ConnectionStatus.Connected;
+        }
+        else if (relevantTabs.Any(t => t.Status == ConnectionStatus.Connecting || t.Status == ConnectionStatus.Reconnecting))
+        {
+            aggregate = ConnectionStatus.Connecting;
+        }
+
+        session.LiveStatus = aggregate;
+    }
+
+    private void RemoveTab(TerminalTabViewModel tab)
+    {
+        tab.Dispose();
+        Tabs.Remove(tab);
+        RefreshSessionLiveStatus(tab.Session);
     }
 
     [RelayCommand]
@@ -326,8 +362,7 @@ public partial class MainViewModel : ObservableObject
         if (tab == null) return;
 
         int index = Tabs.IndexOf(tab);
-        tab.Dispose();
-        Tabs.Remove(tab);
+        RemoveTab(tab);
 
         if (SelectedTab == tab)
         {
@@ -352,8 +387,7 @@ public partial class MainViewModel : ObservableObject
         var others = Tabs.Where(t => t != tab).ToList();
         foreach (var t in others)
         {
-            t.Dispose();
-            Tabs.Remove(t);
+            RemoveTab(t);
         }
         SelectedTab = tab;
     }
@@ -370,8 +404,7 @@ public partial class MainViewModel : ObservableObject
         var toRemove = Tabs.Skip(idx + 1).ToList();
         foreach (var t in toRemove)
         {
-            t.Dispose();
-            Tabs.Remove(t);
+            RemoveTab(t);
         }
     }
 
@@ -381,8 +414,7 @@ public partial class MainViewModel : ObservableObject
         var list = Tabs.ToList();
         foreach (var t in list)
         {
-            t.Dispose();
-            Tabs.Remove(t);
+            RemoveTab(t);
         }
         SelectedTab = null;
     }

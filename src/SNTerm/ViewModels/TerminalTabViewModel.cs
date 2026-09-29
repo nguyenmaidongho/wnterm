@@ -175,8 +175,7 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
     {
         if (Status == ConnectionStatus.Disconnected)
         {
-            if (data.Equals("r", StringComparison.OrdinalIgnoreCase) ||
-                data.Contains("r", StringComparison.OrdinalIgnoreCase) ||
+            if (data.Contains("r", StringComparison.OrdinalIgnoreCase) ||
                 data.Contains("\r") || data.Contains("\n"))
             {
                 _ = ReconnectAsync();
@@ -364,7 +363,7 @@ public partial class TerminalTabViewModel : ObservableObject, IDisposable
 
         UpdateStatusBrush();
 
-        TerminalControl.PostStatus($"Đang kết nối tới {Session.DisplayName} ({Session.Host}:{Session.Port})...");
+        TerminalControl.PostStatus($"Đang kết nối tới {Session.DisplayName} ({Session.Host})...");
 
 
         bool authRetry = false;

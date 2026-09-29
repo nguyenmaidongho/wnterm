@@ -37,7 +37,7 @@
         <Border x:Name="PasswordPanel" Grid.Row="1" Background="{DynamicResource ThemeSidebarBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12" Visibility="Collapsed">
             <StackPanel>
                 <TextBlock Text="File này được bảo vệ bằng mật khẩu Export:" FontWeight="SemiBold" Foreground="#F04438" Margin="0,0,0,6" />
-                <PasswordBox x:Name="ExportPasswordBox" Padding="6,4" Background="{DynamicResource ThemeInputBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}" />
+                <PasswordBox x:Name="ExportPasswordBox" Background="{DynamicResource ThemeInputBackground}" Foreground="{DynamicResource ThemeForeground}" BorderBrush="{DynamicResource ThemeBorderBrush}" />
             </StackPanel>
         </Border>
 

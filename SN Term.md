@@ -717,7 +717,8 @@ Khi chọn tab: focus vào WebView2 và gửi `focus` để gọi `term.focus()`
 **Hoàn thành khi:** **[Tay]** đổi font/cỡ chữ/theme áp dụng ngay cho mọi tab; mở lại app giữ đúng cài đặt và kích thước cửa sổ.
 
 ### Giai đoạn 7 — Đóng gói
-- Bản portable: `dotnet publish src/SNTerm -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true`, kèm thư mục `wwwroot`. Nén thành `SNTerm-portable.zip`.
+- Bản portable (framework-dependent, ~7MB, cần máy đích đã cài .NET 10 Desktop Runtime): `dotnet publish src/SNTerm -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true`, kèm thư mục `wwwroot`. Nén thành `SNTerm-portable.zip`.
+  - Nếu muốn bản không phụ thuộc .NET trên máy đích (đổi lại nặng hơn nhiều, ~140MB): thêm `--self-contained true -p:IncludeNativeLibrariesForSelfExtract=true`.
 - Kiểm tra WebView2 Runtime lúc khởi động; nếu thiếu → thông báo kèm link tải của Microsoft.
 - (Tùy chọn) Bộ cài bằng Inno Setup.
 - Viết `README.md` tiếng Việt: cách cài, cách dùng, nơi lưu dữ liệu, cách sao lưu, **cách chuyển danh sách VM sang máy mới bằng Export/Import**.

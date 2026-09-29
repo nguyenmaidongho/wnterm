@@ -13,7 +13,8 @@ public partial class PasswordPromptDialog : Window
 
         Title = $"{vmName} — Nhập mật khẩu";
         TitleBlock.Text = $"{vmName} — Nhập mật khẩu";
-        SubtitleBlock.Text = $"{user}@{host}:{port}";
+        // Không hiện port để tránh lộ ra khi ai đó nhìn màn hình lúc nhập mật khẩu.
+        SubtitleBlock.Text = $"{user}@{host}";
 
         if (wasRejected)
         {

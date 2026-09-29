@@ -23,7 +23,7 @@
 - **Sao lưu tự động**:
   - Tự động sao lưu `sessions.json` hằng ngày và trước mỗi lần Import.
 - **Bản chạy Portable**:
-  - File đóng gói độc lập, không yêu cầu cài đặt trước .NET trên máy đích.
+  - File nhẹ (~7MB), chạy ngay không cần cài đặt.
 
 ---
 
@@ -32,9 +32,8 @@
 ### Chạy trực tiếp (Bản Portable)
 1. Tải hoặc giải nén file `SNTerm-portable.zip`.
 2. Chạy file `SNTerm.exe`.
-3. Ứng dụng đã đóng gói sẵn môi trường chạy, sẵn sàng sử dụng ngay trên Windows 10/11.
 
-*(Lưu ý: Nếu máy tính chưa có Microsoft Edge WebView2 Runtime, ứng dụng sẽ hiện thông báo hướng dẫn cài đặt).*
+*(Lưu ý: Đây là bản framework-dependent (nhẹ) — máy đích cần đã cài sẵn **.NET 10 Desktop Runtime** (tải tại https://dotnet.microsoft.com/download/dotnet/10.0, mục "Desktop Runtime"). Nếu chưa có, Windows sẽ tự hiện thông báo và link tải khi chạy `SNTerm.exe`. Nếu máy tính chưa có Microsoft Edge WebView2 Runtime, ứng dụng sẽ hiện thông báo hướng dẫn cài đặt riêng).*
 
 ### Chạy từ mã nguồn (Dành cho lập trình viên)
 Yêu cầu: .NET 10 SDK

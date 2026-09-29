@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using Microsoft.Win32;
 using SNTerm.ViewModels;
 
@@ -75,6 +78,52 @@ public partial class SessionEditorDialog : Window
         if (dlg.ShowDialog(this) == true)
         {
             _viewModel.KeyFilePath = dlg.FileName;
+        }
+    }
+
+    // Ô Port: chỉ cho nhập số.
+    private void PortTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+    {
+        foreach (char c in e.Text)
+        {
+            if (!char.IsDigit(c))
+            {
+                e.Handled = true;
+                return;
+            }
+        }
+    }
+
+    // Chặn dán nội dung không phải số vào ô Port.
+    private void PortTextBox_Pasting(object sender, DataObjectPastingEventArgs e)
+    {
+        if (e.DataObject.GetDataPresent(typeof(string)))
+        {
+            string text = (string)e.DataObject.GetData(typeof(string))!;
+            if (text.Length == 0 || !text.All(char.IsDigit))
+            {
+                e.CancelCommand();
+            }
+        }
+        else
+        {
+            e.CancelCommand();
+        }
+    }
+
+    // Bấm Tab (hoặc click) vào ô Port sẽ chọn sẵn toàn bộ nội dung, chỉ cần gõ số mới
+    // đè lên mà không cần xóa giá trị mặc định trước.
+    private void SelectAllOnFocus_GotFocus(object sender, RoutedEventArgs e)
+    {
+        if (sender is TextBox tb) tb.SelectAll();
+    }
+
+    private void SelectAllOnFocus_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is TextBox tb && !tb.IsKeyboardFocusWithin)
+        {
+            e.Handled = true;
+            tb.Focus();
         }
     }
 }

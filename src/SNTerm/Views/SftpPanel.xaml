@@ -82,11 +82,11 @@
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ThemeItemHover}" />
-                                            <Setter Property="Foreground" Value="#FFFFFF" />
+                                            <Setter Property="Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
                                         </Trigger>
                                         <Trigger Property="IsSelected" Value="True">
                                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ThemeItemSelected}" />
-                                            <Setter Property="Foreground" Value="#FFFFFF" />
+                                            <Setter Property="Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
                                         </Trigger>
                                         <MultiTrigger>
                                             <MultiTrigger.Conditions>
@@ -94,7 +94,7 @@
                                                 <Condition Property="Selector.IsSelectionActive" Value="False" />
                                             </MultiTrigger.Conditions>
                                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ThemeItemHover}" />
-                                            <Setter Property="Foreground" Value="#FFFFFF" />
+                                            <Setter Property="Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
                                         </MultiTrigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
