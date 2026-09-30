@@ -39,6 +39,9 @@ public class AppSettings
     /// <summary>Hash của sessions.json ở lần backup gần nhất, để bỏ qua khi dữ liệu không đổi.</summary>
     public string? LastCloudBackupHash { get; set; }
 
+    /// <summary>Tự backup: bỏ qua nếu dữ liệu VM không đổi so với lần backup trước.</summary>
+    public bool CloudBackupOnlyIfChanged { get; set; } = true;
+
     public int EffectiveCloudIntervalMinutes =>
         CloudBackupIntervalMinutes >= 0 ? CloudBackupIntervalMinutes : (CloudAutoBackup ? 1440 : 0);
     public int CloudKeepCount { get; set; } = 30;

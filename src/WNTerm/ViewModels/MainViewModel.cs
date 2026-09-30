@@ -244,7 +244,7 @@ public partial class MainViewModel : ObservableObject
         try
         {
             // Chỉ upload khi dữ liệu thay đổi, tránh sinh ra hàng loạt bản trùng nhau.
-            var key = await new CloudBackupService(_settings, _sessionStore).BackupAsync(onlyIfChanged: true);
+            var key = await new CloudBackupService(_settings, _sessionStore).BackupAsync(onlyIfChanged: _settings.CloudBackupOnlyIfChanged);
             if (key != null)
             {
                 _settingsStore.Save(_settings);

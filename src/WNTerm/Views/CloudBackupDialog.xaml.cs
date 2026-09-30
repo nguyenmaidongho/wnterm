@@ -30,6 +30,7 @@ public partial class CloudBackupDialog : Window
         AccessKeyBox.Text = settings.S3AccessKey;
         SecretKeyBox.Password = SecretProtector.Decrypt(settings.S3SecretKeyEnc) ?? "";
         BackupPasswordBox.Password = SecretProtector.Decrypt(settings.CloudBackupPasswordEnc) ?? "";
+        OnlyChangedCheck.IsChecked = settings.CloudBackupOnlyIfChanged;
         foreach (System.Windows.Controls.ComboBoxItem it in IntervalCombo.Items)
             if (it.Tag?.ToString() == settings.EffectiveCloudIntervalMinutes.ToString()) IntervalCombo.SelectedItem = it;
         if (IntervalCombo.SelectedItem == null) IntervalCombo.SelectedIndex = 4;
@@ -79,6 +80,7 @@ public partial class CloudBackupDialog : Window
         _settings.CloudBackupPasswordEnc = SecretProtector.Encrypt(BackupPasswordBox.Password);
         int minutes = int.TryParse((IntervalCombo.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Tag?.ToString(), out int m) ? m : 1440;
         _settings.CloudBackupIntervalMinutes = minutes;
+        _settings.CloudBackupOnlyIfChanged = OnlyChangedCheck.IsChecked == true;
         _settings.CloudAutoBackup = minutes > 0;
         _settings.S3PathStyle = PathStyleCheck.IsChecked == true;
         _settings.CloudKeepCount = int.TryParse(KeepBox.Text, out int k) && k >= 1 ? k : 30;

@@ -76,6 +76,8 @@
                     <CheckBox x:Name="PathStyleCheck" Content="Path-style" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" VerticalAlignment="Center" Margin="16,0,0,0" ToolTip="{DynamicResource Str_CbPathTip}" />
                 </StackPanel>
 
+                <CheckBox x:Name="OnlyChangedCheck" Content="{DynamicResource Str_CbOnlyChanged}" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" Margin="0,0,0,8" />
+
                 <StackPanel Orientation="Horizontal">
                     <Button Content="{DynamicResource Str_CbSaveTest}" Click="SaveTest_Click" Style="{StaticResource PrimaryButtonStyle}" />
                     <TextBlock x:Name="TestResultText" VerticalAlignment="Center" Margin="10,0,0,0" TextWrapping="Wrap" FontWeight="Normal" />
