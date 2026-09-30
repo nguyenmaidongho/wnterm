@@ -213,20 +213,51 @@ public partial class MainViewModel : ObservableObject
     }
 
     /// <summary>Tự backup lên cloud (nền, im lặng) nếu đã cấu hình và quá 20 giờ chưa backup.</summary>
-    public async void RunAutoCloudBackupIfDue()
+    private System.Windows.Threading.DispatcherTimer? _autoBackupTimer;
+    private DateTime _lastAutoAttemptUtc = DateTime.MinValue;
+    private bool _autoBackupRunning;
+
+    /// <summary>Bắt đầu vòng kiểm tra tự backup theo chu kỳ đã chọn (đọc lại cấu hình mỗi lần tick).</summary>
+    public void RunAutoCloudBackupIfDue()
     {
+        if (_autoBackupTimer == null)
+        {
+            _autoBackupTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(15) };
+            _autoBackupTimer.Tick += async (_, _) => await AutoBackupTickAsync();
+            _autoBackupTimer.Start();
+        }
+        _ = AutoBackupTickAsync();
+    }
+
+    private async System.Threading.Tasks.Task AutoBackupTickAsync()
+    {
+        if (_autoBackupRunning) return;
+        int minutes = _settings.EffectiveCloudIntervalMinutes;
+        if (minutes <= 0 || !CloudBackupService.IsConfigured(_settings)) return;
+
+        var reference = _lastAutoAttemptUtc;
+        if (_settings.LastCloudBackupUtc is DateTime last && last > reference) reference = last;
+        if ((DateTime.UtcNow - reference).TotalMinutes < minutes) return;
+
+        _autoBackupRunning = true;
+        _lastAutoAttemptUtc = DateTime.UtcNow;
         try
         {
-            if (!_settings.CloudAutoBackup || !CloudBackupService.IsConfigured(_settings)) return;
-            if (_settings.LastCloudBackupUtc is DateTime last && (DateTime.UtcNow - last).TotalHours < 20) return;
-
-            await new CloudBackupService(_settings, _sessionStore).BackupAsync();
-            _settingsStore.Save(_settings);
-            StatusMessage = WNTerm.Services.LocalizationManager.Tr("Automatic cloud backup done.", "Đã tự động backup lên cloud.");
+            // Chỉ upload khi dữ liệu thay đổi, tránh sinh ra hàng loạt bản trùng nhau.
+            var key = await new CloudBackupService(_settings, _sessionStore).BackupAsync(onlyIfChanged: true);
+            if (key != null)
+            {
+                _settingsStore.Save(_settings);
+                StatusMessage = WNTerm.Services.LocalizationManager.Tr("Automatic cloud backup done.", "Đã tự động backup lên cloud.");
+            }
         }
         catch (Exception ex)
         {
             StatusMessage = WNTerm.Services.LocalizationManager.Tr("Cloud auto backup failed: ", "Auto backup cloud lỗi: ") + ex.Message;
+        }
+        finally
+        {
+            _autoBackupRunning = false;
         }
     }
 

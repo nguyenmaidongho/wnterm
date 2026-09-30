@@ -30,7 +30,9 @@ public partial class CloudBackupDialog : Window
         AccessKeyBox.Text = settings.S3AccessKey;
         SecretKeyBox.Password = SecretProtector.Decrypt(settings.S3SecretKeyEnc) ?? "";
         BackupPasswordBox.Password = SecretProtector.Decrypt(settings.CloudBackupPasswordEnc) ?? "";
-        AutoBackupCheck.IsChecked = settings.CloudAutoBackup;
+        foreach (System.Windows.Controls.ComboBoxItem it in IntervalCombo.Items)
+            if (it.Tag?.ToString() == settings.EffectiveCloudIntervalMinutes.ToString()) IntervalCombo.SelectedItem = it;
+        if (IntervalCombo.SelectedItem == null) IntervalCombo.SelectedIndex = 4;
         PathStyleCheck.IsChecked = settings.S3PathStyle;
         KeepBox.Text = settings.CloudKeepCount.ToString();
 
@@ -75,7 +77,9 @@ public partial class CloudBackupDialog : Window
         _settings.S3AccessKey = AccessKeyBox.Text.Trim();
         _settings.S3SecretKeyEnc = SecretProtector.Encrypt(SecretKeyBox.Password);
         _settings.CloudBackupPasswordEnc = SecretProtector.Encrypt(BackupPasswordBox.Password);
-        _settings.CloudAutoBackup = AutoBackupCheck.IsChecked == true;
+        int minutes = int.TryParse((IntervalCombo.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Tag?.ToString(), out int m) ? m : 1440;
+        _settings.CloudBackupIntervalMinutes = minutes;
+        _settings.CloudAutoBackup = minutes > 0;
         _settings.S3PathStyle = PathStyleCheck.IsChecked == true;
         _settings.CloudKeepCount = int.TryParse(KeepBox.Text, out int k) && k >= 1 ? k : 30;
         _settingsStore.Save(_settings);
@@ -131,7 +135,7 @@ public partial class CloudBackupDialog : Window
         StatusText.Text = WNTerm.Services.LocalizationManager.Tr("Backing up...", "Đang backup...");
         try
         {
-            string key = await Service.BackupAsync();
+            string key = (await Service.BackupAsync())!;
             _settingsStore.Save(_settings);
             await RefreshListAsync();
             StatusText.Text = WNTerm.Services.LocalizationManager.Tr("Backup successful: ", "Backup thành công: ") + System.IO.Path.GetFileName(key);

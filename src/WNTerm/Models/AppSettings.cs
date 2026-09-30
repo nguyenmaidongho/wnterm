@@ -32,6 +32,15 @@ public class AppSettings
     public bool S3PathStyle { get; set; } = true;
     public string? CloudBackupPasswordEnc { get; set; }
     public bool CloudAutoBackup { get; set; } = true;
+
+    /// <summary>Chu kỳ tự backup (phút): 0 = tắt. -1 = chưa đặt (suy ra từ CloudAutoBackup cũ: bật = 1 ngày).</summary>
+    public int CloudBackupIntervalMinutes { get; set; } = -1;
+
+    /// <summary>Hash của sessions.json ở lần backup gần nhất, để bỏ qua khi dữ liệu không đổi.</summary>
+    public string? LastCloudBackupHash { get; set; }
+
+    public int EffectiveCloudIntervalMinutes =>
+        CloudBackupIntervalMinutes >= 0 ? CloudBackupIntervalMinutes : (CloudAutoBackup ? 1440 : 0);
     public int CloudKeepCount { get; set; } = 30;
     public DateTime? LastCloudBackupUtc { get; set; }
 

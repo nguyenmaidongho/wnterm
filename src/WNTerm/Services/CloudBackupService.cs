@@ -87,8 +87,11 @@ public class CloudBackupService
     }
 
     /// <summary>Backup toàn bộ VM (kèm mật khẩu + key file, mã hóa) lên S3. Trả về key đã tải lên.</summary>
-    public async Task<string> BackupAsync(CancellationToken ct = default)
+    public async Task<string?> BackupAsync(CancellationToken ct = default, bool onlyIfChanged = false)
     {
+        string hash = ComputeDataHash();
+        if (onlyIfChanged && hash == _settings.LastCloudBackupHash) return null;
+
         string? password = SecretProtector.Decrypt(_settings.CloudBackupPasswordEnc);
         if (string.IsNullOrEmpty(password))
             throw new InvalidOperationException(WNTerm.Services.LocalizationManager.Tr("Backup password is not set.", "Chưa đặt mật khẩu backup."));
@@ -112,6 +115,7 @@ public class CloudBackupService
             }, ct);
 
             _settings.LastCloudBackupUtc = DateTime.UtcNow;
+            _settings.LastCloudBackupHash = hash;
             await PruneAsync(client, ct);
             return key;
         }
@@ -119,6 +123,19 @@ public class CloudBackupService
         {
             try { File.Delete(tmp); } catch { }
         }
+    }
+
+    private static string ComputeDataHash()
+    {
+        try
+        {
+            string file = AppPaths.Default.SessionsFile;
+            if (!File.Exists(file)) return "";
+            using var sha = System.Security.Cryptography.SHA256.Create();
+            using var fs = File.OpenRead(file);
+            return Convert.ToHexString(sha.ComputeHash(fs));
+        }
+        catch { return ""; }
     }
 
     private async Task PruneAsync(AmazonS3Client client, CancellationToken ct)

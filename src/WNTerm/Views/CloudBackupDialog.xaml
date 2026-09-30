@@ -62,7 +62,14 @@
                 <PasswordBox x:Name="BackupPasswordBox" Margin="0,0,0,6" />
 
                 <StackPanel Orientation="Horizontal" Margin="0,2,0,8">
-                    <CheckBox x:Name="AutoBackupCheck" Content="{DynamicResource Str_CbAuto}" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" VerticalAlignment="Center" />
+                    <TextBlock Text="{DynamicResource Str_CbAuto}" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <ComboBox x:Name="IntervalCombo" MinWidth="120" VerticalAlignment="Center" FontWeight="Normal">
+                        <ComboBoxItem Tag="0" Content="{DynamicResource Str_CbOff}" />
+                        <ComboBoxItem Tag="1" Content="{DynamicResource Str_CbEvery1m}" />
+                        <ComboBoxItem Tag="5" Content="{DynamicResource Str_CbEvery5m}" />
+                        <ComboBoxItem Tag="60" Content="{DynamicResource Str_CbEvery1h}" />
+                        <ComboBoxItem Tag="1440" Content="{DynamicResource Str_CbEvery1d}" />
+                    </ComboBox>
                     <TextBlock Text="{DynamicResource Str_CbKeep}" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" VerticalAlignment="Center" Margin="16,0,4,0" />
                     <TextBox x:Name="KeepBox" Width="44" />
                     <TextBlock Text="{DynamicResource Str_CbLatest}" Foreground="{DynamicResource ThemeForeground}" FontWeight="Normal" VerticalAlignment="Center" Margin="4,0,0,0" />
