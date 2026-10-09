@@ -49,6 +49,7 @@ $ver = is_file($cssFile) ? (string)filemtime($cssFile) : '2';
       <a href="/#iphone">iPhone</a>
       <a href="/#bao-mat"><?= t('nav.security') ?></a>
       <a href="/#faq"><?= t('nav.faq') ?></a>
+      <a href="/#feedback"><?= t('nav.feedback') ?></a>
     </div>
     <div class="actions">
       <div class="lang" role="group" aria-label="<?= e(t('nav.language')) ?>">
@@ -66,6 +67,7 @@ $ver = is_file($cssFile) ? (string)filemtime($cssFile) : '2';
     <a href="/#iphone">iPhone</a>
     <a href="/#bao-mat"><?= t('nav.security') ?></a>
     <a href="/#faq"><?= t('nav.faq') ?></a>
+    <a href="/#feedback"><?= t('nav.feedback') ?></a>
     <a href="/dang-nhap"><?= ($active ?? '') === 'account' ? t('nav.account') : t('nav.login') ?></a>
     <a class="btn brand" href="/#tai-ve"><?= t('nav.download') ?></a>
   </div>

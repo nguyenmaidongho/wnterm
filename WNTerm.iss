@@ -1,6 +1,6 @@
 ﻿; WN Term - Inno Setup Script
 #define MyAppName "WN Term"
-#define MyAppVersion "2.3.2"
+#define MyAppVersion GetVersionNumbersString("publish\desktop-win-x64\WNTerm.exe")
 #define MyAppPublisher "WN Term"
 #define MyAppExeName "WNTerm.exe"
 
@@ -52,3 +52,11 @@ Root: HKA; Subkey: "Software\Classes\WNTerm.SessionBackup\shell\open\command"; V
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; Description: "Khởi chạy {#MyAppName}"; Flags: nowait postinstall skipifsilent
+; Cập nhật ngay trong ứng dụng: app tải bộ cài, chạy với /SILENT /update=1 → cài xong tự mở lại app.
+Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; Flags: nowait runasoriginaluser; Check: IsInAppUpdate
+
+[Code]
+function IsInAppUpdate: Boolean;
+begin
+  Result := ExpandConstant('{param:update|0}') = '1';
+end;

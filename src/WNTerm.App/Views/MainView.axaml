@@ -94,12 +94,12 @@
       <!-- ===== Thanh công cụ ===== -->
       <Border Grid.Row="0" Background="{DynamicResource ThemeToolbarBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="0,0,0,1" Padding="10,8">
         <DockPanel LastChildFill="True">
-          <Border x:Name="Logo" DockPanel.Dock="Right" Background="White" CornerRadius="5" Padding="6,2" VerticalAlignment="Center"
+          <Border x:Name="Logo" DockPanel.Dock="Right" Background="White" CornerRadius="5" Padding="6,2" VerticalAlignment="Center" Cursor="Hand" PointerPressed="OnLogoPressed"
                   ToolTip.Tip="WebNow - WN Term">
             <Image Source="avares://WNTerm.App/Assets/webnow-logo.png" Height="24" />
           </Border>
           <!-- Điện thoại: logo gọn (chữ N) ở góc phải thanh công cụ -->
-          <Border x:Name="LogoCompact" DockPanel.Dock="Right" IsVisible="False" Background="White" CornerRadius="8"
+          <Border x:Name="LogoCompact" DockPanel.Dock="Right" IsVisible="False" Background="White" CornerRadius="8" Cursor="Hand" PointerPressed="OnLogoPressed"
                   Padding="4" Margin="6,0,0,0" VerticalAlignment="Center" ToolTip.Tip="WebNow - WN Term">
             <Image Source="avares://WNTerm.App/Assets/favicon.png" Width="26" Height="26" />
           </Border>
@@ -406,7 +406,19 @@
 
       <!-- ===== Thanh trạng thái ===== -->
       <Border Grid.Row="2" Background="{DynamicResource ThemeStatusBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="0,1,0,0" Padding="8,4">
-        <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource ThemeForegroundMuted}" FontSize="12" VerticalAlignment="Center" />
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource ThemeForegroundMuted}" FontSize="12" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+          <!-- Báo bản mới / tải bản cập nhật có tiến độ -->
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center"
+                      DataContext="{Binding Update}" IsVisible="{Binding IsAvailable}">
+            <TextBlock Text="{Binding Text}" FontSize="12" Foreground="{DynamicResource ThemeConnectButtonBackground}" VerticalAlignment="Center" />
+            <ProgressBar Width="120" Height="8" Minimum="0" Maximum="100" Value="{Binding Progress}" IsVisible="{Binding IsDownloading}" VerticalAlignment="Center" />
+            <Button Content="{Binding ButtonText}" Command="{Binding UpdateNowCommand}" IsVisible="{Binding !IsDownloading}"
+                    Padding="10,0" MinHeight="0" Height="20" FontSize="11" VerticalContentAlignment="Center" />
+            <Button Content="✕" Command="{Binding DismissCommand}" IsVisible="{Binding CanDismiss}"
+                    Padding="6,0" MinHeight="0" Height="20" FontSize="11" VerticalContentAlignment="Center" Background="Transparent" />
+          </StackPanel>
+        </Grid>
       </Border>
 
       <!-- ===== Điều hướng dưới (chỉ điện thoại) ===== -->

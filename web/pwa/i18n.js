@@ -84,6 +84,8 @@
     'Xóa': 'Delete',
     'Đã chuyển vào thùng rác.': 'Moved to trash.',
     'Tên hiển thị (tùy chọn)': 'Display name (optional)',
+    'Tên hiển thị (để trống = dùng IP)': 'Display name (leave empty to use the IP)',
+    'Dùng root': 'Use root',
     'Tag (cách nhau bằng dấu phẩy, tùy chọn)': 'Tags (comma-separated, optional)',
     'Mật khẩu': 'Password',
     'Lưu mật khẩu': 'Save password',

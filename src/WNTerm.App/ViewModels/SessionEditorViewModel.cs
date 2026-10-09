@@ -121,6 +121,23 @@ public partial class SessionEditorViewModel : ObservableObject
             KeyFilePath = _editingSession.KeyFilePath ?? "";
             HasStoredPassword = !string.IsNullOrEmpty(_editingSession.EncryptedPassword);
         }
+        else
+        {
+            Username = "root";
+        }
+    }
+
+    [RelayCommand]
+    private void UseRoot() => Username = "root";
+
+    /// <summary>Tên để trống thì dùng IP/host. Tên cũ chính là host (do tự điền) và host đổi → theo host mới.</summary>
+    private string ResolveName()
+    {
+        var host = (Host ?? string.Empty).Trim();
+        var name = (Name ?? string.Empty).Trim();
+        if (name.Length == 0) return host;
+        if (_editingSession != null && name == _editingSession.Host.Trim() && _editingSession.Name.Trim() == name) return host;
+        return name;
     }
 
     partial void OnHostChanged(string value) => Validate();
@@ -262,7 +279,7 @@ public partial class SessionEditorViewModel : ObservableObject
             session.PingMs = _editingSession.PingMs;
         }
 
-        session.Name = (Name ?? string.Empty).Trim();
+        session.Name = QuickMode ? (Name ?? string.Empty).Trim() : ResolveName();
         session.Group = (Group ?? string.Empty).Trim();
         session.Tags = SessionInfo.ParseTags(TagsText);
         session.Host = (Host ?? string.Empty).Trim();

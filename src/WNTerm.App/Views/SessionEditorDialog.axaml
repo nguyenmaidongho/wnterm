@@ -57,7 +57,11 @@
           </StackPanel>
           <StackPanel Grid.Column="2">
             <TextBlock Text="{DynamicResource Str_UserLabel}" Margin="0,0,0,3" FontWeight="SemiBold" />
-            <TextBox Text="{Binding Username}" />
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBox Grid.Column="0" Text="{Binding Username}" />
+              <Button Grid.Column="1" Content="root" Command="{Binding UseRootCommand}" ToolTip.Tip="{DynamicResource Str_UseRootTip}"
+                      Margin="4,0,0,0" Padding="8,0" MinHeight="0" VerticalAlignment="Stretch" VerticalContentAlignment="Center" FontSize="12" />
+            </Grid>
             <TextBlock Classes="err" Text="{Binding UsernameError}" Margin="0,2,0,0"
                        IsVisible="{Binding UsernameError, Converter={x:Static ObjectConverters.IsNotNull}}" />
           </StackPanel>

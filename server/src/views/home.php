@@ -146,7 +146,7 @@
     <div class="head">
       <div class="eyebrow"><?= t('dl.eyebrow') ?></div>
       <h2><?= t('dl.h2') ?></h2>
-      <p><?= t('dl.p') ?></p>
+      <p><?= t('dl.p', Versions::version('windows'), Versions::version('android')) ?></p>
     </div>
     <div class="dl">
       <div class="dlc">
@@ -180,6 +180,30 @@
     <details><summary><?= t('faq.6.q') ?></summary><p><?= t('faq.6.a') ?></p></details>
     <details><summary><?= t('faq.7.q') ?></summary><p><?= t('faq.7.a') ?></p></details>
     <details><summary><?= t('faq.8.q') ?></summary><p><?= t('faq.8.a') ?></p></details>
-    <details><summary><?= t('faq.9.q') ?></summary><p><?= t('faq.9.a') ?></p></details>
+    <details id="feedback"><summary><?= t('faq.9.q') ?></summary><p><?= t('faq.9.a') ?></p>
+      <?php if (!empty($feedbackOn)): ?>
+      <form id="fbForm" class="fbform" novalidate
+            data-ok="<?= e(t('fb.ok')) ?>" data-sending="<?= e(t('fb.sending')) ?>" data-submit="<?= e(t('fb.submit')) ?>"
+            data-err-required="<?= e(t('fb.err_required')) ?>" data-err-captcha="<?= e(t('fb.err_captcha')) ?>"
+            data-err-rate="<?= e(t('fb.err_rate')) ?>" data-err-fail="<?= e(t('fb.err_fail')) ?>">
+        <div class="fbrow">
+          <input name="name" type="text" maxlength="80" autocomplete="name" placeholder="<?= e(t('fb.name')) ?>" required>
+          <input name="email" type="email" maxlength="190" autocomplete="email" placeholder="<?= e(t('fb.email')) ?>" required>
+        </div>
+        <input name="phone" type="tel" maxlength="20" autocomplete="tel" placeholder="<?= e(t('fb.phone')) ?>">
+        <textarea name="message" rows="5" maxlength="3000" placeholder="<?= e(t('fb.msg')) ?>" required></textarea>
+        <input name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+        <?php if (!empty($turnstileKey)): ?>
+          <div class="cf-turnstile" data-sitekey="<?= e($turnstileKey) ?>" data-theme="dark"></div>
+        <?php endif; ?>
+        <div id="fbMsg" class="alert" hidden></div>
+        <button class="btn brand" id="fbBtn" type="submit"><?= t('fb.submit') ?></button>
+      </form>
+      <?php endif; ?>
+    </details>
   </div>
 </section>
+<script>(function(){function go(){var d=document.getElementById('feedback');if(!d)return;d.open=true;setTimeout(function(){d.scrollIntoView({behavior:'smooth',block:'center'});},60);}
+if(location.hash==='#feedback')go();
+addEventListener('hashchange',function(){if(location.hash==='#feedback')go();});
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href="/#feedback"]');if(a&&document.getElementById('feedback')){e.preventDefault();history.replaceState(null,'','/#feedback');go();}});})();</script>

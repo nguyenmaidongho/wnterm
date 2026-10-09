@@ -17,6 +17,7 @@ public class AndroidApp : AvaloniaAndroidApplication<WNTerm.App.App>
         base.OnCreate();
         // Ghi lỗi .NET chưa bắt được ra file để LauncherActivity hiện ở lần mở sau.
         // (Gắn ở OnCreate, không gắn trong constructor, để không phá bước đăng ký JNI.)
+        try { WNTerm.App.Services.UpdateChecker.CurrentVersionText = PackageManager?.GetPackageInfo(PackageName!, 0)?.VersionName; } catch { }
         AppDomain.CurrentDomain.UnhandledException += (_, e) => SaveCrash("UnhandledException", e.ExceptionObject);
         TaskScheduler.UnobservedTaskException += (_, e) => SaveCrash("UnobservedTaskException", e.Exception);
     }

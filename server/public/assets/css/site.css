@@ -316,3 +316,12 @@ nav .wrap{height:74px}
 .adm .panel h3,.adm .panel h4{margin:6px 0}
 .adm .dev{padding:7px 0;border-bottom:1px solid var(--line);font-size:14px;display:flex;justify-content:space-between;gap:10px;align-items:center;word-break:break-word}
 .adm .logbox{background:#0e0f11;border:1px solid var(--line);border-radius:10px;padding:12px;max-height:60vh;overflow:auto;font:12.5px/1.5 var(--mono);white-space:pre-wrap;word-break:break-all}
+/* form góp ý trong mục Hỏi đáp */
+.fbform{display:grid;gap:10px;margin-top:14px;position:relative}
+.fbform .fbrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.fbform .fbrow{grid-template-columns:1fr}}
+.fbform input,.fbform textarea{width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:inherit;font-size:15px}
+.fbform textarea{resize:vertical;min-height:110px}
+.fbform input:focus,.fbform textarea:focus{outline:none;border-color:var(--accent)}
+.fbform .alert{margin:0}
+.fbform .btn{justify-self:start}

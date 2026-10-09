@@ -99,11 +99,27 @@ public partial class MainView : UserControl
             _vm.RunAutoCloudBackupIfDue();
             if (!string.IsNullOrEmpty(WNTerm.App.App.StartupFile)) _ = _vm.Import(WNTerm.App.App.StartupFile);
             _vm.SessionList.StartStatusMonitor();
+            _vm.Update.Start();
         };
     }
 
     /// <summary>Độ rộng cột trái hiện tại (lưu vào settings khi đóng).</summary>
     public double LeftPaneWidth => this.FindControl<Grid>("MainGrid")!.ColumnDefinitions[0].ActualWidth;
+
+    private const string HomeUrl = "https://wnterm.webnow.vn/";
+
+    /// <summary>Bấm logo → mở trang chủ WNTerm (trình duyệt mặc định; Android/iOS qua Launcher).</summary>
+    private async void OnLogoPressed(object? sender, PointerPressedEventArgs e)
+    {
+        e.Handled = true;
+        try
+        {
+            var launcher = TopLevel.GetTopLevel(this)?.Launcher;
+            if (launcher != null) { await launcher.LaunchUriAsync(new Uri(HomeUrl)); return; }
+        }
+        catch { }
+        Ui.OpenWithShell(HomeUrl);
+    }
 
     // ===== Chế độ gọn cho điện thoại =====
 

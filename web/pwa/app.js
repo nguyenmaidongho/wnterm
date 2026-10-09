@@ -401,7 +401,7 @@
     var isNew = !vm, v = vm || { port: 22, username: 'root', tags: [], password: '' };
     var hasKey = !!v.keyFileContent, picked = { name: null };
     var fields = [
-      { id: 'name', label: L('Tên hiển thị (tùy chọn)'), value: v.name || '' },
+      { id: 'name', label: L('Tên hiển thị (để trống = dùng IP)'), value: v.name && v.name !== v.host ? v.name : '' },
       { id: 'tags', label: L('Tag (cách nhau bằng dấu phẩy, tùy chọn)'), value: (v.tags || []).join(', ') },
       { id: 'host', label: 'IP / Hostname *', value: v.host || '', inputmode: 'url' },
       { id: 'port', label: 'Port *', value: String(v.port || 22), type: 'number', inputmode: 'numeric' },
@@ -462,6 +462,17 @@
           });
           ctx.inputs.tags.parentNode.insertAdjacentElement('afterend', pick);
         }
+        // nút nhỏ "root" nằm trong ô User; ô Tên để trống thì dùng IP (placeholder hiện IP đang nhập)
+        var un = ctx.inputs.username, uw = document.createElement('div'), rb = document.createElement('button');
+        uw.style.position = 'relative'; un.parentNode.insertBefore(uw, un); uw.appendChild(un); un.style.paddingRight = '58px';
+        rb.type = 'button'; rb.className = 'chip'; rb.textContent = 'root'; rb.title = L('Dùng root');
+        rb.style.cssText = 'position:absolute;right:6px;top:50%;transform:translateY(-50%);padding:2px 10px;font-size:12px';
+        rb.onclick = function () { un.value = 'root'; un.dispatchEvent(new Event('input', { bubbles: true })); };
+        uw.appendChild(rb);
+        if (ctx.inputs.name) {
+          var syncName = function () { ctx.inputs.name.placeholder = ctx.inputs.host.value.trim() || L('IP / Hostname'); };
+          ctx.inputs.host.addEventListener('input', syncName); syncName();
+        }
         // chọn file key
         var fi = document.createElement('input'); fi.type = 'file'; fi.hidden = true;
         var fb = document.createElement('button'); fb.type = 'button'; fb.className = 'btn'; fb.textContent = L('Chọn file key…'); fb.style.marginTop = '6px';
@@ -473,7 +484,7 @@
     if (!r.value) return;
     var f = r.fields, keyText = (f.key || '').trim();
     var data = {
-      name: quick ? '' : f.name.trim(), tags: quick ? [] : parseTags(f.tags), host: f.host.trim(), port: parseInt(f.port, 10) || 22, username: f.username.trim(),
+      name: quick ? '' : (f.name.trim() || f.host.trim()), tags: quick ? [] : parseTags(f.tags), host: f.host.trim(), port: parseInt(f.port, 10) || 22, username: f.username.trim(),
       password: (quick || f.savePw) && f.password ? f.password : null, passphrase: f.passphrase ? f.passphrase : null
     };
     if (keyText) { data.keyFileContent = b64utf8(keyText.replace(/\r\n/g, '\n') + (/\n$/.test(keyText) ? '' : '\n')); data.keyFileName = picked.name || 'id_key'; }

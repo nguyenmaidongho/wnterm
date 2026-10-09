@@ -45,6 +45,9 @@ public partial class MainViewModel : ObservableObject
 
     public SessionListViewModel SessionList { get; }
 
+    /// <summary>Báo bản mới + cập nhật trong app (thanh trạng thái).</summary>
+    public UpdateViewModel Update { get; } = new();
+
     public MainViewModel()
     {
         _paths = AppPaths.Default;
