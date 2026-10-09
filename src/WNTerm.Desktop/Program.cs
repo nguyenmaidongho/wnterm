@@ -19,6 +19,7 @@ internal static class Program
             catch { }
         };
 
+        WNTerm.App.Services.UpdateChecker.CurrentVersionText = typeof(Program).Assembly.GetName().Version?.ToString(3);
         WNTerm.App.App.StartupFile = args.FirstOrDefault(File.Exists);
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }

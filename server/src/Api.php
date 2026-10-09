@@ -56,10 +56,8 @@ final class Api
                 case 'GET /admin/user':       self::adminUser(); break;
                 case 'POST /admin/disable':   self::adminSetDisabled(true); break;
                 case 'POST /admin/enable':    self::adminSetDisabled(false); break;
-                case 'GET /admin/users':      self::adminUsers(); break;
-                case 'GET /admin/user':       self::adminUser(); break;
-                case 'POST /admin/disable':   self::adminSetDisabled(true); break;
-                case 'POST /admin/enable':    self::adminSetDisabled(false); break;
+                case 'POST /feedback':        self::feedback(); break;
+                case 'GET /version':          self::version(); break;
                 default:
                     Http::fail(404, 'not_found', 'Không có đường dẫn này.');
             }
@@ -258,7 +256,6 @@ final class Api
             'email'     => $u['email'],
             'admin'     => self::isAdmin($u),
             'createdAt' => $u['created_at'] . 'Z',
-            'admin'     => self::isAdmin($u),
             'vault'     => ['version' => (int)$u['vault_version'], 'updatedAt' => $u['vault_updated_at'] ? $u['vault_updated_at'] . 'Z' : null],
         ]);
     }
@@ -577,6 +574,69 @@ final class Api
         }
         error_log('[wnterm] admin ' . $me['email'] . ($disable ? ' disabled ' : ' enabled ') . $email);
         Http::json(200, ['ok' => true, 'email' => $email, 'disabled' => $disable]);
+    }
+
+    /** Phiên bản mới nhất từng nền tảng (công khai) — app dùng để báo "có bản mới". */
+    private static function version(): void
+    {
+        header('Cache-Control: public, max-age=300');
+        Http::json(200, Versions::forApp(wn_lang()));
+    }
+
+    // ===== Góp ý / báo lỗi → Telegram =====
+
+    private static function feedback(): void
+    {
+        $token = (string)wn_config('telegram.bot_token', '');
+        $chat = (string)wn_config('telegram.chat_id', '');
+        if ($token === '' || $chat === '') {
+            Http::fail(503, 'not_configured', 'Chức năng góp ý chưa được cấu hình.');
+        }
+        $ip = Http::ip();
+        if (!RateLimit::hit('fb:' . $ip, 3, 3600) || !RateLimit::hit('fb:all', 60, 3600)) {
+            Http::fail(429, 'rate_limited', 'Bạn gửi quá nhiều lần, hãy thử lại sau.');
+        }
+        $b = Http::body(16384);
+        if (trim((string)($b['website'] ?? '')) !== '') { // ô bẫy bot: giả vờ thành công
+            Http::json(200, ['ok' => true]);
+        }
+        self::checkTurnstile($b, $ip);
+
+        $name = trim((string)($b['name'] ?? ''));
+        $email = strtolower(trim((string)($b['email'] ?? '')));
+        $phone = trim((string)($b['phone'] ?? ''));
+        $msg = trim((string)($b['message'] ?? ''));
+        if ($name === '' || mb_strlen($name) > 80 || $msg === '' || mb_strlen($msg) > 3000
+            || $email === '' || strlen($email) > 190 || !filter_var($email, FILTER_VALIDATE_EMAIL)
+            || ($phone !== '' && !preg_match('/^[0-9+().\-\s]{6,20}$/', $phone))) {
+            Http::fail(422, 'bad_input', 'Vui lòng nhập tên, email hợp lệ và nội dung góp ý.');
+        }
+
+        $h = fn(string $s): string => htmlspecialchars($s, ENT_NOQUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $text = "📬 <b>Góp ý mới — WNTerm</b>\n"
+            . '👤 ' . $h($name) . "\n"
+            . '✉️ ' . $h($email) . "\n"
+            . ($phone !== '' ? '📞 ' . $h($phone) . "\n" : '')
+            . '🌐 ' . $h($ip) . ' · ' . $h(wn_lang()) . ' · ' . gmdate('Y-m-d H:i') . " UTC\n\n"
+            . $h($msg);
+
+        $base = rtrim((string)wn_config('telegram.api_base', 'https://api.telegram.org'), '/');
+        $ch = curl_init($base . '/bot' . $token . '/sendMessage');
+        curl_setopt_array($ch, [
+            CURLOPT_POST           => true,
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+            CURLOPT_POSTFIELDS     => json_encode(['chat_id' => $chat, 'text' => $text, 'parse_mode' => 'HTML', 'disable_web_page_preview' => true]),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 10,
+        ]);
+        $resp = curl_exec($ch);
+        $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $data = is_string($resp) ? json_decode($resp, true) : null;
+        if ($code !== 200 || !is_array($data) || empty($data['ok'])) {
+            error_log('[wnterm] telegram: HTTP ' . $code . ' ' . (is_array($data) ? (string)($data['description'] ?? '') : 'no response'));
+            Http::fail(502, 'send_failed', 'Chưa gửi được, hãy thử lại sau.');
+        }
+        Http::json(200, ['ok' => true]);
     }
     // ===== Chống bot (tùy chọn) =====
 

@@ -45,7 +45,26 @@ return [
         'secret'   => '',
     ],
 
-    'session_days'    => 90,        // thời hạn phiên đăng nhập của thiết bị
+    // Nhận góp ý/báo lỗi từ form ở mục Hỏi đáp (trang chủ) qua Telegram. Để trống = form báo "chưa cấu hình".
+    //   bot_token: tạo bot bằng @BotFather;  chat_id: id nhóm/kênh (thêm bot vào nhóm; nhóm thường có dạng -100xxxxxxxxxx).
+    // Form dùng chung cấu hình Turnstile ở trên (nếu đã bật).
+    'telegram' => [
+        'bot_token' => '',
+        'chat_id'   => '',
+    ],
+
+    // Phiên bản mới nhất (app tự báo "có bản mới" + hiện ở trang chủ). Ra bản mới: chép file cài vào public_html/downloads/
+    // rồi đổi 'version'. 'min' = bản tối thiểu còn đồng bộ được (app thấp hơn sẽ yêu cầu cập nhật). 'notes' có thể là
+    // chuỗi hoặc ['vi' => '...', 'en' => '...']. Không khai báo = dùng mặc định trong src/Versions.php.
+    // 'versions' => [
+    //     'windows' => ['version' => '2.3.3', 'notes' => ['vi' => 'Sửa lỗi…', 'en' => 'Bug fixes…']],
+    //     'android' => ['version' => '1.4.3'],
+    // ],
+
+    // Email có quyền vào trang /quan-tri (mặc định chỉ donghoc3@gmail.com nếu không khai báo)
+    // 'admins' => ['donghoc3@gmail.com'],
+
+    'session_days'    => 90,       // thời hạn phiên đăng nhập của thiết bị
     'kdf_iterations'  => 600000,    // PBKDF2 ở phía người dùng (app/web)
     'max_vault_bytes' => 5242880,   // tối đa 5 MB mỗi khối dữ liệu
     'keep_versions'   => 30,        // luôn giữ ít nhất bấy nhiêu phiên bản gần nhất (để khôi phục)

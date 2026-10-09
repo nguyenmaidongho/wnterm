@@ -18,6 +18,7 @@ return [
     'foot.tax' => 'MST',
     'foot.recover' => 'Khôi phục tài khoản',
     'foot.terms' => 'Điều khoản & chống lạm dụng',
+    'nav.feedback' => 'Góp ý',
 
     // ---- trang chủ: meta ----
     'home.title' => 'WebNow Terminal (WNTerm) — SSH & SFTP cho Windows, Android và iPhone',
@@ -127,7 +128,7 @@ return [
     // ---- tải về ----
     'dl.eyebrow' => 'Tải về',
     'dl.h2' => 'Chọn nền tảng của bạn',
-    'dl.p' => 'Windows 2.3.2 · Android 1.4.2 · Web (iPhone/iPad/mọi trình duyệt)',
+    'dl.p' => 'Windows %s · Android %s · Web (iPhone/iPad/mọi trình duyệt)',
     'dl.ready' => 'Sẵn sàng',
     'dl.web' => 'Bản web',
     'dl.win.1' => 'Windows 10 / 11, 64-bit',
@@ -165,7 +166,18 @@ return [
     'faq.8.q' => 'Windows báo "không xác định nhà phát hành" khi cài?',
     'faq.8.a' => 'Bộ cài chưa được ký số thương mại nên SmartScreen có thể cảnh báo. Chọn "Thông tin thêm" → "Vẫn chạy" nếu bạn tải từ đúng trang này.',
     'faq.9.q' => 'Báo lỗi hoặc góp ý ở đâu?',
-    'faq.9.a' => 'Liên hệ qua <a href="https://webnow.vn" ' . $ac . '>webnow.vn</a>.',
+    'faq.9.a' => 'Điền form bên dưới, chúng tôi sẽ nhận được ngay và phản hồi sớm nhất có thể. Bạn cũng có thể liên hệ qua <a href="https://webnow.vn" ' . $ac . '>webnow.vn</a>.',
+    'fb.name' => 'Tên của bạn',
+    'fb.email' => 'Email',
+    'fb.phone' => 'Điện thoại (không bắt buộc)',
+    'fb.msg' => 'Nội dung góp ý hoặc mô tả lỗi',
+    'fb.submit' => 'Gửi góp ý',
+    'fb.sending' => 'Đang gửi…',
+    'fb.ok' => 'Đã gửi. Cảm ơn bạn đã góp ý!',
+    'fb.err_required' => 'Vui lòng nhập tên, email hợp lệ và nội dung góp ý.',
+    'fb.err_captcha' => 'Vui lòng xác minh bạn không phải robot.',
+    'fb.err_rate' => 'Bạn gửi quá nhiều lần, hãy thử lại sau.',
+    'fb.err_fail' => 'Chưa gửi được, hãy thử lại sau hoặc liên hệ qua webnow.vn.',
 
     // ---- mô phỏng giao diện ----
     'mock.desktop_aria' => 'Giao diện WNTerm trên máy tính',

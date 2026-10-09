@@ -29,7 +29,7 @@
         </ul>
       </div>
     </div>
-    <div class="copy">© <?= date('Y') ?> <?= e($b['short']) ?>. WebNow Terminal (WNTerm) — <?= e($b['slogan']) ?>.</div>
+    <div class="copy">© <?= date('Y') ?> WebNow Terminal (WNTerm) — <?= e($b['slogan']) ?>.</div>
   </div>
 </footer>
 <?php if (!empty($scripts)): ?>

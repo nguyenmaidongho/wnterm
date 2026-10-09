@@ -18,6 +18,7 @@ return [
     'foot.contact' => 'Contact',
     'foot.recover' => 'Recover account',
     'foot.terms' => 'Terms & abuse policy',
+    'nav.feedback' => 'Feedback',
 
     // ---- home: meta ----
     'home.title' => 'WebNow Terminal (WNTerm) — SSH & SFTP for Windows, Android and iPhone',
@@ -127,7 +128,7 @@ return [
     // ---- download ----
     'dl.eyebrow' => 'Download',
     'dl.h2' => 'Choose your platform',
-    'dl.p' => 'Windows 2.3.2 · Android 1.4.2 · Web (iPhone/iPad/any browser)',
+    'dl.p' => 'Windows %s · Android %s · Web (iPhone/iPad/any browser)',
     'dl.ready' => 'Available',
     'dl.web' => 'Web app',
     'dl.win.1' => 'Windows 10 / 11, 64-bit',
@@ -165,7 +166,18 @@ return [
     'faq.8.q' => 'Windows says "unknown publisher" when installing?',
     'faq.8.a' => 'The installer is not signed with a commercial certificate, so SmartScreen may warn you. Choose "More info" → "Run anyway" if you downloaded it from this page.',
     'faq.9.q' => 'Where can I report bugs or send feedback?',
-    'faq.9.a' => 'Get in touch via <a href="https://webnow.vn" ' . $ac . '>webnow.vn</a>.',
+    'faq.9.a' => 'Fill in the form below — it reaches us right away and we will reply as soon as we can. You can also get in touch via <a href="https://webnow.vn" ' . $ac . '>webnow.vn</a>.',
+    'fb.name' => 'Your name',
+    'fb.email' => 'Email',
+    'fb.phone' => 'Phone (optional)',
+    'fb.msg' => 'Your feedback or a description of the bug',
+    'fb.submit' => 'Send feedback',
+    'fb.sending' => 'Sending…',
+    'fb.ok' => 'Sent. Thank you for your feedback!',
+    'fb.err_required' => 'Please enter your name, a valid email and your feedback.',
+    'fb.err_captcha' => 'Please verify that you are not a robot.',
+    'fb.err_rate' => 'You have sent too many messages, please try again later.',
+    'fb.err_fail' => 'Could not send right now, please try again later or contact us via webnow.vn.',
 
     // ---- UI mockups ----
     'mock.desktop_aria' => 'WNTerm desktop interface',

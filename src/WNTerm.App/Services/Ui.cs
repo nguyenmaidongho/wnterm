@@ -203,6 +203,13 @@ public static class Ui
         }
     }
 
+    /// <summary>Mở URL: ưu tiên Launcher của Avalonia (chạy cả Android/iOS), lùi về shell của hệ điều hành.</summary>
+    public static void OpenWithShellOrLauncher(string url)
+    {
+        try { var l = Main?.Launcher; if (l != null) { _ = l.LaunchUriAsync(new Uri(url)); return; } } catch { }
+        OpenWithShell(url);
+    }
+
     /// <summary>Mở file/URL bằng ứng dụng mặc định của hệ điều hành.</summary>
     public static void OpenWithShell(string pathOrUrl)
     {
