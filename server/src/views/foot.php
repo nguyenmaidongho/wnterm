@@ -24,6 +24,8 @@
           <li><a href="<?= wn_lang() === 'vi' ? '/ssh-windows' : '/en/ssh-windows' ?>"><?= wn_lang() === 'vi' ? 'SSH cho Windows' : 'SSH for Windows' ?></a></li>
           <li><a href="<?= wn_lang() === 'vi' ? '/ssh-iphone' : '/en/ssh-iphone' ?>"><?= wn_lang() === 'vi' ? 'SSH trên iPhone' : 'SSH on iPhone' ?></a></li>
           <li><a href="<?= wn_lang() === 'vi' ? '/chuyen-tu-mobaxterm' : '/en/chuyen-tu-mobaxterm' ?>"><?= wn_lang() === 'vi' ? 'Chuyển từ MobaXterm' : 'Move from MobaXterm' ?></a></li>
+          <li><a href="<?= wn_lang() === 'vi' ? '/dong-bo-pc-dien-thoai' : '/en/dong-bo-pc-dien-thoai' ?>"><?= wn_lang() === 'vi' ? 'Đồng bộ PC ↔ điện thoại' : 'Sync PC ↔ phone' ?></a></li>
+          <li><a href="<?= wn_lang() === 'vi' ? '/ssh-tren-trinh-duyet' : '/en/ssh-tren-trinh-duyet' ?>"><?= wn_lang() === 'vi' ? 'SSH trên trình duyệt' : 'SSH in the browser' ?></a></li>
           <li><a href="/dang-ky"><?= t('nav.register') ?></a></li>
           <li><a href="/dang-nhap"><?= t('nav.login') ?></a></li>
           <li><a href="/khoi-phuc"><?= t('foot.recover') ?></a></li>

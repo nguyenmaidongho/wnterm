@@ -11,6 +11,8 @@ $pages = [
     ['/ssh-windows', __DIR__ . '/ssh-windows.php', '0.8'],
     ['/ssh-iphone', __DIR__ . '/ssh-iphone.php', '0.8'],
     ['/chuyen-tu-mobaxterm', __DIR__ . '/chuyen-tu-mobaxterm.php', '0.7'],
+    ['/dong-bo-pc-dien-thoai', __DIR__ . '/dong-bo-pc-dien-thoai.php', '0.8'],
+    ['/ssh-tren-trinh-duyet', __DIR__ . '/ssh-tren-trinh-duyet.php', '0.8'],
     ['/dieu-khoan', __DIR__ . '/dieu-khoan.php', '0.3'],
 ];
 $lastmodOf = static function (string $f): string {

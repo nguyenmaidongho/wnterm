@@ -7,6 +7,7 @@ $related = [
     [$vi ? '/ssh-iphone' : '/en/ssh-iphone', $vi ? 'SSH trên iPhone không cần App Store' : 'SSH on iPhone without the App Store'],
     [$vi ? '/chuyen-tu-mobaxterm' : '/en/chuyen-tu-mobaxterm', $vi ? 'Chuyển từ MobaXterm sang WNTerm' : 'Move from MobaXterm to WNTerm'],
     [$vi ? '/' : '/en/', $vi ? 'Trang chủ WNTerm' : 'WNTerm home'],
+    [$vi ? '/dong-bo-pc-dien-thoai' : '/en/dong-bo-pc-dien-thoai', $vi ? 'Đồng bộ danh sách máy chủ PC ↔ điện thoại' : 'Sync your server list PC ↔ phone'],
 ];
 
 if ($vi) {

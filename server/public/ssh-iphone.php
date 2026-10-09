@@ -7,6 +7,7 @@ $related = [
     [$vi ? '/ssh-windows' : '/en/ssh-windows', $vi ? 'Phần mềm SSH & SFTP cho Windows' : 'SSH & SFTP client for Windows'],
     [$vi ? '/chuyen-tu-mobaxterm' : '/en/chuyen-tu-mobaxterm', $vi ? 'Chuyển từ MobaXterm sang WNTerm' : 'Move from MobaXterm to WNTerm'],
     [$vi ? '/dieu-khoan' : '/en/dieu-khoan', $vi ? 'Điều khoản sử dụng' : 'Terms of use'],
+    [$vi ? '/dong-bo-pc-dien-thoai' : '/en/dong-bo-pc-dien-thoai', $vi ? 'Đồng bộ danh sách máy chủ PC ↔ điện thoại' : 'Sync your server list PC ↔ phone'],
 ];
 
 if ($vi) {
