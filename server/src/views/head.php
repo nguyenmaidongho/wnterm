@@ -41,7 +41,7 @@ $ver = is_file($cssFile) ? (string)filemtime($cssFile) : '2';
 <body>
 <nav>
   <div class="wrap">
-    <a class="brand" href="/"><span class="logo"><picture><source media="(max-width:620px)" srcset="/assets/logo-n.png"><img src="/assets/webnow-logo.webp" alt="WebNow — <?= e($b['slogan']) ?>"></picture></span><span class="pname">WNTerm<small>WebNow Terminal</small></span></a>
+    <a class="brand" href="/"><span class="logo"><img src="/assets/logo-n.png" alt="WebNow — <?= e($b['slogan']) ?>" width="54" height="54"></span><span class="pname">WNTerm<small>WebNow Terminal</small></span></a>
     <div class="links">
       <a href="/#tinh-nang"><?= t('nav.features') ?></a>
       <a href="/#sftp">SFTP</a>

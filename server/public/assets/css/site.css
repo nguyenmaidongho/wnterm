@@ -277,3 +277,9 @@ nav .burger.on span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
   .brand .logo img{height:34px;width:34px;object-fit:contain}
 }
 @media(max-width:900px){nav .actions{margin-left:auto}}
+/* Logo vuông (chữ N, nền trong suốt — hợp cả nền tối lẫn sáng) ở thanh trên cùng, mọi kích thước màn hình */
+.brand .logo{background:none;box-shadow:none;padding:0}
+.brand .logo img{height:54px;width:54px;object-fit:contain}
+nav .wrap{height:74px}
+.mmenu:not([hidden]){max-height:calc(100vh - 74px)}
+@media(max-width:620px){.brand .logo img{height:44px;width:44px}nav .wrap{height:64px}.mmenu:not([hidden]){max-height:calc(100vh - 64px)}}

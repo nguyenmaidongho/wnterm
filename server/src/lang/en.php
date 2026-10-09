@@ -23,7 +23,7 @@ return [
     'home.desc' => 'WebNow Terminal (WNTerm): SSH and SFTP client for managing many servers on Windows, Android and iPhone (web app). Smooth terminal, SFTP, CPU/RAM monitoring, end-to-end encrypted backup and sync, a trash bin to restore VMs, MobaXterm import.',
 
     // ---- hero ----
-    'hero.pill' => '<b>●</b> Version 2.2 — Windows · Android · iPhone',
+    'hero.pill' => '<b>●</b> Version 2.3 — Windows · Android · iPhone',
     'hero.h1' => 'Manage every server <em>from a single window</em>',
     'hero.lead' => 'WebNow Terminal (WNTerm) is a lightweight SSH and SFTP app: save dozens of servers, open a terminal with one click, and drag and drop files over SFTP — on your computer, on Android and even on iPhone. One account keeps your VM list identical on every device.',
     'hero.dl_win' => 'Download for Windows',

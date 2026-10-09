@@ -23,7 +23,7 @@ return [
     'home.desc' => 'WebNow Terminal (WNTerm): SSH và SFTP quản lý nhiều máy chủ trên Windows, Android và iPhone (bản web). Terminal mượt, SFTP, theo dõi CPU/RAM, backup và đồng bộ mã hóa đầu-cuối, thùng rác khôi phục VM, nhập từ MobaXterm.',
 
     // ---- hero ----
-    'hero.pill' => '<b>●</b> Phiên bản 2.2 — Windows · Android · iPhone',
+    'hero.pill' => '<b>●</b> Phiên bản 2.3 — Windows · Android · iPhone',
     'hero.h1' => 'Quản lý mọi máy chủ <em>trong một cửa sổ</em>',
     'hero.lead' => 'WebNow Terminal (WNTerm) là ứng dụng SSH và SFTP gọn nhẹ: lưu hàng chục máy chủ, bấm một lần là vào terminal, kéo thả file qua SFTP — trên máy tính, Android và cả iPhone. Một tài khoản, danh sách VM luôn giống nhau ở mọi thiết bị.',
     'hero.dl_win' => 'Tải cho Windows',
