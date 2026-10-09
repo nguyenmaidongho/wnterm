@@ -340,3 +340,12 @@ h1 em{background:linear-gradient(90deg,#ff8a86,#e5484d 55%,#ff9b6a);-webkit-back
 .authwrap:before{background:radial-gradient(50% 45% at 80% 10%,rgba(229,72,77,.2),transparent 70%),radial-gradient(45% 50% at 10% 90%,rgba(165,42,46,.22),transparent 70%)}
 /* Phần mock giữ màu xanh của app thật */
 section p a,.meta a,.lead a,details a,.install a{color:#ff8a86;text-decoration:underline;text-underline-offset:2px}
+.guide .crumbs{font-size:13px;color:var(--muted);margin:0 0 14px}
+.guide .crumbs a{color:var(--muted);text-decoration:none}
+.guide .crumbs a:hover{color:var(--fg)}
+.guide details{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;background:var(--bg2)}
+.guide summary{cursor:pointer;font-weight:600}
+.guide ol{padding-left:22px}
+.guide code{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.92em}
+.guide .btn,.guide .btn:hover{text-decoration:none;color:var(--fg)}
+.guide .btn.primary{color:#fff}

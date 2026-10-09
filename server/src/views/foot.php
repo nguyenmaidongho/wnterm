@@ -21,6 +21,9 @@
         <div class="fh">WNTerm</div>
         <ul>
           <li><a href="/#tai-ve"><?= t('nav.download') ?></a></li>
+          <li><a href="<?= wn_lang() === 'vi' ? '/ssh-windows' : '/en/ssh-windows' ?>"><?= wn_lang() === 'vi' ? 'SSH cho Windows' : 'SSH for Windows' ?></a></li>
+          <li><a href="<?= wn_lang() === 'vi' ? '/ssh-iphone' : '/en/ssh-iphone' ?>"><?= wn_lang() === 'vi' ? 'SSH trên iPhone' : 'SSH on iPhone' ?></a></li>
+          <li><a href="<?= wn_lang() === 'vi' ? '/chuyen-tu-mobaxterm' : '/en/chuyen-tu-mobaxterm' ?>"><?= wn_lang() === 'vi' ? 'Chuyển từ MobaXterm' : 'Move from MobaXterm' ?></a></li>
           <li><a href="/dang-ky"><?= t('nav.register') ?></a></li>
           <li><a href="/dang-nhap"><?= t('nav.login') ?></a></li>
           <li><a href="/khoi-phuc"><?= t('foot.recover') ?></a></li>

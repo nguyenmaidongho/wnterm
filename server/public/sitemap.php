@@ -8,6 +8,9 @@ header('Cache-Control: public, max-age=3600');
 // Trang được lập chỉ mục: [đường dẫn vi, file nguồn dùng lấy lastmod, ưu tiên]
 $pages = [
     ['/', __DIR__ . '/../src/views/home.php', '1.0'],
+    ['/ssh-windows', __DIR__ . '/ssh-windows.php', '0.8'],
+    ['/ssh-iphone', __DIR__ . '/ssh-iphone.php', '0.8'],
+    ['/chuyen-tu-mobaxterm', __DIR__ . '/chuyen-tu-mobaxterm.php', '0.7'],
     ['/dieu-khoan', __DIR__ . '/dieu-khoan.php', '0.3'],
 ];
 $lastmodOf = static function (string $f): string {
