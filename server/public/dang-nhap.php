@@ -6,7 +6,8 @@ $title = t('login.title');
 $desc = t('login.desc');
 $active = 'account';
 $scripts = ['wn-crypto.js', 'login.js'];
-view('head', compact('title', 'desc', 'active'));
+$noindex = true;
+view('head', compact('title', 'desc', 'active', 'noindex'));
 ?>
 <main class="authwrap">
   <div class="auth">

@@ -203,6 +203,38 @@
     </details>
   </div>
 </section>
+<?php
+$abs = static function (string $s): string { return trim(preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags($s), ENT_QUOTES | ENT_HTML5, 'UTF-8')) ?? ''); };
+$faq = [];
+for ($i = 1; $i <= 9; $i++) {
+    $faq[] = ['@type' => 'Question', 'name' => $abs(t("faq.$i.q")),
+              'acceptedAnswer' => ['@type' => 'Answer', 'text' => $abs(t("faq.$i.a"))]];
+}
+$b = brand();
+$ld = [
+    '@context' => 'https://schema.org',
+    '@graph' => [
+        ['@type' => 'Organization', '@id' => url('#org'), 'name' => $b['company'], 'url' => $b['site'],
+         'logo' => url('assets/logo-n.png'), 'email' => $b['email'], 'telephone' => $b['phone'],
+         'sameAs' => [$b['facebook'], $b['tiktok']]],
+        ['@type' => 'WebSite', '@id' => url('#web'), 'url' => url('/'), 'name' => 'WebNow Terminal (WNTerm)',
+         'inLanguage' => wn_lang(), 'publisher' => ['@id' => url('#org')]],
+        ['@type' => 'SoftwareApplication', 'name' => 'WebNow Terminal (WNTerm)', 'alternateName' => 'WNTerm',
+         'applicationCategory' => 'DeveloperApplication', 'operatingSystem' => 'Windows, Android, iOS',
+         'softwareVersion' => Versions::version('windows'), 'url' => url('/'),
+         'image' => url('assets/og-image.png'), 'description' => t('home.desc'),
+         'downloadUrl' => url('downloads/WNTerm-Setup.zip'),
+         'offers' => ['@type' => 'Offer', 'price' => '0', 'priceCurrency' => 'VND'],
+         'publisher' => ['@id' => url('#org')]],
+        ['@type' => 'FAQPage', 'mainEntity' => $faq],
+    ],
+];
+?>
+<script type="application/ld+json"><?= json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) ?></script>
+<?php if (!empty($feedbackOn) && !empty($turnstileKey)): ?>
+<script>(function(){var d=document.getElementById('feedback'),l=0;if(!d)return;function load(){if(l)return;l=1;var s=document.createElement('script');s.src='https://challenges.cloudflare.com/turnstile/v0/api.js';s.async=true;s.defer=true;document.head.appendChild(s);}
+d.addEventListener('toggle',function(){if(d.open)load();});if(d.open)load();})();</script>
+<?php endif; ?>
 <script>(function(){function go(){var d=document.getElementById('feedback');if(!d)return;d.open=true;setTimeout(function(){d.scrollIntoView({behavior:'smooth',block:'center'});},60);}
 if(location.hash==='#feedback')go();
 addEventListener('hashchange',function(){if(location.hash==='#feedback')go();});

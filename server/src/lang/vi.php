@@ -1,6 +1,6 @@
 <?php
 // Từ điển tiếng Việt (nguồn gốc). Giá trị có thể chứa HTML tin cậy.
-$a = 'style="color:#5cbcff;text-decoration:underline"';
+$a = 'style="color:#ff8a86;text-decoration:underline"';
 $ac = 'style="color:var(--accent)"';
 return [
     // ---- chung ----
@@ -22,7 +22,7 @@ return [
 
     // ---- trang chủ: meta ----
     'home.title' => 'WebNow Terminal (WNTerm) — SSH & SFTP cho Windows, Android và iPhone',
-    'home.desc' => 'WebNow Terminal (WNTerm): SSH và SFTP quản lý nhiều máy chủ trên Windows, Android và iPhone (bản web). Terminal mượt, SFTP, theo dõi CPU/RAM, backup và đồng bộ mã hóa đầu-cuối, thùng rác khôi phục VM, nhập từ MobaXterm.',
+    'home.desc' => 'WNTerm: phần mềm SSH & SFTP quản lý nhiều máy chủ trên Windows, Android, iPhone. Đồng bộ và backup mã hóa đầu-cuối, theo dõi CPU/RAM, nhập từ MobaXterm. Tải miễn phí.',
 
     // ---- hero ----
     'hero.pill' => '<b>●</b> Phiên bản 2.3 — Windows · Android · iPhone',

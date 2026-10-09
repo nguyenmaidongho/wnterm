@@ -16,6 +16,11 @@ $ver = is_file($cssFile) ? (string)filemtime($cssFile) : '2';
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= e($title) ?></title>
 <meta name="description" content="<?= e($desc) ?>">
+<?php $selfUrl = I18n::urlFor(wn_lang()); ?>
+<?php if (empty($noindex)): ?><link rel="canonical" href="<?= e($selfUrl) ?>">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<?php endif; ?>
+<meta property="og:url" content="<?= e($selfUrl) ?>">
 <meta property="og:title" content="<?= e($title) ?>">
 <meta property="og:description" content="<?= e($desc) ?>">
 <meta property="og:type" content="website">
@@ -23,16 +28,20 @@ $ver = is_file($cssFile) ? (string)filemtime($cssFile) : '2';
 <meta property="og:image" content="<?= e(url('assets/og-image.png')) ?>">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="WebNow Terminal (WNTerm) — SSH &amp; SFTP">
 <meta property="og:site_name" content="WNTerm — WebNow Terminal">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<?= e($title) ?>">
+<meta name="twitter:description" content="<?= e($desc) ?>">
 <meta name="twitter:image" content="<?= e(url('assets/og-image.png')) ?>">
-<meta name="theme-color" content="#141517">
+<meta name="theme-color" content="#0d0d0f">
 <meta name="color-scheme" content="dark light">
-<?php if (!empty($noindex)): ?><meta name="robots" content="noindex"><?php endif; ?>
-<?php $lp = I18n::path(); ?>
-<link rel="alternate" hreflang="vi" href="<?= e(url($lp) . '?lang=vi') ?>">
-<link rel="alternate" hreflang="en" href="<?= e(url($lp) . '?lang=en') ?>">
-<link rel="alternate" hreflang="x-default" href="<?= e(url($lp)) ?>">
+<?php if (!empty($noindex)): ?><meta name="robots" content="noindex,nofollow"><?php else: ?>
+<link rel="alternate" hreflang="vi" href="<?= e(I18n::urlFor('vi')) ?>">
+<link rel="alternate" hreflang="en" href="<?= e(I18n::urlFor('en')) ?>">
+<link rel="alternate" hreflang="x-default" href="<?= e(I18n::urlFor('vi')) ?>">
+<?php endif; ?>
+<?php $viHref = I18n::urlFor('vi'); $enHref = I18n::urlFor('en'); ?>
 <link rel="icon" href="/assets/favicon.webp" type="image/webp">
 <link rel="icon" href="/assets/logo-n.png" type="image/png" sizes="256x256">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.webp">
@@ -53,7 +62,7 @@ $ver = is_file($cssFile) ? (string)filemtime($cssFile) : '2';
     </div>
     <div class="actions">
       <div class="lang" role="group" aria-label="<?= e(t('nav.language')) ?>">
-        <a href="<?= e($lp) ?>?lang=vi" hreflang="vi" lang="vi"<?= wn_lang() === 'vi' ? ' class="on" aria-current="true"' : '' ?>>VI</a><a href="<?= e($lp) ?>?lang=en" hreflang="en" lang="en"<?= wn_lang() === 'en' ? ' class="on" aria-current="true"' : '' ?>>EN</a>
+        <a href="<?= e($viHref) ?>" hreflang="vi" lang="vi"<?= wn_lang() === 'vi' ? ' class="on" aria-current="true"' : '' ?>>VI</a><a href="<?= e($enHref) ?>" hreflang="en" lang="en"<?= wn_lang() === 'en' ? ' class="on" aria-current="true"' : '' ?>>EN</a>
       </div>
       <a class="btn ghost" href="/dang-nhap"><?= ($active ?? '') === 'account' ? t('nav.account') : t('nav.login') ?></a>
       <a class="btn brand" href="/#tai-ve"><?= t('nav.download') ?></a>

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /relay/
+Disallow: /downloads/
+
+Sitemap: https://wnterm.webnow.vn/sitemap.xml

@@ -12,13 +12,44 @@ RewriteRule ^api/v1(/.*)?$ api/index.php [L,QSA]
 RewriteCond %{HTTP:Authorization} .
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+# sitemap + favicon mặc định
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
+RewriteRule ^favicon\.ico$ assets/logo-n.png [L]
+
+# Bản tiếng Anh có URL riêng: /en/ và /en/<trang>
+RewriteRule ^en/?$ index.php?lang=en [L,QSA]
+RewriteCond %{DOCUMENT_ROOT}/$1.php -f
+RewriteRule ^en/([a-z0-9-]+)$ $1.php?lang=en [L,QSA]
+
 # Đường dẫn đẹp (không có .php)
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^([a-z0-9-]+)$ $1.php [L]
 </IfModule>
 
+# Nén văn bản (Cloudflare thường đã nén; đây là dự phòng khi truy cập thẳng origin)
+<IfModule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/html text/css application/javascript text/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+# Cache tài nguyên tĩnh (CSS/JS có ?v= nên đổi phiên bản là lấy bản mới)
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresByType font/woff2 "access plus 1 year"
+ExpiresByType image/webp "access plus 30 days"
+ExpiresByType image/png "access plus 30 days"
+ExpiresByType text/css "access plus 30 days"
+ExpiresByType application/javascript "access plus 7 days"
+ExpiresByType text/javascript "access plus 7 days"
+</IfModule>
+
 <IfModule mod_headers.c>
+<FilesMatch "\.(woff2|webp|png|css|js)$">
+Header set Cache-Control "public, max-age=2592000"
+</FilesMatch>
+<FilesMatch "\.woff2$">
+Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
 Header always set X-Content-Type-Options "nosniff"
 Header always set X-Frame-Options "DENY"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
