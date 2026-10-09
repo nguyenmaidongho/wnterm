@@ -1,50 +1,54 @@
-﻿# WN Term
+﻿# WN Term (WebNow Terminal)
 
-Ứng dụng Windows quản lý kết nối SSH và SFTP tới máy chủ ảo (VM), giao diện gọn nhẹ 2 cột phong cách MobaXterm.
+Ứng dụng **SSH & SFTP** đa nền tảng: lưu hàng chục máy chủ (VM), bấm một lần là vào terminal, kéo thả file qua SFTP — trên **Windows**, **Android** và **iPhone** (web app/PWA). Một tài khoản, danh sách VM luôn giống nhau ở mọi thiết bị.
+
+*English: a cross-platform SSH & SFTP client (Windows, Android, iPhone PWA) with a saved VM list, quick connect, snippets and end-to-end encrypted cloud sync.*
+
+Trang chủ & tải về: **https://wnterm.webnow.vn** · Bản web cho iPhone: https://wnterm.webnow.vn/app/
 
 ## 1. Tính năng chính
 
-- **Quản lý VM tiện lợi**: Lưu thông tin đăng nhập (mật khẩu mã hóa an toàn bằng Windows DPAPI hoặc SSH Key). Nhấp đúp là vào thẳng terminal.
-- **Terminal xterm.js mượt mà**:
-  - Tự động copy vào clipboard ngay khi bôi đen (quét khối).
-  - Chuột phải để dán nhanh (hoặc hiện menu chuột phải).
-  - Hỗ trợ đầy đủ tiếng Việt có dấu (Unikey, EVKey với Telex/VNI).
-  - Phím tắt tiện lợi: `Ctrl+Shift+C`, `Ctrl+Shift+V`, `Ctrl+Tab`, `Alt+1..9`.
-- **SFTP tích hợp**:
-  - Cột trái tự động chuyển sang SFTP khi đăng nhập SSH thành công.
-  - Tự động đồng bộ theo tab VM đang chọn.
-  - Duyệt file/thư mục, tạo thư mục mới, đổi tên, xóa.
-  - Kéo thả file từ Windows Explorer vào panel để upload trực tiếp.
-  - Tải file/thư mục về máy với thanh tiến trình % và tốc độ truyền.
-- **Export & Import danh sách VM an toàn (`.wnterm`)**:
-  - Xuất ra file `.wnterm` được bảo vệ bằng chuẩn mã hóa cao cấp AES-256-GCM (PBKDF2 600.000 vòng).
-  - Dễ dàng chuyển toàn bộ danh sách VM sang máy tính khác mà vẫn giữ nguyên mật khẩu.
-  - Tự động phát hiện trùng lặp với 3 tùy chọn: Bỏ qua, Ghi đè, Thêm bản sao.
-- **Sao lưu tự động**:
-  - Tự động sao lưu `sessions.json` hằng ngày và trước mỗi lần Import.
-- **Bản chạy Portable**:
-  - File nhẹ (~7MB), chạy ngay không cần cài đặt.
+- **Quản lý VM**: thêm/sửa/xóa, ghim, nhóm, tag, tìm nhanh (Ctrl+K), mở nhiều VM cùng lúc; mật khẩu lưu mã hóa (DPAPI trên Windows) hoặc dùng SSH Key (kèm passphrase).
+- **Kết nối nhanh (Quick connect)**: thử một máy chủ ngay mà không cần lưu VM.
+- **Terminal xterm.js**: gõ tiếng Việt (Unikey/EVKey) không lỗi, bôi đen tự copy, chuột phải dán, hỏi xác nhận khi dán nhiều dòng, phím tắt, thanh phím trên điện thoại.
+- **Snippets**: lưu lệnh dùng lại (dùng chung hoặc riêng từng VM), bấm là gửi vào terminal; "Lưu lệnh vừa gõ".
+- **SFTP**: duyệt, tải lên/xuống (kéo thả, thanh tiến trình), đổi tên, xóa, chmod, sửa file ngay trên máy chủ.
+- **Giám sát máy chủ**: CPU / RAM / mạng / ổ đĩa, chấm online + độ trễ từng VM.
+- **Tài khoản & đồng bộ cloud (mã hóa đầu-cuối)**: backup tự động, lịch sử phiên bản, thùng rác, khôi phục; máy chủ chỉ giữ dữ liệu đã mã hóa.
+- **Export / Import** danh sách VM (`.wnterm`, AES-256-GCM, PBKDF2 600.000 vòng) và nhập từ MobaXterm.
+- **Đa ngôn ngữ**: tiếng Việt và English (app Windows/Android, web iPhone, trang chủ).
 
----
+## 2. Thành phần & công nghệ
 
-## 2. Hướng dẫn cài đặt & Chạy ứng dụng
+| Thành phần | Thư mục | Ngôn ngữ / công nghệ |
+|---|---|---|
+| Lõi dùng chung (kết nối SSH/SFTP, kho VM, đồng bộ, mã hóa, snippets) | `src/WNTerm.Core` | **C#** (.NET 10), SSH.NET |
+| Giao diện đa nền tảng | `src/WNTerm.App` | **C#**, Avalonia UI 12 |
+| Bản Windows / Android | `src/WNTerm.Desktop`, `src/WNTerm.Android` | **C#** (.NET 10, `net10.0-android`) |
+| Bản WPF cũ (giữ nguyên, dùng lại Core) | `src/WNTerm` | **C#**, WPF, WebView2 |
+| Web app iPhone (PWA) | `web/pwa` | **JavaScript**, HTML, CSS, xterm.js |
+| Bộ SSH/SFTP chạy trong trình duyệt | `web/sshwasm` | **Go** → WebAssembly (`x/crypto/ssh`, `pkg/sftp`) |
+| Trạm chuyển tiếp WebSocket→TCP cho bản web | `web/relay` | **Go** |
+| Trang chủ + tài khoản + API đồng bộ | `server` | **PHP** 7.4+, MySQL (tùy chọn S3) |
+| Kiểm thử | `tests` | **C#** (xUnit), Node.js |
+| Bộ cài Windows | `WNTerm.iss` | Inno Setup |
 
-### Chạy trực tiếp (Bản Portable)
-1. Tải hoặc giải nén file `WNTerm-portable.zip`.
-2. Chạy file `WNTerm.exe`.
+Chi tiết: [`PORTING.md`](PORTING.md) (quy ước đa nền tảng), [`web/README.md`](web/README.md) (PWA + trạm chuyển tiếp), [`server/DEPLOY.md`](server/DEPLOY.md) (máy chủ tài khoản).
 
-*(Lưu ý: Đây là bản framework-dependent (nhẹ) — máy đích cần đã cài sẵn **.NET 10 Desktop Runtime** (tải tại https://dotnet.microsoft.com/download/dotnet/10.0, mục "Desktop Runtime"). Nếu chưa có, Windows sẽ tự hiện thông báo và link tải khi chạy `WNTerm.exe`. Nếu máy tính chưa có Microsoft Edge WebView2 Runtime, ứng dụng sẽ hiện thông báo hướng dẫn cài đặt riêng).*
+## 3. Cài đặt & chạy
 
-### Chạy từ mã nguồn (Dành cho lập trình viên)
-Yêu cầu: .NET 10 SDK
+- **Người dùng**: tải bản Windows / APK Android tại https://wnterm.webnow.vn, hoặc mở https://wnterm.webnow.vn/app/ trên iPhone rồi "Thêm vào MH chính".
+- **Từ mã nguồn** (cần .NET 10 SDK):
 ```powershell
 dotnet build WNTerm.slnx
-dotnet run --project src/WNTerm
+dotnet run --project src/WNTerm.Desktop      # bản Avalonia (Windows)
 ```
+  Bản Android cần workload `android` (không nằm trong `WNTerm.slnx`); bản web cần Go (xem `web/README.md`).
+- Chạy thử an toàn (không đụng dữ liệu thật): đặt biến môi trường `WNTERM_DATA_DIR` và `WNTERM_LOCAL_DIR` sang một thư mục tạm.
 
 ---
 
-## 3. Hướng dẫn sử dụng
+## 4. Hướng dẫn sử dụng
 
 ### Quản lý VM
 - **Thêm VM**: Bấm nút **"+ Thêm VM"** trên thanh công cụ, nhập IP/Hostname, Port, User, Mật khẩu hoặc file SSH Key. Bấm **Lưu** hoặc **Lưu & Kết nối**.
@@ -67,7 +71,7 @@ dotnet run --project src/WNTerm
 
 ---
 
-## 4. Vị trí lưu trữ dữ liệu & Sao lưu
+## 5. Vị trí lưu trữ dữ liệu & Sao lưu
 
 - **Danh sách cấu hình VM**: `%APPDATA%\WNTerm\sessions.json`
 - **Bản sao lưu tự động**: `%APPDATA%\WNTerm\backups\`
@@ -77,7 +81,7 @@ dotnet run --project src/WNTerm
 
 ---
 
-## 5. Xử lý sự cố thường gặp
+## 6. Xử lý sự cố thường gặp
 
 - **Tên file tiếng Việt hiển thị dấu chấm hỏi (`?`) trên Linux**:
   Nếu VM cấu hình locale mặc định là `LANG=C` hoặc `POSIX`, các lệnh dòng lệnh như `ls` có thể không hiển thị đúng ký tự Unicode. Hãy cấu hình lại locale trên server Linux:
