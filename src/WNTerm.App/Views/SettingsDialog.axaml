@@ -76,6 +76,24 @@
           <TextBlock Text="{DynamicResource Str_KeepAliveLabel}" VerticalAlignment="Center" TextWrapping="Wrap" />
           <TextBox x:Name="KeepAliveBox" Grid.Column="1" Text="30" HorizontalContentAlignment="Center" />
         </Grid>
+
+        <!-- Export / Import danh sách VM -->
+        <Separator Margin="0,6,0,10" />
+        <TextBlock x:Name="DataTitle" FontWeight="Bold" FontSize="13" Margin="0,0,0,10" />
+        <Grid ColumnDefinitions="*,8,*" Margin="0,0,0,6">
+          <Button x:Name="ExportVmsBtn" Grid.Column="0" Padding="8,7" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+            <StackPanel Orientation="Horizontal" Spacing="7">
+              <Path Classes="ico" Data="{StaticResource IconExport}" />
+              <TextBlock Text="Export VM List" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button x:Name="ImportVmsBtn" Grid.Column="2" Padding="8,7" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+            <StackPanel Orientation="Horizontal" Spacing="7">
+              <Path Classes="ico" Data="{StaticResource IconImport}" />
+              <TextBlock Text="Import VM List" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+        </Grid>
       </StackPanel>
     </ScrollViewer>
 

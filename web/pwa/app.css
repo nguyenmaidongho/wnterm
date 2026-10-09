@@ -280,3 +280,5 @@ input[type=checkbox], input[type=radio] { width: 20px; height: 20px; padding: 0;
 .snip-empty { padding: 14px 4px; text-align: center; }
 .snip-note { margin: 6px 0 0; }
 @media (max-width: 420px) { .tb { width: 34px; } .toolbar { gap: 4px; padding-left: 6px; padding-right: 6px; } }
+.btn-row { display: flex; gap: 8px; margin: 2px 0 6px; }
+.btn-row .btn { flex: 1 1 0; min-width: 0; white-space: nowrap; padding: 9px 6px; font-size: 13.5px; gap: 6px; }

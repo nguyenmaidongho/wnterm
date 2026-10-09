@@ -124,7 +124,11 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public async Task OpenSettings()
     {
-        var dlg = new SettingsDialog(_settings);
+        var dlg = new SettingsDialog(_settings)
+        {
+            ExportVmsAction = () => Export(),
+            ImportVmsAction = () => Import()
+        };
         if (await Dialogs.ShowAsync(dlg) == true)
         {
             _settingsStore.Save(_settings);

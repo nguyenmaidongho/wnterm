@@ -728,6 +728,10 @@
     var r = await modal({
       title: L('Cài đặt'),
       html: L('<p class="muted small">Tài khoản: <b>{0}</b> · bản web {1}</p>', esc(auth.email), esc(VERSION)),
+      row: [
+        { text: 'Export VM List', value: 'export', icon: 'export' },
+        { text: 'Import VM List', value: 'import', icon: 'import' }
+      ],
       menu: [
         { text: L('Xóa các khóa máy chủ đã tin cậy'), value: 'hosts', icon: 'key' },
         { text: L('Đăng xuất'), value: 'logout', icon: 'logout', cls: 'danger' }
@@ -745,6 +749,8 @@
     });
     if (r.value === 'hosts') { store.del('hosts'); return toast(L('Đã xóa danh sách khóa máy chủ.')); }
     if (r.value === 'logout') return logout();
+    if (r.value === 'export') return exportDialog(null);
+    if (r.value === 'import') { $('importFile').click(); return; }
     if (!r.value) return;
     var f = r.fields;
     settings.theme = f.theme; settings.fontSize = parseInt(f.fontSize, 10); settings.scrollback = parseInt(f.scrollback, 10);

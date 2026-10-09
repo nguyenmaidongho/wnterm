@@ -117,13 +117,13 @@
                   <TextBlock Text="{DynamicResource Str_QuickConnect}" VerticalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button Classes="toolbar" Command="{Binding ExportCommand}">
+              <Button x:Name="ExportBtn" Classes="toolbar" Command="{Binding ExportCommand}">
                 <StackPanel Orientation="Horizontal" Spacing="7">
                   <Path Classes="ico" Data="{StaticResource IconExport}" />
                   <TextBlock Text="{DynamicResource Str_Export}" VerticalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button Classes="toolbar" Command="{Binding ImportCommand}">
+              <Button x:Name="ImportBtn" Classes="toolbar" Command="{Binding ImportCommand}">
                 <StackPanel Orientation="Horizontal" Spacing="7">
                   <Path Classes="ico" Data="{StaticResource IconImport}" />
                   <TextBlock Text="{DynamicResource Str_Import}" VerticalAlignment="Center" />

@@ -20,21 +20,28 @@ $ver = is_file($cssFile) ? (string)filemtime($cssFile) : '2';
 <meta property="og:description" content="<?= e($desc) ?>">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="<?= wn_lang() === 'vi' ? 'vi_VN' : 'en_US' ?>">
-<meta property="og:image" content="<?= e(url('assets/favicon.webp')) ?>">
+<meta property="og:image" content="<?= e(url('assets/og-image.png')) ?>">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="WNTerm — WebNow Terminal">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="<?= e(url('assets/og-image.png')) ?>">
 <meta name="theme-color" content="#141517">
+<meta name="color-scheme" content="dark light">
 <?php if (!empty($noindex)): ?><meta name="robots" content="noindex"><?php endif; ?>
 <?php $lp = I18n::path(); ?>
 <link rel="alternate" hreflang="vi" href="<?= e(url($lp) . '?lang=vi') ?>">
 <link rel="alternate" hreflang="en" href="<?= e(url($lp) . '?lang=en') ?>">
 <link rel="alternate" hreflang="x-default" href="<?= e(url($lp)) ?>">
 <link rel="icon" href="/assets/favicon.webp" type="image/webp">
+<link rel="icon" href="/assets/logo-n.png" type="image/png" sizes="256x256">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.webp">
 <link rel="stylesheet" href="/assets/css/site.css?v=<?= e($ver) ?>">
 </head>
 <body>
 <nav>
   <div class="wrap">
-    <a class="brand" href="/"><span class="logo"><img src="/assets/webnow-logo.webp" alt="WebNow — <?= e($b['slogan']) ?>"></span><span class="pname">WNTerm<small>WebNow Terminal</small></span></a>
+    <a class="brand" href="/"><span class="logo"><picture><source media="(max-width:620px)" srcset="/assets/logo-n.png"><img src="/assets/webnow-logo.webp" alt="WebNow — <?= e($b['slogan']) ?>"></picture></span><span class="pname">WNTerm<small>WebNow Terminal</small></span></a>
     <div class="links">
       <a href="/#tinh-nang"><?= t('nav.features') ?></a>
       <a href="/#sftp">SFTP</a>
@@ -49,6 +56,18 @@ $ver = is_file($cssFile) ? (string)filemtime($cssFile) : '2';
       </div>
       <a class="btn ghost" href="/dang-nhap"><?= ($active ?? '') === 'account' ? t('nav.account') : t('nav.login') ?></a>
       <a class="btn brand" href="/#tai-ve"><?= t('nav.download') ?></a>
+      <button class="burger" id="burger" type="button" aria-label="<?= e(t('nav.menu')) ?>" aria-expanded="false" aria-controls="mmenu"><span></span><span></span><span></span></button>
     </div>
   </div>
+  <div class="mmenu" id="mmenu" hidden>
+    <a href="/#tinh-nang"><?= t('nav.features') ?></a>
+    <a href="/#sftp">SFTP</a>
+    <a href="/#di-dong"><?= t('nav.mobile') ?></a>
+    <a href="/#iphone">iPhone</a>
+    <a href="/#bao-mat"><?= t('nav.security') ?></a>
+    <a href="/#faq"><?= t('nav.faq') ?></a>
+    <a href="/dang-nhap"><?= ($active ?? '') === 'account' ? t('nav.account') : t('nav.login') ?></a>
+    <a class="btn brand" href="/#tai-ve"><?= t('nav.download') ?></a>
+  </div>
 </nav>
+<script>(function(){var b=document.getElementById('burger'),m=document.getElementById('mmenu');if(!b||!m)return;function set(o){m.hidden=!o;b.setAttribute('aria-expanded',o?'true':'false');b.classList.toggle('on',o);}b.addEventListener('click',function(){set(m.hidden);});m.addEventListener('click',function(e){if(e.target.closest('a'))set(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false);});window.addEventListener('resize',function(){if(innerWidth>900)set(false);});})();</script>

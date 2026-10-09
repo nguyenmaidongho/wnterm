@@ -11,6 +11,10 @@ public partial class SettingsDialog : DialogView<bool?>
 {
     private readonly AppSettings _settings;
 
+    /// <summary>Do MainViewModel gắn vào: Export/Import danh sách VM (đóng Cài đặt rồi mở hộp thoại tương ứng).</summary>
+    public Func<Task>? ExportVmsAction { get; set; }
+    public Func<Task>? ImportVmsAction { get; set; }
+
     public SettingsDialog() : this(new AppSettings()) { }
 
     public SettingsDialog(AppSettings settings)
@@ -31,6 +35,12 @@ public partial class SettingsDialog : DialogView<bool?>
         ShowHiddenFilesCheck.IsChecked = _settings.ShowHiddenFiles;
         CustomEditorBox.Text = _settings.CustomEditorPath;
         RightClickCombo.SelectedIndex = _settings.RightClickAction == "Menu" ? 1 : 0;
+
+        this.FindControl<TextBlock>("DataTitle")!.Text = LocalizationManager.Tr("VM list data", "Dữ liệu danh sách VM");
+        var exportBtn = this.FindControl<Button>("ExportVmsBtn")!;
+        var importBtn = this.FindControl<Button>("ImportVmsBtn")!;
+        exportBtn.Click += (_, _) => { var a = ExportVmsAction; Close(false); if (a != null) _ = a(); };
+        importBtn.Click += (_, _) => { var a = ImportVmsAction; Close(false); if (a != null) _ = a(); };
 
         this.FindControl<Button>("BrowseBtn")!.Click += BrowseEditor_Click;
         this.FindControl<Button>("SaveBtn")!.Click += Save_Click;

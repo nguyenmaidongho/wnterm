@@ -101,6 +101,16 @@
           setInfo: function (m) { info.textContent = m || ''; info.hidden = !m; if (m) err.hidden = true; }
         };
 
+        if (opts.row) {   // hàng nút ngang (mỗi nút chiếm đều chiều rộng), có icon
+          var rowEl = document.createElement('div'); rowEl.className = 'btn-row';
+          opts.row.forEach(function (m) {
+            var rb = document.createElement('button'); rb.type = 'button'; rb.className = 'btn' + (m.cls ? ' ' + m.cls : '');
+            rb.innerHTML = (m.icon ? ico(m.icon) : '') + '<span>' + esc(m.text) + '</span>';
+            rb.onclick = function () { done(m.value); }; rowEl.appendChild(rb);
+          });
+          body.appendChild(rowEl);
+        }
+
         if (opts.menu) {
           var list = document.createElement('div'); list.className = 'menu-list';
           opts.menu.forEach(function (m) {

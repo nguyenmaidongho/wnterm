@@ -257,3 +257,23 @@ p,li,summary,.sub,.hint{text-wrap:pretty}
 h3,.card h3{text-wrap:balance}
 summary{text-wrap:balance}
 .meta{text-wrap:balance}
+
+/* ===== Menu di động (≤900px): nút ☰ + bảng liên kết ===== */
+nav .burger{display:none;width:40px;height:40px;border:1px solid var(--line);border-radius:10px;background:var(--panel);cursor:pointer;padding:0;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+nav .burger span{display:block;width:18px;height:2px;background:var(--fg);border-radius:2px;transition:transform .18s,opacity .18s}
+nav .burger.on span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+nav .burger.on span:nth-child(2){opacity:0}
+nav .burger.on span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.mmenu{display:none}
+@media(max-width:900px){
+  nav .burger{display:flex}
+  .mmenu:not([hidden]){display:flex;flex-direction:column;gap:2px;padding:10px 16px 16px;border-top:1px solid var(--line);background:rgba(20,21,23,.97);max-height:calc(100vh - 62px);overflow:auto}
+  .mmenu a{padding:13px 8px;color:var(--fg);font-size:16px;border-bottom:1px solid var(--line)}
+  .mmenu a.btn{margin-top:12px;border-bottom:0;text-align:center;justify-content:center}
+}
+@media(max-width:620px){
+  nav .actions>.btn.brand{display:none}
+  .brand .logo{background:none;box-shadow:none;padding:0}
+  .brand .logo img{height:34px;width:34px;object-fit:contain}
+}
+@media(max-width:900px){nav .actions{margin-left:auto}}

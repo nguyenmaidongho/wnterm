@@ -12,6 +12,7 @@ return [
     'nav.login' => 'Đăng nhập',
     'nav.download' => 'Tải xuống',
     'nav.register' => 'Tạo tài khoản',
+    'nav.menu' => 'Menu',
     'nav.language' => 'Ngôn ngữ',
     'foot.contact' => 'Liên hệ',
     'foot.recover' => 'Khôi phục tài khoản',
@@ -124,7 +125,7 @@ return [
     // ---- tải về ----
     'dl.eyebrow' => 'Tải về',
     'dl.h2' => 'Chọn nền tảng của bạn',
-    'dl.p' => 'Windows 2.3.0 · Android 1.4 · Web (iPhone/iPad/mọi trình duyệt)',
+    'dl.p' => 'Windows 2.3.1 · Android 1.4.1 · Web (iPhone/iPad/mọi trình duyệt)',
     'dl.ready' => 'Sẵn sàng',
     'dl.web' => 'Bản web',
     'dl.win.1' => 'Windows 10 / 11, 64-bit',

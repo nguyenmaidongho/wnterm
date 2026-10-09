@@ -120,6 +120,9 @@ public partial class MainView : UserControl
         this.FindControl<Grid>("RootGrid")!.Classes.Set("compact", compact);
         this.FindControl<Border>("Logo")!.IsVisible = !compact;
         this.FindControl<Border>("LogoCompact")!.IsVisible = compact;
+        // Điện thoại: Export/Import chuyển vào Cài đặt cho gọn thanh công cụ (Tìm nhanh vẫn giữ).
+        this.FindControl<Button>("ExportBtn")!.IsVisible = !compact;
+        this.FindControl<Button>("ImportBtn")!.IsVisible = !compact;
         var grid = this.FindControl<Grid>("MainGrid")!;
         if (compact)
         {
