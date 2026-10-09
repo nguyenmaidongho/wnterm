@@ -20,3 +20,4 @@ cp "$SN/src/WNTerm/wwwroot/lib/"{xterm.js,xterm.css,addon-fit.js,addon-unicode11
 cp "$SN/src/WNTerm/wwwroot/fonts/"*.woff2 "$OUT/fonts/"
 (cd "$WEB/relay" && GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o "$WEB/dist/wnterm-relay-linux-amd64" . && go build -o "$WEB/dist/wnterm-relay.exe" .)
 echo "built $VER"; du -sh "$OUT"
+cp "$(dirname "$0")/install-relay.sh" "$(dirname "$0")/dist/install-relay.sh"

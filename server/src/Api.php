@@ -14,6 +14,9 @@ declare(strict_types=1);
  */
 final class Api
 {
+    /** Phiên bản Điều khoản sử dụng hiện hành (public/dieu-khoan.php) — đổi khi nội dung điều khoản thay đổi. */
+    public const TOS_VERSION = '2026-10-09';
+
     public static function handle(): void
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -49,6 +52,14 @@ final class Api
                 case 'POST /recover/reset':  self::recoverReset(); break;
                 case 'POST /password/change': self::passwordChange(); break;
                 case 'POST /account/delete':  self::accountDelete(); break;
+                case 'GET /admin/users':      self::adminUsers(); break;
+                case 'GET /admin/user':       self::adminUser(); break;
+                case 'POST /admin/disable':   self::adminSetDisabled(true); break;
+                case 'POST /admin/enable':    self::adminSetDisabled(false); break;
+                case 'GET /admin/users':      self::adminUsers(); break;
+                case 'GET /admin/user':       self::adminUser(); break;
+                case 'POST /admin/disable':   self::adminSetDisabled(true); break;
+                case 'POST /admin/enable':    self::adminSetDisabled(false); break;
                 default:
                     Http::fail(404, 'not_found', 'Không có đường dẫn này.');
             }
@@ -134,6 +145,10 @@ final class Api
         $b = Http::body(65536);
         self::checkTurnstile($b, $ip);
 
+        if ((string)($b['tos'] ?? '') !== self::TOS_VERSION) {
+            Http::fail(422, 'tos_required', 'Bạn cần đồng ý với Điều khoản sử dụng.');
+        }
+
         $email = self::email($b);
         $authKey = self::key32($b, 'authKey');
         $recoveryAuth = self::key32($b, 'recoveryAuth');
@@ -167,6 +182,12 @@ final class Api
         }
 
         $uid = (int)$pdo->lastInsertId();
+        try { // bằng chứng đã đồng ý điều khoản (phiên bản + thời điểm + IP); lỗi ghi không chặn đăng ký
+            $pdo->prepare('INSERT INTO tos_acceptances (user_id, version, ip, accepted_at) VALUES (?, ?, ?, ?)')
+                ->execute([$uid, self::TOS_VERSION, $ip, Db::now()]);
+        } catch (Throwable $e) {
+            error_log('[wnterm] tos_acceptances: ' . $e->getMessage());
+        }
         $device = (string)($b['deviceName'] ?? 'Trình duyệt web');
         $t = Auth::newToken($uid, $device, $ip);
 
@@ -235,7 +256,9 @@ final class Api
         Http::json(200, [
             'ok'        => true,
             'email'     => $u['email'],
+            'admin'     => self::isAdmin($u),
             'createdAt' => $u['created_at'] . 'Z',
+            'admin'     => self::isAdmin($u),
             'vault'     => ['version' => (int)$u['vault_version'], 'updatedAt' => $u['vault_updated_at'] ? $u['vault_updated_at'] . 'Z' : null],
         ]);
     }
@@ -454,6 +477,107 @@ final class Api
         Http::json(200, ['ok' => true]);
     }
 
+
+    // ===== Quản trị (trang /quan-tri) =====
+
+    /** Danh sách email quản trị: config 'admins' (mảng email). Mặc định chỉ donghoc3@gmail.com. */
+    public static function isAdmin(array $u): bool
+    {
+        $list = array_map('strtolower', (array)wn_config('admins', ['donghoc3@gmail.com']));
+        return in_array(strtolower((string)$u['email']), $list, true);
+    }
+
+    private static function admin(): array
+    {
+        [$u] = Auth::require();
+        if (!self::isAdmin($u)) {
+            Http::fail(403, 'forbidden', 'Không có quyền quản trị.');
+        }
+        if (!RateLimit::hit('admin:' . (int)$u['id'], 240, 60)) {
+            Http::fail(429, 'rate_limited', 'Bạn thao tác quá nhanh, hãy thử lại sau ít phút.');
+        }
+        return $u;
+    }
+
+    private static function adminUsers(): void
+    {
+        self::admin();
+        $q = trim((string)($_GET['q'] ?? ''));
+        $like = '%' . addcslashes(strtolower($q), '%_\\') . '%';
+        $st = Db::pdo()->prepare(
+            'SELECT u.id, u.email, u.created_at, u.last_login_at, u.disabled,
+                    (SELECT COUNT(*) FROM sessions s WHERE s.user_id = u.id AND s.expires_at > ?) AS sessions,
+                    (SELECT s.ip FROM sessions s WHERE s.user_id = u.id ORDER BY s.last_used_at DESC LIMIT 1) AS last_ip
+               FROM users u
+              WHERE (? = \'\' OR u.email LIKE ?)
+              ORDER BY u.id DESC LIMIT 100'
+        );
+        $st->execute([Db::now(), $q, $like]);
+        $list = [];
+        foreach ($st->fetchAll() as $r) {
+            $list[] = [
+                'id'        => (int)$r['id'],
+                'email'     => $r['email'],
+                'createdAt' => $r['created_at'] . 'Z',
+                'lastLogin' => $r['last_login_at'] ? $r['last_login_at'] . 'Z' : null,
+                'disabled'  => (bool)$r['disabled'],
+                'admin'     => self::isAdmin($r),
+                'sessions'  => (int)$r['sessions'],
+                'lastIp'    => $r['last_ip'],
+            ];
+        }
+        Http::json(200, ['ok' => true, 'users' => $list]);
+    }
+
+    private static function adminUser(): void
+    {
+        self::admin();
+        $email = self::email(['email' => $_GET['email'] ?? '']);
+        $u = self::user($email);
+        if ($u === null) {
+            Http::fail(404, 'not_found', 'Không thấy tài khoản.');
+        }
+        $st = Db::pdo()->prepare('SELECT device_name, ip, created_at, last_used_at FROM sessions WHERE user_id = ? AND expires_at > ? ORDER BY last_used_at DESC LIMIT 50');
+        $st->execute([(int)$u['id'], Db::now()]);
+        $sessions = [];
+        foreach ($st->fetchAll() as $s) {
+            $sessions[] = ['device' => $s['device_name'], 'ip' => $s['ip'], 'createdAt' => $s['created_at'] . 'Z', 'lastUsedAt' => $s['last_used_at'] . 'Z'];
+        }
+        $tosRows = [];
+        try {
+            $ts = Db::pdo()->prepare('SELECT version, ip, accepted_at FROM tos_acceptances WHERE user_id = ?');
+            $ts->execute([(int)$u['id']]);
+            $tosRows = $ts->fetchAll();
+        } catch (Throwable $e) {
+        }
+        Http::json(200, [
+            'ok' => true, 'email' => $u['email'], 'createdAt' => $u['created_at'] . 'Z',
+            'lastLogin' => $u['last_login_at'] ? $u['last_login_at'] . 'Z' : null,
+            'disabled' => (bool)$u['disabled'], 'admin' => self::isAdmin($u),
+            'sessions' => $sessions,
+            'tos' => array_map(fn($r) => ['version' => $r['version'], 'ip' => $r['ip'], 'at' => $r['accepted_at'] . 'Z'], $tosRows),
+        ]);
+    }
+
+    private static function adminSetDisabled(bool $disable): void
+    {
+        $me = self::admin();
+        $b = Http::body(4096);
+        $email = self::email($b);
+        $u = self::user($email);
+        if ($u === null) {
+            Http::fail(404, 'not_found', 'Không thấy tài khoản.');
+        }
+        if (self::isAdmin($u)) {
+            Http::fail(422, 'admin_protected', 'Không thể khóa tài khoản quản trị.');
+        }
+        Db::pdo()->prepare('UPDATE users SET disabled = ? WHERE id = ?')->execute([$disable ? 1 : 0, (int)$u['id']]);
+        if ($disable) {
+            Auth::revokeAll((int)$u['id']);
+        }
+        error_log('[wnterm] admin ' . $me['email'] . ($disable ? ' disabled ' : ' enabled ') . $email);
+        Http::json(200, ['ok' => true, 'email' => $email, 'disabled' => $disable]);
+    }
     // ===== Chống bot (tùy chọn) =====
 
     private static function checkTurnstile(array $b, string $ip): void

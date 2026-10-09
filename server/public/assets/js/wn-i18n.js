@@ -14,6 +14,7 @@
       'reg.pw_short': 'Mật khẩu cần ít nhất 10 ký tự.',
       'reg.pw_mismatch': 'Hai lần nhập mật khẩu chưa khớp.',
       'reg.agree_req': 'Vui lòng xác nhận bạn hiểu về mã khôi phục.',
+      'reg.tos_req': 'Vui lòng đồng ý với Điều khoản sử dụng.',
       'reg.working': 'Đang tạo khóa bảo mật…',
       'reg.failed': 'Không tạo được tài khoản, hãy thử lại.',
       'reg.crypto_err': 'Có lỗi khi mã hóa: %s',
@@ -68,6 +69,7 @@
       'err.bad_kdf': 'Tham số mã hóa không hợp lệ.',
       'err.email_taken': 'Email này đã được đăng ký.',
       'err.captcha': 'Vui lòng xác minh bạn không phải robot.',
+      'err.tos_required': 'Vui lòng đồng ý với Điều khoản sử dụng.',
       'err.bad_field': 'Dữ liệu không hợp lệ.'
     },
     en: {
@@ -80,6 +82,7 @@
       'reg.pw_short': 'Password must be at least 10 characters.',
       'reg.pw_mismatch': 'The two passwords do not match.',
       'reg.agree_req': 'Please confirm that you understand the recovery code.',
+      'reg.tos_req': 'Please accept the Terms of Use.',
       'reg.working': 'Generating security keys…',
       'reg.failed': 'Could not create the account, please try again.',
       'reg.crypto_err': 'Encryption error: %s',
@@ -134,6 +137,7 @@
       'err.bad_kdf': 'Invalid encryption parameters.',
       'err.email_taken': 'This email is already registered.',
       'err.captcha': 'Please verify that you are not a robot.',
+      'err.tos_required': 'Please accept the Terms of Use.',
       'err.bad_field': 'Invalid data.'
     }
   };

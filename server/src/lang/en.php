@@ -17,6 +17,7 @@ return [
     'foot.tax' => 'Tax code',
     'foot.contact' => 'Contact',
     'foot.recover' => 'Recover account',
+    'foot.terms' => 'Terms & abuse policy',
 
     // ---- home: meta ----
     'home.title' => 'WebNow Terminal (WNTerm) — SSH & SFTP for Windows, Android and iPhone',
@@ -205,6 +206,9 @@ return [
     'reg.pwhint' => 'A long, memorable phrase is safer than random characters.',
     'reg.pw2' => 'Confirm password',
     'reg.agree' => 'I understand that <b>if I forget my password and lose my recovery code</b>, the encrypted data cannot be recovered.',
+    'reg.tos' => 'I accept the <a href="/dieu-khoan" target="_blank" rel="noopener"><b>Terms of Use</b></a>: I will only connect to servers I own or am authorised to access, and will not scan or attack anyone.',
+    'terms.title' => 'Terms of Use & abuse policy — WNTerm',
+    'terms.desc' => 'WNTerm terms of use, acceptable use rules, connection logging and how to report abuse.',
     'reg.submit' => 'Create account',
     'reg.have' => 'Already have an account? <a href="/dang-nhap">Log in</a>',
     'reg.s2.h1' => 'Save your recovery code',
