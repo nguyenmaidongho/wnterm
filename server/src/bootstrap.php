@@ -66,15 +66,16 @@ function view(string $name, array $vars = []): void
 /** Thông tin thương hiệu lấy từ webnow.vn. */
 function brand(): array
 {
+    $en = function_exists('wn_lang') && wn_lang() === 'en';
     return [
-        'company' => 'Công ty TNHH Giải pháp số WebNow',
+        'company' => $en ? 'WebNow Digital Solutions Co., Ltd.' : 'Công ty TNHH Giải Pháp Số WebNow',
         'short'   => 'WebNow',
-        'slogan'  => 'Nay code mai giao',
+        'slogan'  => 'Nay Code Mai Giao',
         'site'    => 'https://webnow.vn',
         'phone'   => '02862 722 577',
         'phone2'  => '0375 445 916',
-        'email'   => 'contact@webnow.vn',
-        'address' => '81 Liên khu 5-11-12, Phường Bình Trị Đông, Quận Bình Tân, TP. Hồ Chí Minh',
+        'email'   => 'hi@webnow.vn',
+        'address' => $en ? '81 Lien Khu 5-11-12, Binh Tri Dong Ward, Ho Chi Minh City, Vietnam' : '81 Liên khu 5-11-12, Phường Bình Trị Đông, TP. Hồ Chí Minh',
         'mst'     => '0318865407',
         'facebook' => 'https://www.facebook.com/webnow.vn',
         'tiktok'   => 'https://www.tiktok.com/@webnow.vn',

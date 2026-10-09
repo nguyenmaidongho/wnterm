@@ -14,6 +14,7 @@ return [
     'nav.register' => 'Create account',
     'nav.menu' => 'Menu',
     'nav.language' => 'Language',
+    'foot.tax' => 'Tax code',
     'foot.contact' => 'Contact',
     'foot.recover' => 'Recover account',
 

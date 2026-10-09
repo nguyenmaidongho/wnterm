@@ -15,6 +15,7 @@ return [
     'nav.menu' => 'Menu',
     'nav.language' => 'Ngôn ngữ',
     'foot.contact' => 'Liên hệ',
+    'foot.tax' => 'MST',
     'foot.recover' => 'Khôi phục tài khoản',
 
     // ---- trang chủ: meta ----

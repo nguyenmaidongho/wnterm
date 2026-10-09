@@ -5,7 +5,7 @@
       <div>
         <a class="lg" href="<?= e($b['site']) ?>" rel="noopener"><img src="/assets/webnow-logo.webp" alt="WebNow — <?= e($b['slogan']) ?>"></a>
         <div><?= e($b['company']) ?></div>
-        <div style="margin-top:6px">MST: <?= e($b['mst']) ?></div>
+        <div style="margin-top:6px"><?= t('foot.tax') ?>: <?= e($b['mst']) ?></div>
         <div style="margin-top:6px"><?= e($b['address']) ?></div>
       </div>
       <div>
@@ -24,7 +24,7 @@
           <li><a href="/dang-ky"><?= t('nav.register') ?></a></li>
           <li><a href="/dang-nhap"><?= t('nav.login') ?></a></li>
           <li><a href="/khoi-phuc"><?= t('foot.recover') ?></a></li>
-          <li><a href="<?= e($b['site']) ?>" rel="noopener">webnow.vn</a></li>
+          <li><a href="<?= e($b['site']) ?>" rel="noopener"><?= e($b['site']) ?></a></li>
         </ul>
       </div>
     </div>
