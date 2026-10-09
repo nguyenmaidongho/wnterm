@@ -11,7 +11,8 @@ $turnstileKey = (string)wn_config('turnstile.site_key', '');
 if ($turnstileKey !== '') {
     $extraHead = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
 }
-view('head', compact('title', 'desc', 'active'));
+$noindex = true;
+view('head', compact('title', 'desc', 'active', 'noindex'));
 if (!empty($extraHead)) { echo $extraHead; }
 ?>
 <main class="authwrap">

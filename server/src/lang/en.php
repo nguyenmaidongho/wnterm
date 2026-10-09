@@ -1,6 +1,6 @@
 <?php
 // English dictionary. Values may contain trusted HTML.
-$a = 'style="color:#5cbcff;text-decoration:underline"';
+$a = 'style="color:#ff8a86;text-decoration:underline"';
 $ac = 'style="color:var(--accent)"';
 return [
     // ---- common ----
@@ -22,7 +22,7 @@ return [
 
     // ---- home: meta ----
     'home.title' => 'WebNow Terminal (WNTerm) — SSH & SFTP for Windows, Android and iPhone',
-    'home.desc' => 'WebNow Terminal (WNTerm): SSH and SFTP client for managing many servers on Windows, Android and iPhone (web app). Smooth terminal, SFTP, CPU/RAM monitoring, end-to-end encrypted backup and sync, a trash bin to restore VMs, MobaXterm import.',
+    'home.desc' => 'WNTerm: SSH & SFTP client to manage many servers on Windows, Android and iPhone. End-to-end encrypted sync and backup, CPU/RAM monitoring, MobaXterm import. Free download.',
 
     // ---- hero ----
     'hero.pill' => '<b>●</b> Version 2.3 — Windows · Android · iPhone',

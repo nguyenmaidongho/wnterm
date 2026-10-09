@@ -1,8 +1,6 @@
-@font-face{font-family:"JB Mono";src:url(assets/fonts/JetBrainsMono-Regular.woff2) format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:"JB Mono";src:url(assets/fonts/JetBrainsMono-Bold.woff2) format("woff2");font-weight:700;font-display:swap}
 :root{
-  --bg:#141517; --bg2:#1b1d20; --panel:#202226; --panel2:#262a30; --line:#33373d;
-  --fg:#e8eaed; --muted:#9aa3ad; --accent:#1a8ad6; --accent2:#0e639c; --red:#d4283a; --green:#52c41a; --amber:#faad14;
+  --bg:#0d0d0f; --bg2:#151517; --panel:#1b1b1e; --panel2:#232327; --line:#2f2f35;
+  --fg:#e8eaed; --muted:#9aa3ad; --accent:#e5484d; --accent2:#a52a2e; --red:#d4283a; --green:#52c41a; --amber:#faad14;
   --mono:"JB Mono",ui-monospace,Consolas,Menlo,monospace;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
@@ -50,7 +48,7 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#4cc0ff,#1a8ad6 50%,#ff
 .body{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:340px}
 .side{background:#252526;border-right:1px solid #3c3c3c;padding:10px}
 .tabs2{display:flex;gap:3px;margin:-2px 0 9px;border-bottom:1px solid #3c3c3c}
-.tabs2 b{padding:5px 12px;color:#aaa;font-size:12px}
+.tabs2 b{padding:5px 12px;color:#c4c4c4;font-size:12px}
 .tabs2 b.a{color:#fff;border-bottom:2px solid #1177bb}
 .search{height:26px;border:1px solid #3c3c3c;border-radius:6px;background:#2d2d30;margin-bottom:8px}
 .chips{display:flex;gap:5px;margin-bottom:8px}
@@ -72,7 +70,7 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#4cc0ff,#1a8ad6 50%,#ff
 .tab.a{background:#1e1e1e;border:1px solid #3c3f41;border-bottom:0}
 .tab:before{content:"";width:7px;height:7px;border-radius:50%;background:#52c41a}
 .term{flex:1;padding:12px 14px;font:12.5px/1.55 var(--mono);color:#d4d4d4;white-space:pre;overflow:hidden}
-.term .g{color:#6a9955}.term .b{color:#569cd6}.term .y{color:#dcdcaa}.term .r{color:#f48771}.term .m{color:#c586c0}.term .c{color:#4ec9b0}.term .d{color:#808080}
+.term .g{color:#6a9955}.term .b{color:#569cd6}.term .y{color:#dcdcaa}.term .r{color:#f48771}.term .m{color:#c586c0}.term .c{color:#4ec9b0}.term .d{color:#a0a0a0}
 .cur{display:inline-block;width:8px;height:15px;background:#aeafad;vertical-align:-3px;animation:bl 1s steps(2) infinite}
 @keyframes bl{50%{opacity:0}}
 .mon{display:flex;gap:12px;align-items:center;padding:5px 10px;background:#16181a;border-top:1px solid #2d3139;color:#e6edf3;font-size:11px;white-space:nowrap;overflow:hidden}
@@ -81,6 +79,7 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#4cc0ff,#1a8ad6 50%,#ff
 .spark{display:inline-block;width:38px;height:13px;vertical-align:-3px;border:1px solid #1b5e20;background:#0a1f0a;border-radius:2px}
 /* sections */
 section{padding:84px 0}
+section+section{content-visibility:auto;contain-intrinsic-size:auto 640px}
 .head{text-align:center;max-width:720px;margin:0 auto 46px}
 .eyebrow{color:var(--accent);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
 h2{font-size:clamp(28px,4vw,42px);line-height:1.15;margin:10px 0 12px;letter-spacing:-.015em}
@@ -126,8 +125,8 @@ h2{font-size:clamp(28px,4vw,42px);line-height:1.15;margin:10px 0 12px;letter-spa
 .phone .term{padding:8px;font-size:9.5px;height:278px;background:#1e1e1e}
 .keys{display:flex;gap:4px;padding:5px;background:#16181a;border-top:1px solid #2d3139;overflow:hidden}
 .keys i{font-style:normal;padding:5px 8px;border-radius:5px;background:#2d3139;border:1px solid #3c3c3c;color:#e6edf3;font-size:9.5px}
-.nav3{display:grid;grid-template-columns:repeat(3,1fr);background:#252526;border-top:1px solid #3c3c3c;text-align:center;padding:8px 0;color:#a0a0a0;font-size:10px}
-.nav3 b{color:#1a8ad6}
+.nav3{display:grid;grid-template-columns:repeat(3,1fr);background:#252526;border-top:1px solid #3c3c3c;text-align:center;padding:8px 0;color:#c4c4c4;font-size:10px}
+.nav3 b{color:#58b6f5}
 /* download */
 .dl{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .dlc{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:12px}
@@ -152,7 +151,7 @@ details p{color:var(--muted);margin:10px 0 0;font-size:15px}
 footer{border-top:1px solid var(--line);padding:38px 0;color:var(--muted);font-size:14px}
 footer .wrap{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
 footer .lg{background:#fff;border-radius:8px;padding:5px 12px}
-footer .lg img{height:26px;display:block}
+footer .lg img{height:26px;width:auto;display:block}
 @media(max-width:900px){
   .grid,.dl{grid-template-columns:1fr 1fr}
   .split{grid-template-columns:minmax(0,1fr);gap:30px}.split.rev .txt{order:0}
@@ -176,7 +175,7 @@ nav .btn.ghost:hover{color:var(--fg);background:var(--panel)}
 .hero:before{background:radial-gradient(60% 60% at 70% 20%,rgba(26,138,214,.18),transparent 70%),radial-gradient(45% 55% at 12% 8%,rgba(209,78,77,.22),transparent 70%)}
 .eyebrow{color:#ff8a86}
 footer .cols{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:28px;width:100%}
-footer h4{margin:0 0 10px;color:var(--fg);font-size:14px;letter-spacing:.04em;text-transform:uppercase}
+footer .fh{display:block;font-weight:700;margin:0 0 10px;color:var(--fg);font-size:14px;letter-spacing:.04em;text-transform:uppercase}
 footer a:hover{color:var(--fg)}
 footer .lg{display:inline-block;margin-bottom:12px}
 footer ul{list-style:none;padding:0;margin:0;display:grid;gap:7px}
@@ -325,3 +324,19 @@ nav .wrap{height:74px}
 .fbform input:focus,.fbform textarea:focus{outline:none;border-color:var(--accent)}
 .fbform .alert{margin:0}
 .fbform .btn{justify-self:start}
+
+/* ===== Tông đỏ – đen (màu chủ đạo WebNow) ===== */
+nav{background:rgba(13,13,15,.88)}
+.btn:hover{border-color:#55383a}
+.btn.primary{background:linear-gradient(180deg,#d6453f,#a52a2e);border-color:#e0605b;color:#fff;box-shadow:0 6px 24px -8px rgba(229,72,77,.65)}
+.btn.primary:hover{background:linear-gradient(180deg,#e2554f,#b4312f)}
+.hero:before{background:radial-gradient(60% 60% at 72% 18%,rgba(229,72,77,.24),transparent 70%),radial-gradient(45% 55% at 12% 8%,rgba(165,42,46,.28),transparent 70%)}
+h1 em{background:linear-gradient(90deg,#ff8a86,#e5484d 55%,#ff9b6a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.eyebrow{color:#ff8a86}
+.card .ico{background:rgba(229,72,77,.14);color:#ff8a86}
+.steps i.on{background:linear-gradient(90deg,#a52a2e,#ff6b66)}
+.check input{accent-color:#e5484d}
+.legal a,.adm .linkbtn{color:#ff8a86}
+.authwrap:before{background:radial-gradient(50% 45% at 80% 10%,rgba(229,72,77,.2),transparent 70%),radial-gradient(45% 50% at 10% 90%,rgba(165,42,46,.22),transparent 70%)}
+/* Phần mock giữ màu xanh của app thật */
+section p a,.meta a,.lead a,details a,.install a{color:#ff8a86;text-decoration:underline;text-underline-offset:2px}

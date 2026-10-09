@@ -3,13 +3,13 @@
   <div class="wrap">
     <div class="cols">
       <div>
-        <a class="lg" href="<?= e($b['site']) ?>" rel="noopener"><img src="/assets/webnow-logo.webp" alt="WebNow — <?= e($b['slogan']) ?>"></a>
+        <a class="lg" href="<?= e($b['site']) ?>" rel="noopener"><img src="/assets/webnow-logo.webp" alt="WebNow — <?= e($b['slogan']) ?>" width="300" height="59" loading="lazy" decoding="async"></a>
         <div><?= e($b['company']) ?></div>
         <div style="margin-top:6px"><?= t('foot.tax') ?>: <?= e($b['mst']) ?></div>
         <div style="margin-top:6px"><?= e($b['address']) ?></div>
       </div>
       <div>
-        <h4><?= t('foot.contact') ?></h4>
+        <div class="fh"><?= t('foot.contact') ?></div>
         <ul>
           <li><a href="tel:<?= e(preg_replace('/\s+/', '', $b['phone'])) ?>"><?= e($b['phone']) ?></a></li>
           <li><a href="tel:<?= e(preg_replace('/\s+/', '', $b['phone2'])) ?>"><?= e($b['phone2']) ?></a></li>
@@ -18,7 +18,7 @@
         </ul>
       </div>
       <div>
-        <h4>WNTerm</h4>
+        <div class="fh">WNTerm</div>
         <ul>
           <li><a href="/#tai-ve"><?= t('nav.download') ?></a></li>
           <li><a href="/dang-ky"><?= t('nav.register') ?></a></li>

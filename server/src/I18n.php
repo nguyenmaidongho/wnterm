@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * Đa ngôn ngữ tối giản (vi | en) cho các trang web.
  *
- * Chọn ngôn ngữ: ?lang=vi|en  →  cookie `wnlang` (1 năm)  →  Accept-Language (vi → vi, còn lại → en).
+ * Chọn ngôn ngữ: ?lang=vi|en  →  cookie `wnlang` (1 năm)  →  Accept-Language (trống hoặc vi → vi, còn lại → en; Googlebot không gửi header nên thấy bản vi).
  * Từ điển nằm ở src/lang/vi.php và src/lang/en.php (mảng key => chuỗi, có thể chứa HTML tin cậy
  * và các chỗ %s/%1$s cho sprintf). Vì từ điển là nội dung tin cậy nên t() KHÔNG escape;
  * dùng e(t(...)) khi đặt vào thuộc tính HTML.
@@ -37,7 +37,8 @@ final class I18n
         }
         $al = strtolower((string)($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? ''));
         // Lấy ngôn ngữ ưu tiên cao nhất (đứng đầu danh sách): vi → vi, còn lại → en.
-        if ($al !== '' && preg_match('/^\s*([a-z]{1,8})/', $al, $m) && $m[1] === 'vi') {
+        // Không có header (Googlebot, công cụ kiểm tra) → bản vi, ngôn ngữ chính của site.
+        if ($al === '' || (preg_match('/^\s*([a-z]{1,8})/', $al, $m) && $m[1] === 'vi')) {
             return 'vi';
         }
         return 'en';
@@ -73,6 +74,26 @@ final class I18n
             }
         }
         return $key;
+    }
+
+    /** Đường dẫn gốc không có tiền tố ngôn ngữ (/en/...) và không .php. */
+    public static function basePath(): string
+    {
+        $p = self::path();
+        if ($p === '/en' || $p === '/en/') {
+            return '/';
+        }
+        if (strncmp($p, '/en/', 4) === 0) {
+            return substr($p, 3);
+        }
+        return $p;
+    }
+
+    /** URL tuyệt đối của trang hiện tại ở ngôn ngữ $lang (vi: /path, en: /en/path). */
+    public static function urlFor(string $lang): string
+    {
+        $p = self::basePath();
+        return $lang === 'en' ? url('en' . ($p === '/' ? '/' : $p)) : url($p);
     }
 
     /** Đường dẫn hiện tại (không query) để dựng liên kết đổi ngôn ngữ / hreflang. */
