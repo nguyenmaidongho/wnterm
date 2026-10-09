@@ -41,7 +41,7 @@ $ver = is_file($cssFile) ? (string)filemtime($cssFile) : '2';
 <link rel="alternate" hreflang="en" href="<?= e(I18n::urlFor('en')) ?>">
 <link rel="alternate" hreflang="x-default" href="<?= e(I18n::urlFor('vi')) ?>">
 <?php endif; ?>
-<?php $viHref = I18n::urlFor('vi'); $enHref = I18n::urlFor('en'); ?>
+<?php $viHref = I18n::urlFor('vi') . '?lang=vi'; /* ?lang=vi ghi đè cookie wnlang=en */$enHref = I18n::urlFor('en'); ?>
 <link rel="icon" href="/assets/favicon.webp" type="image/webp">
 <link rel="icon" href="/assets/logo-n.png" type="image/png" sizes="256x256">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.webp">
