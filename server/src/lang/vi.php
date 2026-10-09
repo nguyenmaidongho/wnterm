@@ -125,7 +125,7 @@ return [
     // ---- tải về ----
     'dl.eyebrow' => 'Tải về',
     'dl.h2' => 'Chọn nền tảng của bạn',
-    'dl.p' => 'Windows 2.3.1 · Android 1.4.1 · Web (iPhone/iPad/mọi trình duyệt)',
+    'dl.p' => 'Windows 2.3.2 · Android 1.4.2 · Web (iPhone/iPad/mọi trình duyệt)',
     'dl.ready' => 'Sẵn sàng',
     'dl.web' => 'Bản web',
     'dl.win.1' => 'Windows 10 / 11, 64-bit',

@@ -424,7 +424,7 @@ public sealed class AccountDialog : DialogView<bool?>
     private async Task DoSync()
     {
         SetStatus(T("Backing up...", "Đang backup..."), true);
-        var r = await _account.SyncAsync();
+        var r = await _account.SyncAsync(forceNewVersion: true);
         UpdateSyncInfo();
         SetStatus(string.Format(T("Backed up {0} VMs. Also received from your other devices: {1} new, {2} updated, {3} moved to recycle bin.", "Đã backup {0} VM. Nhận thêm từ máy khác: {1} mới, {2} cập nhật, {3} vào thùng rác."),
             r.Total, r.Added, r.Updated, r.Deleted), true);

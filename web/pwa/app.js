@@ -173,12 +173,12 @@
     b.hidden = !(vault.state.dirty || syncErr); b.classList.toggle('err', !!syncErr);
   }
   /** Đồng bộ (backup + nhận thay đổi từ máy khác). silent=true: không báo khi không có gì mới. */
-  async function syncNow(silent) {
+  async function syncNow(silent, force) {
     if (!vault || syncing) return null;
     syncing = true; updateBadge();
     if (!silent) setStatus(L('Đang backup…'));
     try {
-      var r = await vault.sync();
+      var r = await vault.sync({ force: !!force });
       syncErr = null;
       var got = r.added + r.updated + r.deleted;
       if (!silent || got) setStatus(L('Đã backup {0} VM', r.total) + (got ? L(' · nhận từ máy khác: {0} mới, {1} cập nhật, {2} vào thùng rác', r.added, r.updated, r.deleted) : ''), 5000);
@@ -535,7 +535,7 @@
         ]
       });
       if (r.value === 'sync') {
-        var res = await syncNow(false);
+        var res = await syncNow(false, true);
         if (res) toast(L('Đã backup {0} VM.', res.total));
         else if (syncErr) toast(L('Lỗi: {0}', LT(syncErr.message)), 5000);
       } else if (r.value === 'restore') await historyDialog();

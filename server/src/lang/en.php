@@ -125,7 +125,7 @@ return [
     // ---- download ----
     'dl.eyebrow' => 'Download',
     'dl.h2' => 'Choose your platform',
-    'dl.p' => 'Windows 2.3.1 · Android 1.4.1 · Web (iPhone/iPad/any browser)',
+    'dl.p' => 'Windows 2.3.2 · Android 1.4.2 · Web (iPhone/iPad/any browser)',
     'dl.ready' => 'Available',
     'dl.web' => 'Web app',
     'dl.win.1' => 'Windows 10 / 11, 64-bit',

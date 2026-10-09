@@ -474,13 +474,14 @@
   };
 
   /** Kéo bản trên máy chủ, gộp với máy này, rồi đẩy bản gộp lên (nếu có khác biệt). */
-  Vault.prototype.sync = async function () {
+  Vault.prototype.sync = async function (opts) {
+    var force = !!(opts && opts.force);   // "Backup ngay" bấm tay: luôn tạo bản mới trong lịch sử dù dữ liệu không đổi
     for (var attempt = 0; attempt < 4; attempt++) {
       var p = await this._pull();
       var m = this._merge(p.data);
       try {
         var ver = p.version;
-        if (!p.data || !sameContent(p.data, m.vault)) ver = await this._push(m.vault, p.version);
+        if (force || !p.data || !sameContent(p.data, m.vault)) ver = await this._push(m.vault, p.version);
         this._markSynced(ver);
         if (this.onChange && (m.added || m.updated || m.deleted || m.snipChanged)) this.onChange();
         return { added: m.added, updated: m.updated, deleted: m.deleted, snipChanged: m.snipChanged, total: this.state.sessions.length, version: ver };

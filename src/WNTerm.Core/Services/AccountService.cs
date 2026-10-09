@@ -591,7 +591,8 @@ public class AccountService
     }
 
     /// <summary>Kéo bản trên máy chủ, gộp với máy này (thêm/sửa/xóa — bản mới nhất thắng), rồi đẩy bản gộp lên.</summary>
-    public async Task<SyncResult> SyncAsync(CancellationToken ct = default)
+    /// <param name="forceNewVersion">true khi người dùng bấm "Backup ngay": luôn tạo bản mới trong lịch sử dù dữ liệu không đổi.</param>
+    public async Task<SyncResult> SyncAsync(CancellationToken ct = default, bool forceNewVersion = false)
     {
         for (int attempt = 0; attempt < 4; attempt++)
         {
@@ -600,7 +601,7 @@ public class AccountService
             try
             {
                 int ver = serverVer;
-                if (remote == null || !SameContent(remote, merged)) ver = await PushAsync(merged, serverVer, ct);
+                if (forceNewVersion || remote == null || !SameContent(remote, merged)) ver = await PushAsync(merged, serverVer, ct);
                 MarkSynced(ver);
                 return new SyncResult(added, updated, merged.Sessions.Count, ver, deleted);
             }
