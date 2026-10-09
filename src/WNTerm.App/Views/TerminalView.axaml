@@ -1,0 +1,112 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="WNTerm.App.Views.TerminalView">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.mon">
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="Foreground" Value="#E6EDF3" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Path.mi">
+      <Setter Property="Width" Value="12" />
+      <Setter Property="Height" Value="12" />
+      <Setter Property="Stretch" Value="Uniform" />
+      <Setter Property="StrokeThickness" Value="1.4" />
+      <Setter Property="StrokeLineCap" Value="Round" />
+      <Setter Property="StrokeJoin" Value="Round" />
+      <Setter Property="Margin" Value="0,0,4,0" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Border.monsep">
+      <Setter Property="BorderBrush" Value="#2D3139" />
+      <Setter Property="BorderThickness" Value="0,0,1,0" />
+      <Setter Property="Padding" Value="0,0,8,0" />
+      <Setter Property="Margin" Value="0,0,8,0" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid Background="#1E1E1E" RowDefinitions="*,Auto">
+    <Grid Grid.Row="0">
+      <NativeWebView x:Name="WebView" />
+      <TextBlock x:Name="LoadingText" Text="{DynamicResource Str_InitTerminal}"
+                 Foreground="#8B949E" FontStyle="Italic" IsHitTestVisible="False"
+                 HorizontalAlignment="Center" VerticalAlignment="Center" />
+    </Grid>
+
+    <!-- Thanh Server Monitor như MobaXterm -->
+    <Border Grid.Row="1" x:Name="MonitorBar" Background="#16181A" BorderBrush="#2D3139" BorderThickness="0,1,0,0" Height="26" IsVisible="False">
+      <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0">
+
+          <!-- 1. OS &amp; Hostname -->
+          <Border Classes="monsep">
+            <StackPanel x:Name="OsInfoPanel" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Hand" Background="Transparent">
+              <Image x:Name="OsIconImage" Width="15" Height="15" Margin="0,0,5,0" VerticalAlignment="Center" />
+              <TextBlock x:Name="HostnameText" Classes="mon" Text="hostname" FontWeight="SemiBold" Foreground="#4BA3E3" />
+            </StackPanel>
+          </Border>
+
+          <!-- 2. CPU -->
+          <Border Classes="monsep">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Path Classes="mi" Data="{StaticResource MonCpu}" Stroke="#FFA726" />
+              <TextBlock x:Name="CpuText" Classes="mon" Text="0%" Margin="0,0,5,0" />
+              <Border BorderBrush="#1B5E20" BorderThickness="1" Background="#0A1F0A" CornerRadius="2" VerticalAlignment="Center">
+                <Polyline x:Name="CpuPolyline" Stroke="#00E676" StrokeThickness="1.5" Height="14" Width="40" />
+              </Border>
+            </StackPanel>
+          </Border>
+
+          <!-- 3. RAM -->
+          <Border Classes="monsep">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Path Classes="mi" Data="{StaticResource MonRam}" Stroke="#42A5F5" />
+              <TextBlock x:Name="RamText" Classes="mon" Text="0 MB / 0 MB" Margin="0,0,5,0" />
+              <Border BorderBrush="#1565C0" BorderThickness="1" Background="#0A192F" CornerRadius="2" VerticalAlignment="Center">
+                <Polyline x:Name="RamPolyline" Stroke="#42A5F5" StrokeThickness="1.5" Height="14" Width="40" />
+              </Border>
+            </StackPanel>
+          </Border>
+
+          <!-- 4. Upload -->
+          <Border Classes="monsep">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Path Classes="mi" Data="{StaticResource MonUp}" Stroke="#00E676" />
+              <TextBlock x:Name="UploadText" Classes="mon" Text="0.00 Mb/s" />
+            </StackPanel>
+          </Border>
+
+          <!-- 5. Download -->
+          <Border Classes="monsep">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Path Classes="mi" Data="{StaticResource MonDown}" Stroke="#29B6F6" />
+              <TextBlock x:Name="DownloadText" Classes="mon" Text="0.00 Mb/s" />
+            </StackPanel>
+          </Border>
+
+          <!-- 6. Uptime -->
+          <Border Classes="monsep">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Path Classes="mi" Data="{StaticResource MonClock}" Stroke="#AB47BC" />
+              <TextBlock x:Name="UptimeText" Classes="mon" Text="-- days" />
+            </StackPanel>
+          </Border>
+
+          <!-- 7. User -->
+          <Border Classes="monsep">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Path Classes="mi" Data="{StaticResource MonUser}" Stroke="#FFCA28" />
+              <TextBlock x:Name="UserText" Classes="mon" Text="root" />
+            </StackPanel>
+          </Border>
+
+          <!-- 8. Disk -->
+          <StackPanel x:Name="DiskPanel" Orientation="Horizontal" VerticalAlignment="Center" Cursor="Hand" Background="Transparent">
+            <Path Classes="mi" Data="{StaticResource MonDisk}" Stroke="#26A69A" />
+            <TextBlock x:Name="DiskText" Classes="mon" Text="/: --" />
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+  </Grid>
+</UserControl>

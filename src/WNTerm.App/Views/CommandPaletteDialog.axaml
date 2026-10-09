@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WNTerm.App.Views"
+             xmlns:m="using:WNTerm.Models"
+             x:Class="WNTerm.App.Views.CommandPaletteDialog"
+             FontSize="13">
+
+  <UserControl.Styles>
+    <Style Selector="ListBoxItem">
+      <Setter Property="Padding" Value="4,0" />
+    </Style>
+  </UserControl.Styles>
+
+  <StackPanel>
+    <TextBox x:Name="QueryBox" Height="34" FontSize="14" VerticalContentAlignment="Center" Padding="6,0" />
+    <ListBox x:Name="ResultsList" Margin="0,6,0,0" MaxHeight="320" BorderThickness="0" Background="Transparent">
+      <ListBox.DataTemplates>
+        <DataTemplate DataType="m:Snippet">
+          <Grid ColumnDefinitions="Auto,*,Auto" Margin="2,3">
+            <Path Classes="ico" Data="{StaticResource IconSnippet}" Margin="0,0,8,0" VerticalAlignment="Center" />
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+              <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+              <TextBlock Text="{Binding Command}" Margin="8,0,0,0" FontSize="11" VerticalAlignment="Center" Classes="muted" MaxWidth="260" TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+          </Grid>
+        </DataTemplate>
+        <DataTemplate DataType="m:SessionInfo">
+          <Grid ColumnDefinitions="Auto,*,Auto" Margin="2,3">
+            <Ellipse Width="8" Height="8" Margin="0,0,8,0" VerticalAlignment="Center"
+                     Fill="{Binding IsOnline, Converter={x:Static local:CommandPaletteDialog.OnlineToBrush}}" />
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+              <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" />
+              <TextBlock Text="{Binding Subtitle}" Margin="8,0,0,0" FontSize="11" VerticalAlignment="Center" Classes="muted" />
+            </StackPanel>
+            <TextBlock Grid.Column="2" Text="{Binding PrimaryTag}" FontSize="11" Classes="muted" />
+          </Grid>
+        </DataTemplate>
+      </ListBox.DataTemplates>
+    </ListBox>
+    <TextBlock Margin="4,6,0,0" FontSize="11" Classes="muted" TextWrapping="Wrap" Text="{DynamicResource Str_QfHint}" />
+    <TextBlock x:Name="SnippetHint" Margin="4,2,0,0" FontSize="11" Classes="muted" TextWrapping="Wrap" />
+  </StackPanel>
+</UserControl>

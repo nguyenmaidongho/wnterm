@@ -1,0 +1,124 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="WNTerm.App.Views.CloudBackupDialog">
+  <UserControl.Styles>
+    <Style Selector="Expander">
+      <Style.Resources>
+        <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="Transparent" />
+        <SolidColorBrush x:Key="ExpanderHeaderBackgroundPointerOver" Color="Transparent" />
+        <SolidColorBrush x:Key="ExpanderHeaderBackgroundPressed" Color="Transparent" />
+        <SolidColorBrush x:Key="ExpanderContentBackground" Color="Transparent" />
+        <SolidColorBrush x:Key="ExpanderHeaderBorderBrush" Color="Transparent" />
+        <SolidColorBrush x:Key="ExpanderContentBorderBrush" Color="Transparent" />
+      </Style.Resources>
+    </Style>
+    <Style Selector="StackPanel#ConfigPanel TextBlock.lbl">
+      <Setter Property="FontWeight" Value="Normal" />
+      <Setter Property="Margin" Value="0,0,0,3" />
+    </Style>
+    <Style Selector="ListBox#BackupsList > ListBoxItem">
+      <Setter Property="Padding" Value="6,4" />
+      <Setter Property="Margin" Value="0" />
+      <Setter Property="CornerRadius" Value="0" />
+    </Style>
+  </UserControl.Styles>
+
+  <StackPanel Spacing="0">
+    <!-- Cấu hình -->
+    <Expander x:Name="ConfigExpander" Header="{DynamicResource Str_CbConfig}" IsExpanded="True" FontWeight="SemiBold"
+              HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Margin="0,0,0,8">
+      <StackPanel x:Name="ConfigPanel" Margin="0,8,0,0" TextElement.FontWeight="Normal">
+        <TextBlock Classes="lbl" Text="{DynamicResource Str_CbEndpoint}" />
+        <TextBox x:Name="EndpointBox" Margin="0,0,0,6" />
+
+        <Grid ColumnDefinitions="*,10,*" Margin="0,0,0,6">
+          <StackPanel Grid.Column="0">
+            <TextBlock Classes="lbl" Text="Bucket:" />
+            <TextBox x:Name="BucketBox" />
+          </StackPanel>
+          <StackPanel Grid.Column="2">
+            <TextBlock Classes="lbl" Text="{DynamicResource Str_CbRegion}" />
+            <TextBox x:Name="RegionBox" />
+          </StackPanel>
+        </Grid>
+
+        <TextBlock Classes="lbl" Text="{DynamicResource Str_CbPrefix}" />
+        <TextBox x:Name="PrefixBox" Margin="0,0,0,6" />
+
+        <Grid ColumnDefinitions="*,10,*" Margin="0,0,0,6">
+          <StackPanel Grid.Column="0">
+            <TextBlock Classes="lbl" Text="Access Key:" />
+            <TextBox x:Name="AccessKeyBox" />
+          </StackPanel>
+          <StackPanel Grid.Column="2">
+            <TextBlock Classes="lbl" Text="Secret Key:" />
+            <TextBox x:Name="SecretKeyBox" PasswordChar="•" />
+          </StackPanel>
+        </Grid>
+
+        <TextBlock Classes="lbl" Text="{DynamicResource Str_CbPassword}" TextWrapping="Wrap" />
+        <TextBox x:Name="BackupPasswordBox" PasswordChar="•" Margin="0,0,0,6" />
+
+        <WrapPanel Margin="0,2,0,8">
+          <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
+            <TextBlock Text="{DynamicResource Str_CbAuto}" FontWeight="Normal" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <ComboBox x:Name="IntervalCombo" MinWidth="120" VerticalAlignment="Center" FontWeight="Normal">
+              <ComboBoxItem Tag="0" Content="{DynamicResource Str_CbOff}" />
+              <ComboBoxItem Tag="1" Content="{DynamicResource Str_CbEvery1m}" />
+              <ComboBoxItem Tag="5" Content="{DynamicResource Str_CbEvery5m}" />
+              <ComboBoxItem Tag="60" Content="{DynamicResource Str_CbEvery1h}" />
+              <ComboBoxItem Tag="1440" Content="{DynamicResource Str_CbEvery1d}" />
+            </ComboBox>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
+            <TextBlock Text="{DynamicResource Str_CbKeep}" FontWeight="Normal" VerticalAlignment="Center" Margin="0,0,4,0" />
+            <TextBox x:Name="KeepBox" Width="56" VerticalAlignment="Center" />
+            <TextBlock Text="{DynamicResource Str_CbLatest}" FontWeight="Normal" VerticalAlignment="Center" Margin="4,0,0,0" />
+          </StackPanel>
+          <CheckBox x:Name="PathStyleCheck" Content="Path-style" FontWeight="Normal" VerticalAlignment="Center"
+                    ToolTip.Tip="{DynamicResource Str_CbPathTip}" />
+        </WrapPanel>
+
+        <CheckBox x:Name="OnlyChangedCheck" Content="{DynamicResource Str_CbOnlyChanged}" FontWeight="Normal" Margin="0,0,0,8" />
+
+        <StackPanel Orientation="Horizontal">
+          <Button Classes="primary" Content="{DynamicResource Str_CbSaveTest}" Click="SaveTest_Click" />
+          <TextBlock x:Name="TestResultText" VerticalAlignment="Center" Margin="10,0,0,0" TextWrapping="Wrap" FontWeight="Normal" />
+        </StackPanel>
+      </StackPanel>
+    </Expander>
+
+    <!-- Thanh hành động -->
+    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+      <Button x:Name="BackupNowBtn" Classes="primary" Content="{DynamicResource Str_CbBackupNow}" Click="BackupNow_Click" Margin="0,0,8,0" />
+      <Button x:Name="RestoreBtn" Classes="toolbar" Content="{DynamicResource Str_CbRestore}" Click="Restore_Click" />
+      <Button Classes="toolbar" Content="{DynamicResource Str_CbRefresh}" Click="Refresh_Click" />
+      <Button Classes="toolbar" Content="{DynamicResource Str_CbDelete}" Click="Delete_Click" />
+    </StackPanel>
+
+    <!-- Danh sách backup -->
+    <Border Height="220" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="1" Background="{DynamicResource ThemeInputBackground}">
+      <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="150,90,*" Margin="6,4"
+              TextElement.FontWeight="SemiBold">
+          <TextBlock Grid.Column="0" Text="{DynamicResource Str_CbColTime}" />
+          <TextBlock Grid.Column="1" Text="{DynamicResource Str_CbColSize}" />
+          <TextBlock Grid.Column="2" Text="{DynamicResource Str_CbColName}" />
+        </Grid>
+        <ListBox x:Name="BackupsList" Grid.Row="1" SelectionMode="Single" DoubleTapped="BackupsList_DoubleTapped" Background="Transparent">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Grid ColumnDefinitions="150,90,*">
+                <TextBlock Grid.Column="0" Text="{Binding LastModifiedLocal}" />
+                <TextBlock Grid.Column="1" Text="{Binding SizeText}" />
+                <TextBlock Grid.Column="2" Text="{Binding FileName}" TextTrimming="CharacterEllipsis" />
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </Grid>
+    </Border>
+
+    <TextBlock x:Name="StatusText" Margin="0,8,0,0" Classes="muted" TextWrapping="Wrap" />
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/WNTerm.Core/WNTerm.Core.csproj" />
+    <Project Path="src/WNTerm/WNTerm.csproj" />
+    <Project Path="src/WNTerm.App/WNTerm.App.csproj" />
+    <Project Path="src/WNTerm.Desktop/WNTerm.Desktop.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/WNTerm.Tests/WNTerm.Tests.csproj" />
+    <Project Path="tests/SnippetMergeCli/SnippetMergeCli.csproj" />
+  </Folder>
+</Solution>

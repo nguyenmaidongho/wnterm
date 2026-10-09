@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="WNTerm.App.Views.ImportDialog">
+  <StackPanel Spacing="12">
+    <!-- Thông tin file -->
+    <Border Background="{DynamicResource ThemeToolbarBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}"
+            BorderThickness="1" CornerRadius="6" Padding="12">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="4">
+          <TextBlock x:Name="FileSummaryBlock" Text="File: backup.wnterm" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+          <TextBlock x:Name="ProtectionStatusBlock" Text="{DynamicResource Str_ImNoPw}" Classes="muted" FontSize="12" TextTrimming="CharacterEllipsis" />
+        </StackPanel>
+        <Button Grid.Column="1" Classes="toolbar" Content="{DynamicResource Str_BrowseBtn}" Click="BrowseFile_Click"
+                VerticalAlignment="Center" Margin="8,0,0,0" Padding="12,5" />
+      </Grid>
+    </Border>
+
+    <!-- Ô nhập mật khẩu nếu có bảo vệ -->
+    <Border x:Name="PasswordPanel" IsVisible="False" Background="{DynamicResource ThemeSidebarBackground}"
+            BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12">
+      <StackPanel Spacing="6">
+        <TextBlock Text="{DynamicResource Str_ImPwPrompt}" FontWeight="SemiBold" Foreground="#F04438" TextWrapping="Wrap" />
+        <TextBox x:Name="ExportPasswordBox" PasswordChar="•" />
+      </StackPanel>
+    </Border>
+
+    <!-- Xử lý trùng lặp -->
+    <Border Background="{DynamicResource ThemeSidebarBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}"
+            BorderThickness="1" CornerRadius="6" Padding="12">
+      <StackPanel Spacing="6">
+        <TextBlock Text="{DynamicResource Str_ConflictHeader}" FontWeight="SemiBold" Margin="0,0,0,4" TextWrapping="Wrap" />
+        <RadioButton x:Name="ConflictSkipRadio" GroupName="ImpConflict" Content="{DynamicResource Str_ConflictSkip}" IsChecked="True" />
+        <RadioButton x:Name="ConflictOverwriteRadio" GroupName="ImpConflict" Content="{DynamicResource Str_ConflictOverwrite}" />
+        <RadioButton x:Name="ConflictAddCopyRadio" GroupName="ImpConflict" Content="{DynamicResource Str_ConflictAddCopy}" />
+      </StackPanel>
+    </Border>
+
+    <!-- Nút Import / Hủy -->
+    <Grid Margin="0,4,0,0">
+      <Button x:Name="ScanMobaBtn" Classes="toolbar" Margin="0" Content="{DynamicResource Str_ScanMobaBtn}" Click="ScanMobaXterm_Click"
+              HorizontalAlignment="Left" Padding="12,6" ToolTip.Tip="{DynamicResource Str_ScanMobaTooltip}" />
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+        <Button x:Name="ImportBtn" Classes="primary" Content="{DynamicResource Str_ImportAction}" Click="Import_Click" IsDefault="True" />
+        <Button Content="{DynamicResource Str_Cancel}" Click="Cancel_Click" Padding="16,6" />
+      </StackPanel>
+    </Grid>
+  </StackPanel>
+</UserControl>

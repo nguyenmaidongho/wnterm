@@ -1,0 +1,6 @@
+config.php
+storage/
+signing/
+*.log
+public/downloads/*.exe
+public/downloads/*.apk

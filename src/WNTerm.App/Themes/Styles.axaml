@@ -1,0 +1,293 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Styles.Resources>
+    <!-- Bỏ gạch chân tab đang chọn (Sessions | SFTP) ở mọi biến thể template của Fluent -->
+    <SolidColorBrush x:Key="TabItemHeaderSelectedPipeFill" Color="Transparent" />
+  </Styles.Resources>
+
+  <Style Selector="Window">
+    <Setter Property="Background" Value="{DynamicResource ThemeWindowBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+    <Setter Property="FontSize" Value="13" />
+  </Style>
+  <!-- Foreground kế thừa xuống TextBlock (không đặt style TextBlock trực tiếp để Button/Menu còn đổi màu chữ khi hover) -->
+  <Style Selector="UserControl">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+  </Style>
+  <Style Selector="TextBlock.muted">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundMuted}" />
+  </Style>
+  <Style Selector="TextBlock.small">
+    <Setter Property="FontSize" Value="11" />
+  </Style>
+  <Style Selector="TextBlock.h2">
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <!-- ===== Button (mặc định, bo góc 6) ===== -->
+  <Style Selector="Button">
+    <Setter Property="Background" Value="{DynamicResource ThemeButtonBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Padding" Value="10,5" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+  <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeButtonHover}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeForegroundMuted}" />
+    <Setter Property="TextElement.Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
+  </Style>
+  <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeItemSelected}" />
+    <Setter Property="TextElement.Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
+  </Style>
+  <Style Selector="Button:disabled">
+    <Setter Property="Opacity" Value="0.5" />
+  </Style>
+
+  <!-- Nút chính (Connect, OK, Save...) -->
+  <Style Selector="Button.primary">
+    <Setter Property="Background" Value="{DynamicResource ThemeConnectButtonBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeConnectButtonForeground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeConnectButtonBorder}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Padding" Value="14,6" />
+  </Style>
+  <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeConnectButtonHoverBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeConnectButtonHoverBorder}" />
+    <Setter Property="TextElement.Foreground" Value="#FFFFFF" />
+  </Style>
+  <Style Selector="Button.primary:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeConnectButtonActiveBackground}" />
+    <Setter Property="TextElement.Foreground" Value="#FFFFFF" />
+  </Style>
+
+  <!-- Nút thanh công cụ -->
+  <Style Selector="Button.toolbar">
+    <Setter Property="Padding" Value="10,6" />
+    <Setter Property="Margin" Value="0,0,8,0" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <!-- Nút icon nhỏ không viền (quick action, close tab...) -->
+  <Style Selector="Button.icon">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="4" />
+    <Setter Property="CornerRadius" Value="5" />
+  </Style>
+  <Style Selector="Button.icon:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeButtonHover}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
+
+  <Style Selector="Path.ico">
+    <Setter Property="Stretch" Value="Uniform" />
+    <Setter Property="Width" Value="14" />
+    <Setter Property="Height" Value="14" />
+    <Setter Property="Stroke" Value="{Binding $parent[Button].Foreground}" />
+    <Setter Property="StrokeThickness" Value="1.6" />
+    <Setter Property="StrokeLineCap" Value="Round" />
+    <Setter Property="StrokeJoin" Value="Round" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+  <Style Selector="Path.fill">
+    <Setter Property="Stretch" Value="Uniform" />
+    <Setter Property="Width" Value="14" />
+    <Setter Property="Height" Value="14" />
+    <Setter Property="Fill" Value="{Binding $parent[Button].Foreground}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- Chip lọc tag -->
+  <Style Selector="ToggleButton.chip">
+    <Setter Property="Margin" Value="0,0,4,4" />
+    <Setter Property="Padding" Value="9,2" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="CornerRadius" Value="11" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundMuted}" />
+  </Style>
+  <Style Selector="ToggleButton.chip:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeItemHover}" />
+  </Style>
+  <Style Selector="ToggleButton.chip:checked /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeChipActiveBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeChipActiveBorder}" />
+    <Setter Property="TextElement.Foreground" Value="{DynamicResource ThemeForeground}" />
+  </Style>
+
+  <!-- ===== TextBox ===== -->
+  <Style Selector="TextBox">
+    <Setter Property="Background" Value="{DynamicResource ThemeInputBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="CaretBrush" Value="{DynamicResource ThemeForeground}" />
+    <Setter Property="SelectionBrush" Value="{DynamicResource ThemeItemSelected}" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Padding" Value="8,6" />
+    <Setter Property="MinHeight" Value="30" />
+  </Style>
+  <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource ThemeInputBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeForegroundMuted}" />
+  </Style>
+  <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource ThemeInputBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeConnectButtonBackground}" />
+  </Style>
+
+  <!-- ===== ComboBox ===== -->
+  <Style Selector="ComboBox">
+    <Setter Property="Background" Value="{DynamicResource ThemeInputBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Padding" Value="8,5" />
+    <Setter Property="MinHeight" Value="30" />
+  </Style>
+  <Style Selector="ComboBox:pointerover /template/ Border#Background">
+    <Setter Property="Background" Value="{DynamicResource ThemeInputBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeForegroundMuted}" />
+  </Style>
+  <Style Selector="ComboBoxItem">
+    <Setter Property="Padding" Value="8,5" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+    <Setter Property="CornerRadius" Value="4" />
+  </Style>
+  <Style Selector="ComboBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeItemHover}" />
+    <Setter Property="TextElement.Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
+  </Style>
+  <Style Selector="ComboBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeItemSelected}" />
+    <Setter Property="TextElement.Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
+  </Style>
+
+  <!-- ===== CheckBox / RadioButton ===== -->
+  <Style Selector="CheckBox">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+  </Style>
+  <Style Selector="RadioButton">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+  </Style>
+
+  <!-- ===== ListBox (danh sách VM, v.v.) ===== -->
+  <Style Selector="ListBox">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+  </Style>
+  <Style Selector="ListBoxItem">
+    <Setter Property="Padding" Value="8,7" />
+    <Setter Property="Margin" Value="0,1" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+  <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeItemHover}" />
+    <Setter Property="TextElement.Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
+  </Style>
+  <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeItemSelected}" />
+    <Setter Property="TextElement.Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
+  </Style>
+  <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeItemSelected}" />
+  </Style>
+
+  <!-- Chữ của RadioButton/CheckBox tự xuống dòng (màn hình điện thoại hẹp) -->
+  <Style Selector="RadioButton /template/ ContentPresenter#PART_ContentPresenter, CheckBox /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+
+  <!-- ===== TabControl / TabItem (cột trái Sessions | SFTP và dialog) ===== -->
+  <Style Selector="TabControl">
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="TabItem">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeTabUnselectedForeground}" />
+    <Setter Property="Background" Value="{DynamicResource ThemeTabUnselectedBackground}" />
+    <Setter Property="Margin" Value="0,0,2,0" />
+    <Setter Property="Padding" Value="14,6" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="CornerRadius" Value="6,6,0,0" />
+    <Setter Property="MinHeight" Value="0" />
+  </Style>
+  <Style Selector="TabItem:pointerover /template/ Border#PART_LayoutRoot">
+    <Setter Property="Background" Value="{DynamicResource ThemeItemHover}" />
+  </Style>
+  <!-- Không gạch chân tab đang chọn: nền + chữ đậm đã đủ phân biệt -->
+  <Style Selector="TabItem /template/ :is(Control)#PART_SelectedPipe">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+  <Style Selector="TabItem:selected">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeTabSelectedForeground}" />
+  </Style>
+  <Style Selector="TabItem:selected /template/ Border#PART_LayoutRoot">
+    <Setter Property="Background" Value="{DynamicResource ThemeTabSelectedBackground}" />
+  </Style>
+
+  <!-- ===== Menu / ContextMenu ===== -->
+  <Style Selector="ContextMenu">
+    <Setter Property="Background" Value="{DynamicResource ThemePopupBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="4" />
+  </Style>
+  <Style Selector="MenuItem">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+    <Setter Property="Padding" Value="8,5" />
+    <Setter Property="CornerRadius" Value="6" />
+  </Style>
+  <Style Selector="MenuItem:selected /template/ Border#PART_LayoutRoot">
+    <Setter Property="Background" Value="{DynamicResource ThemeItemHover}" />
+  </Style>
+  <Style Selector="MenuItem:selected">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeButtonHoverForeground}" />
+  </Style>
+  <Style Selector="Separator">
+    <Setter Property="Background" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="Height" Value="1" />
+    <Setter Property="Margin" Value="2,4" />
+  </Style>
+  <Style Selector="ToolTip">
+    <Setter Property="Background" Value="{DynamicResource ThemePopupBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+  </Style>
+
+  <!-- ===== Scrollbar mảnh ===== -->
+  <Style Selector="ScrollBar /template/ Thumb">
+    <Setter Property="Background" Value="{DynamicResource ThemeScrollBarThumb}" />
+  </Style>
+
+  <!-- ===== Splitter ===== -->
+  <Style Selector="GridSplitter">
+    <Setter Property="Background" Value="{DynamicResource ThemeBorderBrush}" />
+  </Style>
+
+  <!-- ===== Thẻ hộp thoại ===== -->
+  <Style Selector="Border.dialog">
+    <Setter Property="Background" Value="{DynamicResource ThemeCardBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Padding" Value="20" />
+    <Setter Property="BoxShadow" Value="0 8 28 0 #60000000" />
+  </Style>
+
+</Styles>
