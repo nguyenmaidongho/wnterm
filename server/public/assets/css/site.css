@@ -252,7 +252,7 @@ nav .actions{display:flex;align-items:center;gap:10px}
 .lang a:hover{color:var(--fg);background:var(--panel)}
 .lang a.on{background:var(--panel2);color:var(--fg)}
 /* avoid orphan words in body copy */
-p,li,summary,.sub,.hint{text-wrap:pretty}
+p,li,summary,.sub,.hint{text-wrap:wrap}
 h3,.card h3{text-wrap:balance}
 summary{text-wrap:balance}
 .meta{text-wrap:balance}
@@ -349,3 +349,6 @@ section p a,.meta a,.lead a,details a,.install a{color:#ff8a86;text-decoration:u
 .guide code{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.92em}
 .guide .btn,.guide .btn:hover{text-decoration:none;color:var(--fg)}
 .guide .btn.primary{color:#fff}
+.legal ul,.guide ol{padding-left:20px}
+.legal li,.legal p{overflow-wrap:break-word;hyphens:manual}
+@media(max-width:620px){.guide .cta .btn{flex:1 1 100%;justify-content:center}.guide h1{font-size:clamp(28px,8vw,36px)}}
