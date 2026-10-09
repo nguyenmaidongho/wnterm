@@ -108,7 +108,7 @@ $reg = [
     'email' => $email, 'authKey' => b64($k['auth']), 'kdfIterations' => $iter,
     'wrappedPw' => gcmSeal($k['enc'], $vaultKey),
     'recoveryAuth' => b64($rec['auth']), 'wrappedRecovery' => gcmSeal($rec['enc'], $vaultKey),
-    'deviceName' => 'Máy thử',
+    'deviceName' => 'Máy thử', 'tos' => '2026-10-09',
 ];
 [$c, $r] = call('POST', '/register', $reg);
 check('đăng ký mới → 201', $c === 201 && !empty($r['token']), json_encode($r));

@@ -55,6 +55,7 @@ if (!empty($extraHead)) { echo $extraHead; }
           <input id="pw2" name="pw2" type="password" autocomplete="new-password" required>
         </div>
         <label class="check"><input id="agree" type="checkbox"> <span><?= t('reg.agree') ?></span></label>
+        <label class="check"><input id="tos" type="checkbox" data-tos="<?= e(Api::TOS_VERSION) ?>"> <span><?= t('reg.tos') ?></span></label>
         <?php if ($turnstileKey !== ''): ?>
           <div class="cf-turnstile" data-sitekey="<?= e($turnstileKey) ?>" data-theme="dark" style="margin:12px 0"></div>
         <?php endif; ?>

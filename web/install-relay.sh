@@ -13,6 +13,9 @@ PORT=8787
 SELF_PORTS="22,8282"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 BIN=/usr/local/bin/wnterm-relay
+BLOCKLIST=/etc/wnterm-relay/blocklist.txt
+RELAY_LOG=/var/log/wnterm-relay/relay.log
+DYN_BLOCKLIST=/var/lib/wnterm-relay/blocklist.dynamic
 UNIT=/etc/systemd/system/wnterm-relay.service
 CUST="/usr/local/directadmin/data/users/$DAUSER/domains/$DOMAIN.cust_nginx"
 BEGIN="# >>> wnterm-relay (do not edit between these markers)"
@@ -55,7 +58,7 @@ strip_block() {   # bỏ khối cũ của chúng ta (nếu có) khỏi file cust
 if [ "${1:-}" = "uninstall" ]; then
   say "Gỡ wnterm-relay"
   systemctl disable --now wnterm-relay 2>/dev/null || true
-  rm -f "$UNIT" "$BIN"; systemctl daemon-reload
+  rm -f "$UNIT" "$BIN" /etc/logrotate.d/wnterm-relay; systemctl daemon-reload
   strip_block; rewrite_nginx
   echo "Đã gỡ. (User hệ thống wnrelay vẫn giữ; xóa bằng: userdel wnrelay)"
   exit 0
@@ -69,11 +72,37 @@ say "1/5 User hệ thống + chương trình"
 id wnrelay >/dev/null 2>&1 || useradd --system --no-create-home --shell /sbin/nologin wnrelay
 install -m 0755 -o root -g root "$HERE/wnterm-relay-linux-amd64" "$BIN"
 "$BIN" -h 2>&1 | head -1 || true
+# Danh sách đích bị chặn (relay nạp lại mỗi 60 giây, không cần restart). Thêm tên máy / *.tên-miền / IP / CIDR, mỗi dòng một mục.
+mkdir -p /etc/wnterm-relay
+if [ ! -f "$BLOCKLIST" ]; then
+  printf "# Đích bị chặn qua bản web (mỗi dòng: tên máy, *.ten-mien, IP hoặc CIDR; # là chú thích)
+" > "$BLOCKLIST"
+fi
+chown root:wnrelay "$BLOCKLIST"; chmod 0640 "$BLOCKLIST"
+
+# Log kết nối giữ 90 ngày (ai, lúc nào, tới đâu) — phục vụ xử lý báo cáo lạm dụng; nêu rõ trong Điều khoản.
+cat > /etc/logrotate.d/wnterm-relay <<LR
+/var/log/wnterm-relay/relay.log {
+    daily
+    rotate 90
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}
+LR
 
 say "2/5 Chọn đường gọi API kiểm tra đăng nhập"
 API_ARGS="-api https://$DOMAIN/api/v1"
-if APIIP="$(probe /api/v1/health '"service":"wnterm"')"; then
-  API_ARGS="$API_ARGS -api-connect $APIIP:443"; echo "Gọi thẳng $APIIP:443 (không vòng qua Cloudflare)."
+# Relay (Go) kiểm tra chứng chỉ TLS nghiêm ngặt → chỉ dùng đường gọi thẳng nếu curl KHÔNG cần -k cũng xác minh được
+# (nginx gốc có thể đưa chứng chỉ của máy chủ khác, vd. control3.webnow.vn, khiến relay không kiểm tra được đăng nhập).
+APIIP=""
+for ip in $(local_ips); do
+  if curl -s --max-time 8 --resolve "$DOMAIN:443:$ip" "https://$DOMAIN/api/v1/health" 2>/dev/null | grep -q '"service":"wnterm"'; then APIIP="$ip"; break; fi
+done
+if [ -n "$APIIP" ]; then
+  API_ARGS="$API_ARGS -api-connect $APIIP:443"; echo "Gọi thẳng $APIIP:443 (không vòng qua Cloudflare, chứng chỉ hợp lệ)."
 else
   echo "Gọi qua https://$DOMAIN (Cloudflare)."
 fi
@@ -88,9 +117,13 @@ Wants=network-online.target
 [Service]
 User=wnrelay
 Group=wnrelay
-ExecStart=$BIN -listen 127.0.0.1:$PORT $API_ARGS -origins $DOMAIN -self-ports $SELF_PORTS
+ExecStart=$BIN -listen 127.0.0.1:$PORT $API_ARGS -origins $DOMAIN -self-ports $SELF_PORTS -blocklist $BLOCKLIST -blocklist-dynamic $DYN_BLOCKLIST -log-file $RELAY_LOG
 Restart=always
 RestartSec=3
+LogsDirectory=wnterm-relay
+LogsDirectoryMode=0750
+StateDirectory=wnterm-relay
+StateDirectoryMode=0750
 LimitNOFILE=65536
 MemoryMax=512M
 NoNewPrivileges=yes
@@ -142,7 +175,7 @@ if IP="$(probe /relay/health wnterm-relay)"; then
   if [ "$IP" = public ]; then H="$(curl -s --max-time 10 "https://$DOMAIN/relay/health")"; else H="$(curl -sk --max-time 8 --resolve "$DOMAIN:443:$IP" "https://$DOMAIN/relay/health")"; fi
   echo "OK qua $IP: $H"
   printf '\n\033[1;32mXONG: https://%s/relay đã hoạt động. Mở https://%s/app trên iPhone để dùng.\033[0m\n' "$DOMAIN" "$DOMAIN"
-  echo "Xem log:  journalctl -u wnterm-relay -f      Gỡ:  bash $0 uninstall"
+  echo "Xem log:  tail -f $RELAY_LOG   (chỉ các dòng lạm dụng: grep abuse $RELAY_LOG)   Chặn đích: sửa $BLOCKLIST   Gỡ:  bash $0 uninstall"
 else
   grep -rl "wnterm-relay" /usr/local/directadmin/data/users/$DAUSER/nginx*.conf 2>/dev/null || echo "(không thấy khối /relay trong nginx.conf của user — cấu hình DA có thể khác)"
   die "nginx chưa chuyển /relay vào trạm. Gửi lại kết quả ở trên cho mình."

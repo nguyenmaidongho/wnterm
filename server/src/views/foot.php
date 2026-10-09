@@ -24,6 +24,7 @@
           <li><a href="/dang-ky"><?= t('nav.register') ?></a></li>
           <li><a href="/dang-nhap"><?= t('nav.login') ?></a></li>
           <li><a href="/khoi-phuc"><?= t('foot.recover') ?></a></li>
+          <li><a href="/dieu-khoan"><?= t('foot.terms') ?></a></li>
           <li><a href="<?= e($b['site']) ?>" rel="noopener"><?= e($b['site']) ?></a></li>
         </ul>
       </div>

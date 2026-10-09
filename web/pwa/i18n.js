@@ -333,6 +333,7 @@
     'Dùng tài khoản WN Term để lấy danh sách VM đã backup từ máy tính hoặc Android.': 'Sign in with your WN Term account to load the VM list backed up from your computer or Android.',
     'Tạo tài khoản': 'Create account',
     'Quên mật khẩu': 'Forgot password',
+    'Điều khoản': 'Terms',
     'Mật khẩu và dữ liệu được mã hóa ngay trên máy bạn — máy chủ không đọc được.': 'Your password and data are encrypted on your device — the server cannot read them.',
     'Trên iPhone: bấm <b>Chia sẻ</b> rồi chọn <b>Thêm vào MH chính</b> để dùng như một app.': 'On iPhone: tap <b>Share</b>, then <b>Add to Home Screen</b> to use it like an app.',
     'Chưa có VM nào': 'No VMs yet',
@@ -400,6 +401,11 @@
     ['không được phép kết nối tới địa chỉ này qua bản web (địa chỉ nội bộ)', 'connecting to this address is not allowed from the web app (internal address)'],
     ['máy chủ đích không phản hồi như máy chủ SSH', 'the target did not respond like an SSH server'],
     ['đích không phải máy chủ SSH', 'the target is not an SSH server'],
+    ['quá nhiều yêu cầu từ địa chỉ của bạn, hãy thử lại sau ít phút', 'too many requests from your address, try again in a few minutes'],
+    ['bạn mở kết nối quá nhanh, hãy đợi một chút rồi thử lại', 'you are opening connections too fast, wait a moment and try again'],
+    ['bạn đã kết nối tới quá nhiều máy chủ khác nhau trong 1 giờ, hãy thử lại sau', 'you have connected to too many different servers within an hour, try again later'],
+    ['tạm khóa kết nối tới máy chủ này do nhiều lần thất bại liên tiếp, hãy thử lại sau 15 phút', 'connections to this server are temporarily locked after repeated failures, try again in 15 minutes'],
+    ['đích này bị chặn do vi phạm điều khoản sử dụng', 'this destination is blocked for violating the terms of use'],
     ['không kết nối được trạm chuyển tiếp', 'could not reach the relay'],
     ['trạm chuyển tiếp không phản hồi', 'the relay did not respond'],
     ['trạm chuyển tiếp từ chối kết nối', 'the relay refused the connection'],
@@ -422,6 +428,7 @@
   var rules = [
     [/không tìm thấy máy chủ ([^\s:]+)/, 'host not found: $1'],
     [/không kết nối được ([^\s:]+:\d+)/, 'could not connect to $1'],
+    [/tài khoản mới bị giới hạn số kết nối cùng lúc trong (\d+) giờ đầu/, 'new accounts are limited in simultaneous connections during the first $1 hours'],
     [/^Passphrase của SSH key:?$/, 'SSH key passphrase:'],
     [/^Mật khẩu cho (.+?):?$/, 'Password for $1:']
   ];

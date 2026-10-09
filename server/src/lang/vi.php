@@ -17,6 +17,7 @@ return [
     'foot.contact' => 'Liên hệ',
     'foot.tax' => 'MST',
     'foot.recover' => 'Khôi phục tài khoản',
+    'foot.terms' => 'Điều khoản & chống lạm dụng',
 
     // ---- trang chủ: meta ----
     'home.title' => 'WebNow Terminal (WNTerm) — SSH & SFTP cho Windows, Android và iPhone',
@@ -205,6 +206,9 @@ return [
     'reg.pwhint' => 'Dùng một câu dài dễ nhớ sẽ an toàn hơn ký tự lộn xộn.',
     'reg.pw2' => 'Nhập lại mật khẩu',
     'reg.agree' => 'Tôi hiểu rằng <b>nếu quên mật khẩu và mất mã khôi phục</b>, dữ liệu đã mã hóa không thể lấy lại.',
+    'reg.tos' => 'Tôi đồng ý với <a href="/dieu-khoan" target="_blank" rel="noopener"><b>Điều khoản sử dụng</b></a>: chỉ kết nối tới máy chủ của tôi hoặc máy chủ tôi được phép, không dò quét hay tấn công.',
+    'terms.title' => 'Điều khoản sử dụng & chính sách chống lạm dụng — WNTerm',
+    'terms.desc' => 'Điều khoản sử dụng, quy tắc chấp nhận được, nhật ký kết nối và cách báo cáo lạm dụng của WNTerm.',
     'reg.submit' => 'Tạo tài khoản',
     'reg.have' => 'Đã có tài khoản? <a href="/dang-nhap">Đăng nhập</a>',
     'reg.s2.h1' => 'Lưu mã khôi phục',

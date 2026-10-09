@@ -52,6 +52,7 @@
     if (pw.length < 10) return showErr(L.t('reg.pw_short'));
     if (pw !== pw2) return showErr(L.t('reg.pw_mismatch'));
     if (!$('agree').checked) return showErr(L.t('reg.agree_req'));
+    if (!$('tos').checked) return showErr(L.t('reg.tos_req'));
 
     btn.disabled = true;
     var oldLabel = btn.textContent;
@@ -71,6 +72,7 @@
         wrappedPw: await WN.seal(k.enc, vaultKey),
         recoveryAuth: WN.b64(rk.auth),
         wrappedRecovery: await WN.seal(rk.enc, vaultKey),
+        tos: $('tos').getAttribute('data-tos'),
         deviceName: L.t('device.web')
       };
       var ts = document.querySelector('[name="cf-turnstile-response"]');

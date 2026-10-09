@@ -13,6 +13,7 @@
     var me = await WN.api('GET', '/me', null, true);
     if (!me.ok) { WN.setToken(null); return location.replace('/dang-nhap'); }
     email = me.email;
+    if (me.admin) { var ad = document.createElement('a'); ad.className = 'btn'; ad.href = '/quan-tri'; ad.textContent = 'Quản trị'; $('who').parentNode.insertBefore(ad, $('who').nextSibling); }
     $('who').textContent = L.t('acc.hello', me.email);
     $('kvEmail').textContent = me.email;
     $('kvCreated').textContent = fmt(me.createdAt);

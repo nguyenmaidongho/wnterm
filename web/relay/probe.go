@@ -137,6 +137,10 @@ func handleProbe(w http.ResponseWriter, r *http.Request) {
 		probeWriteJSON(w, http.StatusForbidden, map[string]any{"ok": false, "error": "origin"})
 		return
 	}
+	if !rateAllow("probeip:"+clientIP(r), 12, time.Minute) {
+		probeWriteJSON(w, http.StatusTooManyRequests, map[string]any{"ok": false, "error": "quá nhiều yêu cầu kiểm tra", "retryAfter": 30})
+		return
+	}
 	var req probeRequest
 	if err := json.NewDecoder(io.LimitReader(r.Body, probeMaxBody)).Decode(&req); err != nil {
 		probeWriteJSON(w, http.StatusBadRequest, map[string]any{"ok": false, "error": "yêu cầu không hợp lệ"})

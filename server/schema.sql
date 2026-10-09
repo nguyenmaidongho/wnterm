@@ -59,3 +59,13 @@ CREATE TABLE IF NOT EXISTS vault_history (
 -- Nạp lịch sử cho các phiên bản đã có từ trước (chạy lại nhiều lần vẫn an toàn).
 INSERT IGNORE INTO vault_history (user_id, version, created_at, size, device)
   SELECT user_id, version, created_at, LENGTH(data), '' FROM vault_blobs;
+
+-- Bằng chứng người dùng đã đồng ý Điều khoản sử dụng (phiên bản, thời điểm, IP lúc đăng ký).
+CREATE TABLE IF NOT EXISTS tos_acceptances (
+  user_id     BIGINT UNSIGNED NOT NULL,
+  version     VARCHAR(20)     NOT NULL,
+  ip          VARCHAR(64)     NOT NULL DEFAULT '',
+  accepted_at DATETIME        NOT NULL,
+  PRIMARY KEY (user_id, version),
+  CONSTRAINT fk_tos_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
