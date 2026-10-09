@@ -3,12 +3,7 @@ using System.Windows.Media;
 
 namespace WNTerm.Views;
 
-public enum HostKeyDecision
-{
-    Cancel,
-    TrustOnce,
-    TrustAndSave
-}
+using WNTerm.Services;
 
 public partial class HostKeyDialog : Window
 {

@@ -1,12 +1,36 @@
 (async function () {
     let settings = {
         copyOnSelect: true,
-        rightClickAction: 'Paste'
+        rightClickAction: 'Paste',
+        confirmMultilinePaste: false
     };
 
+    // Cầu nối HTTP (Android/iOS): POST lên /__msg theo lô, nhận bằng SSE /__events.
+    const bridgeParams = new URLSearchParams(location.search);
+    const httpBridge = bridgeParams.get("bridge") === "http";
+    const bridgeCh = bridgeParams.get("ch") || "";
+    let outbox = [];
+    let sending = false;
+    async function flushOutbox() {
+        if (sending) return;
+        sending = true;
+        try {
+            while (outbox.length) {
+                const batch = outbox;
+                outbox = [];
+                try {
+                    await fetch("/__msg?ch=" + bridgeCh, { method: "POST", body: JSON.stringify(batch) });
+                } catch (e) { }
+            }
+        } finally { sending = false; }
+    }
+
     function post(msg) {
+        if (httpBridge) { outbox.push(msg); flushOutbox(); return; }
         if (window.chrome && window.chrome.webview) {
             window.chrome.webview.postMessage(msg);
+        } else if (window.invokeCSharpAction) {
+            window.invokeCSharpAction(JSON.stringify(msg));
         }
     }
 
@@ -123,28 +147,49 @@
             return false;
         }
 
+        if (e.ctrlKey && e.shiftKey && (e.key === 'S' || e.key === 's')) {
+            e.preventDefault();
+            post({ type: 'hotkey', name: 'Snippets' });
+            return false;
+        }
+
         if (e.altKey && e.key >= '1' && e.key <= '9') {
             post({ type: 'hotkey', name: 'Tab' + e.key });
             return false;
         }
 
+        // preventDefault: để host đổi cỡ chữ, không để WebView tự phóng to cả trang.
         if (e.ctrlKey && (e.key === '=' || e.key === '+')) {
+            e.preventDefault();
             post({ type: 'hotkey', name: 'ZoomIn' });
             return false;
         }
 
         if (e.ctrlKey && (e.key === '-' || e.key === '_')) {
+            e.preventDefault();
             post({ type: 'hotkey', name: 'ZoomOut' });
             return false;
         }
 
         if (e.ctrlKey && e.key === '0') {
+            e.preventDefault();
             post({ type: 'hotkey', name: 'ZoomReset' });
             return false;
         }
 
         return true;
     });
+
+    // Dán gốc (menu/phím của WebView, bàn phím điện thoại): văn bản nhiều dòng → gửi host hỏi xác nhận trước.
+    // Chỉ bật khi host gửi confirmMultilinePaste (bản WPF không gửi → không đổi hành vi).
+    container.addEventListener('paste', (e) => {
+        if (!settings.confirmMultilinePaste) return;
+        const text = e.clipboardData ? e.clipboardData.getData('text/plain') : '';
+        if (!text || !/[\r\n]/.test(text)) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        post({ type: 'pasteText', text: text });
+    }, true);
 
     if (term.element) {
         term.element.addEventListener('mouseup', (e) => {
@@ -164,9 +209,8 @@
         });
     }
 
-    if (window.chrome && window.chrome.webview) {
-        window.chrome.webview.addEventListener('message', (e) => {
-            const msg = e.data;
+    const onHostMessage = (msg) => {
+        {
             if (!msg || !msg.type) return;
 
             switch (msg.type) {
@@ -208,6 +252,7 @@
                     if (msg.scrollback) term.options.scrollback = msg.scrollback;
                     if (msg.copyOnSelect !== undefined) settings.copyOnSelect = msg.copyOnSelect;
                     if (msg.rightClickAction) settings.rightClickAction = msg.rightClickAction;
+                    if (msg.confirmMultilinePaste !== undefined) settings.confirmMultilinePaste = msg.confirmMultilinePaste;
                     fitAddon.fit();
                     if (changed) {
                         post({ type: 'resize', cols: term.cols, rows: term.rows });
@@ -229,7 +274,18 @@
                     }
                     break;
             }
-        });
+        }
+    };
+
+    if (window.chrome && window.chrome.webview) {
+        window.chrome.webview.addEventListener('message', (e) => onHostMessage(e.data));
+    }
+    // Avalonia WebView: host gọi window.__wntermReceive(jsonString)
+    window.__wntermReceive = (json) => { try { onHostMessage(JSON.parse(json)); } catch { } };
+
+    if (httpBridge) {
+        const es = new EventSource("/__events?ch=" + bridgeCh);
+        es.onmessage = (e) => { try { onHostMessage(JSON.parse(e.data)); } catch (err) { } };
     }
 
     post({ type: 'ready', cols: term.cols, rows: term.rows });

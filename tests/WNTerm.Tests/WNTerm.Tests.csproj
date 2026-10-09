@@ -16,6 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Lớp thuần của App (không phụ thuộc Avalonia) được biên dịch thẳng vào dự án test -->
+    <Compile Include="..\..\src\WNTerm.App\Services\TypedLineTracker.cs" Link="TypedLineTracker.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\WNTerm\WNTerm.csproj" />
   </ItemGroup>
 

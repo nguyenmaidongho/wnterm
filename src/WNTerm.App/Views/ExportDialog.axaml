@@ -1,0 +1,70 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="WNTerm.App.Views.ExportDialog">
+  <UserControl.Styles>
+    <Style Selector="ListBox#SessionsList > ListBoxItem">
+      <Setter Property="Padding" Value="4,2" />
+      <Setter Property="Margin" Value="0" />
+      <Setter Property="CornerRadius" Value="0" />
+    </Style>
+    <Style Selector="Button.small">
+      <Setter Property="Padding" Value="8,4" />
+      <Setter Property="FontSize" Value="11" />
+    </Style>
+  </UserControl.Styles>
+
+  <StackPanel Spacing="0">
+    <TextBlock Text="{DynamicResource Str_ExportSelectPrompt}" FontWeight="SemiBold" Margin="0,0,0,8" TextWrapping="Wrap" />
+
+    <!-- Danh sách checkbox VM -->
+    <Border Height="180" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="1" CornerRadius="4"
+            Background="{DynamicResource ThemeInputBackground}">
+      <ListBox x:Name="SessionsList" SelectionMode="Multiple,Toggle" Background="Transparent" BorderThickness="0">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <CheckBox IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=TwoWay}" Margin="4,2">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" Margin="0,0,8,0" />
+                <TextBlock Text="{Binding Subtitle}" Classes="muted" FontSize="11" VerticalAlignment="Center" />
+              </StackPanel>
+            </CheckBox>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Border>
+
+    <!-- Nút chọn / bỏ chọn -->
+    <StackPanel Orientation="Horizontal" Margin="0,6,0,12" Spacing="6">
+      <Button Classes="small" Content="{DynamicResource Str_SelectAll}" Click="SelectAll_Click" />
+      <Button Classes="small" Content="{DynamicResource Str_DeselectAll}" Click="DeselectAll_Click" />
+    </StackPanel>
+
+    <!-- Tùy chọn bảo mật -->
+    <Border Background="{DynamicResource ThemeToolbarBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}"
+            BorderThickness="1" CornerRadius="6" Padding="12">
+      <StackPanel>
+        <TextBlock Text="{DynamicResource Str_PasswordLabel}" FontWeight="Bold" Margin="0,0,0,6" />
+        <RadioButton x:Name="NoPasswordRadio" GroupName="ExpPw" Content="{DynamicResource Str_NoPasswordExport}" IsChecked="True" IsCheckedChanged="PasswordMode_Changed" Margin="0,0,0,6" />
+        <RadioButton x:Name="WithPasswordRadio" GroupName="ExpPw" Content="{DynamicResource Str_WithPasswordExport}" IsCheckedChanged="PasswordMode_Changed" Margin="0,0,0,8" />
+
+        <StackPanel x:Name="PasswordFieldsPanel" IsEnabled="False" Margin="16,0,0,0">
+          <TextBlock Text="{DynamicResource Str_ExportPasswordPrompt}" FontSize="11" Margin="0,0,0,2" Classes="muted" />
+          <TextBox x:Name="ExportPasswordBox" PasswordChar="•" Margin="0,0,0,6" />
+
+          <TextBlock Text="{DynamicResource Str_ConfirmPasswordPrompt}" FontSize="11" Margin="0,0,0,2" Classes="muted" />
+          <TextBox x:Name="ConfirmPasswordBox" PasswordChar="•" Margin="0,0,0,6" />
+
+          <CheckBox x:Name="IncludeKeyFileCheckBox" Content="{DynamicResource Str_IncludeKeyFile}" IsChecked="True" FontSize="11" Margin="0,4,0,0" />
+        </StackPanel>
+      </StackPanel>
+    </Border>
+
+    <!-- Nút Export / Hủy -->
+    <Border Margin="0,12,0,0" Padding="0,14,0,0" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="0,1,0,0">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+        <Button x:Name="ExportBtn" Classes="primary" Content="{DynamicResource Str_ExportAction}" Click="Export_Click" />
+        <Button Content="{DynamicResource Str_Cancel}" Click="Cancel_Click" Padding="14,5" />
+      </StackPanel>
+    </Border>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,32 @@
+# WNTerm — Apache (DirectAdmin). Cần mod_rewrite + mod_headers.
+Options -Indexes
+DirectoryIndex index.php index.html
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# API: /api/v1/... -> api/index.php
+RewriteRule ^api/v1(/.*)?$ api/index.php [L,QSA]
+
+# Chuyển Authorization header cho PHP (một số cấu hình FastCGI bỏ mất header này)
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# Đường dẫn đẹp (không có .php)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([a-z0-9-]+)$ $1.php [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "DENY"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+Header always set Strict-Transport-Security "max-age=31536000"
+</IfModule>
+
+# Không cho truy cập file ẩn / cấu hình nếu lỡ nằm trong web root
+<FilesMatch "^(\.|config\.php$|schema\.sql$|composer\.)">
+  Require all denied
+</FilesMatch>

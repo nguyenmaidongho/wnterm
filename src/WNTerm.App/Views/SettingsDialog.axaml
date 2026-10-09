@@ -1,0 +1,90 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="WNTerm.App.Views.SettingsDialog"
+             FontSize="12">
+
+  <Grid RowDefinitions="Auto,Auto">
+    <ScrollViewer x:Name="Scroller" Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,6,0">
+      <StackPanel>
+        <TextBlock Text="{DynamicResource Str_AppearanceTerminal}" FontWeight="Bold" FontSize="13" Margin="0,0,0,10" />
+
+        <!-- Language -->
+        <TextBlock Text="{DynamicResource Str_LanguageLabel}" Margin="0,0,0,4" />
+        <ComboBox x:Name="LanguageCombo" Margin="0,0,0,10" HorizontalAlignment="Stretch">
+          <ComboBoxItem Content="English (Default)" Tag="en" />
+          <ComboBoxItem Content="Tiếng Việt" Tag="vi" />
+        </ComboBox>
+
+        <!-- Font -->
+        <TextBlock Text="{DynamicResource Str_FontLabel}" Margin="0,0,0,4" />
+        <ComboBox x:Name="FontFamilyCombo" Margin="0,0,0,10" HorizontalAlignment="Stretch" SelectedIndex="0">
+          <ComboBoxItem Content="JetBrains Mono" />
+          <ComboBoxItem Content="Cascadia Mono" />
+          <ComboBoxItem Content="Consolas" />
+        </ComboBox>
+
+        <!-- Font size -->
+        <TextBlock Text="{DynamicResource Str_FontSizeLabel}" Margin="0,0,0,4" />
+        <ComboBox x:Name="FontSizeCombo" Margin="0,0,0,10" HorizontalAlignment="Stretch" SelectedIndex="3">
+          <ComboBoxItem Content="11" />
+          <ComboBoxItem Content="12" />
+          <ComboBoxItem Content="13" />
+          <ComboBoxItem Content="14" />
+          <ComboBoxItem Content="16" />
+          <ComboBoxItem Content="18" />
+          <ComboBoxItem Content="20" />
+        </ComboBox>
+
+        <!-- Theme -->
+        <TextBlock Text="{DynamicResource Str_ThemeLabel}" Margin="0,0,0,4" />
+        <ComboBox x:Name="ThemeCombo" Margin="0,0,0,14" HorizontalAlignment="Stretch" SelectedIndex="0">
+          <ComboBoxItem Content="Dark" />
+          <ComboBoxItem Content="Light" />
+        </ComboBox>
+
+        <Separator Margin="0,2,0,10" />
+        <TextBlock Text="{DynamicResource Str_ActionsClipboard}" FontWeight="Bold" FontSize="13" Margin="0,0,0,10" />
+
+        <!-- Copy on select -->
+        <CheckBox x:Name="CopyOnSelectCheck" Content="{DynamicResource Str_CopyOnSelect}" IsChecked="True" Margin="0,0,0,8" />
+
+        <!-- Right click -->
+        <TextBlock Text="{DynamicResource Str_RightClickLabel}" Margin="0,2,0,4" />
+        <ComboBox x:Name="RightClickCombo" Margin="0,0,0,10" HorizontalAlignment="Stretch" SelectedIndex="0">
+          <ComboBoxItem Content="{DynamicResource Str_RightClickPaste}" Tag="Paste" />
+          <ComboBoxItem Content="{DynamicResource Str_RightClickMenu}" Tag="Menu" />
+        </ComboBox>
+
+        <!-- Confirm multiline paste -->
+        <CheckBox x:Name="ConfirmMultilineCheck" Content="{DynamicResource Str_ConfirmMultiline}" IsChecked="True" Margin="0,0,0,12" />
+
+        <Separator Margin="0,2,0,10" />
+        <TextBlock Text="{DynamicResource Str_NetworkSftp}" FontWeight="Bold" FontSize="13" Margin="0,0,0,10" />
+
+        <!-- SFTP Show hidden files -->
+        <CheckBox x:Name="ShowHiddenFilesCheck" Content="{DynamicResource Str_ShowHiddenFiles}" IsChecked="True" Margin="0,0,0,10" />
+
+        <!-- Custom Editor -->
+        <TextBlock Text="{DynamicResource Str_CustomEditorLabel}" Margin="0,0,0,4" />
+        <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+          <TextBox x:Name="CustomEditorBox" Grid.Column="0" />
+          <Button x:Name="BrowseBtn" Grid.Column="1" Content="{DynamicResource Str_BrowseBtn}" Margin="4,0,0,0" Padding="10,4" />
+        </Grid>
+
+        <!-- Keepalive -->
+        <Grid ColumnDefinitions="*,80" Margin="0,0,0,8">
+          <TextBlock Text="{DynamicResource Str_KeepAliveLabel}" VerticalAlignment="Center" TextWrapping="Wrap" />
+          <TextBox x:Name="KeepAliveBox" Grid.Column="1" Text="30" HorizontalContentAlignment="Center" />
+        </Grid>
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- Buttons -->
+    <Border Grid.Row="1" Padding="0,12,0,0" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="0,1,0,0">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+        <Button x:Name="SaveBtn" Content="{DynamicResource Str_SaveSettings}" Classes="primary" IsDefault="True" />
+        <Button x:Name="CancelBtn" Content="{DynamicResource Str_Cancel}" Padding="14,5" />
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

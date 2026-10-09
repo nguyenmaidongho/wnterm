@@ -11,10 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.S3" Version="4.0.103.4" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4191.47" />
-    <PackageReference Include="SSH.NET" Version="2026.0.0" />
+    <ProjectReference Include="..\WNTerm.Core\WNTerm.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

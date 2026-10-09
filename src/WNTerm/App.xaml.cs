@@ -14,6 +14,8 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        WpfPlatform.Register();
+
         var settingsStore = new SettingsStore();
         var settings = settingsStore.Load();
         ThemeManager.ApplyTheme(settings.Theme);

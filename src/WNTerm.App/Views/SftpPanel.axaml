@@ -1,0 +1,233 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WNTerm.App.Views"
+             x:Class="WNTerm.App.Views.SftpPanel"
+             FontSize="12"
+             Background="{DynamicResource ThemeWindowBackground}">
+
+  <UserControl.Styles>
+    <!-- Nút thanh công cụ SFTP: Padding 6,2 / Margin 2 như WPF -->
+    <Style Selector="local|SftpPanel Button.sftp">
+      <Setter Property="Padding" Value="6,2" />
+      <Setter Property="Margin" Value="2" />
+      <Setter Property="MinHeight" Value="0" />
+    </Style>
+    <Style Selector="local|SftpPanel Button.sftp Path">
+      <Setter Property="Stroke" Value="{Binding $parent[Button].Foreground}" />
+      <Setter Property="StrokeThickness" Value="1.6" />
+      <Setter Property="StrokeLineCap" Value="Round" />
+      <Setter Property="StrokeJoin" Value="Round" />
+      <Setter Property="Width" Value="13" />
+      <Setter Property="Height" Value="13" />
+      <Setter Property="Stretch" Value="Uniform" />
+    </Style>
+
+    <!-- Dòng file: giống ListViewItem của WPF (Padding 4,3, bo 2, không margin) -->
+    <Style Selector="ListBox.files">
+      <Setter Property="Background" Value="{DynamicResource ThemeWindowBackground}" />
+      <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style Selector="ListBox.files ListBoxItem">
+      <Setter Property="Padding" Value="4,3" />
+      <Setter Property="Margin" Value="0" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="CornerRadius" Value="2" />
+      <Setter Property="Cursor" Value="Arrow" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <!-- Chọn nhưng list không có focus: nền hover (như MultiTrigger IsSelectionActive=False) -->
+    <Style Selector="ListBox.files:not(:focus-within) ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource ThemeItemHover}" />
+    </Style>
+    <Style Selector="ListBox.files:not(:focus-within) ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource ThemeItemHover}" />
+    </Style>
+
+    <!-- Tiêu đề cột (GridViewColumnHeader) -->
+    <Style Selector="Border.colhdr">
+      <Setter Property="Background" Value="{DynamicResource ThemeToolbarBackground}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+      <Setter Property="BorderThickness" Value="0,0,1,1" />
+      <Setter Property="Padding" Value="6,4" />
+    </Style>
+    <Style Selector="Border.colhdr > TextBlock">
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+    <Style Selector="Grid.row > TextBlock">
+      <Setter Property="Margin" Value="6,0" />
+      <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+    <!-- Thanh nút công cụ SFTP -->
+    <Border Grid.Row="0" Background="{DynamicResource ThemeToolbarBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="0,0,0,1" Padding="4">
+      <WrapPanel Orientation="Horizontal">
+        <Button Classes="sftp" Content="{DynamicResource Str_UpFolder}" Command="{Binding GoUpCommand}" ToolTip.Tip="{DynamicResource Str_UpFolderTooltip}" />
+        <Button Classes="sftp" Command="{Binding RefreshCommand}" ToolTip.Tip="{DynamicResource Str_RefreshTooltip}">
+          <Path Data="{StaticResource IconRefresh}" />
+        </Button>
+        <Button Classes="sftp" Command="{Binding GoHomeCommand}" ToolTip.Tip="{DynamicResource Str_HomeTooltip}">
+          <Path Data="{StaticResource IconHome}" />
+        </Button>
+        <Button Classes="sftp" Content="{DynamicResource Str_NewFolderBtn}" Command="{Binding CreateDirectoryCommand}" />
+        <Button Classes="sftp" Content="{DynamicResource Str_Upload}" Click="UploadButton_Click" />
+        <Button Classes="sftp" Content="{DynamicResource Str_Download}" Click="DownloadButton_Click" />
+        <Button Classes="sftp" Content="{DynamicResource Str_EditBtn}" Command="{Binding EditFileDefaultCommand}" ToolTip.Tip="{DynamicResource Str_EditDefaultTooltip}" IsVisible="{Binding CanEditExternally}" />
+        <CheckBox Content="{DynamicResource Str_ShowHiddenFilesShort}" IsChecked="{Binding ShowHiddenFiles}" VerticalAlignment="Center" Margin="6,0,0,0" FontSize="11" />
+      </WrapPanel>
+    </Border>
+
+    <!-- Thanh đường dẫn -->
+    <Border Grid.Row="1" Background="{DynamicResource ThemeToolbarBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="0,0,0,1" Padding="4">
+      <TextBox x:Name="PathTextBox" Padding="4,2" MinHeight="0" KeyDown="PathTextBox_KeyDown" LostFocus="PathTextBox_LostFocus" />
+    </Border>
+
+    <!-- Danh sách file/thư mục -->
+    <Grid Grid.Row="2">
+      <ScrollViewer x:Name="ListScroll" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+        <Grid x:Name="ListGrid" RowDefinitions="Auto,*" Width="525">
+          <!-- Header cột -->
+          <Grid Grid.Row="0" ColumnDefinitions="*,65,95,65,65,105">
+            <Border Grid.Column="0" Classes="colhdr"><TextBlock Text="{DynamicResource Str_ColName}" /></Border>
+            <Border Grid.Column="1" Classes="colhdr"><TextBlock Text="{DynamicResource Str_ColSize}" /></Border>
+            <Border Grid.Column="2" Classes="colhdr"><TextBlock Text="{DynamicResource Str_ColPermissions}" /></Border>
+            <Border Grid.Column="3" Classes="colhdr"><TextBlock Text="{DynamicResource Str_ColOwner}" /></Border>
+            <Border Grid.Column="4" Classes="colhdr"><TextBlock Text="{DynamicResource Str_ColGroup}" /></Border>
+            <Border Grid.Column="5" Classes="colhdr"><TextBlock Text="{DynamicResource Str_ColModified}" /></Border>
+          </Grid>
+
+          <ListBox x:Name="FileListView" Grid.Row="1" Classes="files"
+                   ItemsSource="{Binding Items}"
+                   SelectedItem="{Binding SelectedItem}"
+                   SelectionMode="Multiple"
+                   DragDrop.AllowDrop="True"
+                   DoubleTapped="FileListView_DoubleTapped"
+                   KeyDown="FileListView_KeyDown"
+                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                   ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <Grid Classes="row" ColumnDefinitions="*,65,95,65,65,105">
+                  <Grid Grid.Column="0" ColumnDefinitions="Auto,*" VerticalAlignment="Center" Margin="6,0">
+                    <Panel>
+                    <!-- 1. Parent Folder (xanh lá với ..) -->
+                    <Viewbox Width="16" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"
+                             IsVisible="{Binding ItemType, Converter={x:Static local:SftpPanel.ItemTypeIs}, ConverterParameter=ParentDirectory}">
+                      <Canvas Width="16" Height="14">
+                        <Path Fill="#2E7D32" Data="M 1,2 L 6,2 L 7.5,4 L 14.5,4 C 15.3,4 15.5,4.5 15.5,5.2 L 15.5,12.5 C 15.5,13.2 15,13.8 14.2,13.8 L 1.8,13.8 C 1,13.8 0.5,13.2 0.5,12.5 L 0.5,3.3 C 0.5,2.6 1,2 1.8,2 Z" />
+                        <Path Fill="#4CAF50" Data="M 0.5,5.2 L 15.5,5.2 L 14.2,13.5 L 1.8,13.5 Z" />
+                        <Path Fill="#81C784" Data="M 1.5,5.5 L 14.5,5.5 L 13.8,6.8 L 2.2,6.8 Z" Opacity="0.7" />
+                        <Ellipse Fill="#FFFFFF" Canvas.Left="4.8" Canvas.Top="8.0" Width="2.4" Height="2.4" />
+                        <Ellipse Fill="#FFFFFF" Canvas.Left="8.8" Canvas.Top="8.0" Width="2.4" Height="2.4" />
+                      </Canvas>
+                    </Viewbox>
+
+                    <!-- 2. Folder thường (hổ phách) -->
+                    <Viewbox Width="16" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"
+                             IsVisible="{Binding ItemType, Converter={x:Static local:SftpPanel.ItemTypeIs}, ConverterParameter=Directory}">
+                      <Canvas Width="16" Height="14">
+                        <Path Fill="#FFA000" Data="M 1,2 L 6,2 L 7.5,4 L 14.5,4 C 15.3,4 15.5,4.5 15.5,5.2 L 15.5,12.5 C 15.5,13.2 15,13.8 14.2,13.8 L 1.8,13.8 C 1,13.8 0.5,13.2 0.5,12.5 L 0.5,3.3 C 0.5,2.6 1,2 1.8,2 Z" />
+                        <Path Fill="#FFCA28" Data="M 0.5,5.2 L 15.5,5.2 L 14.2,13.5 L 1.8,13.5 Z" />
+                        <Path Fill="#FFE082" Data="M 1.5,5.5 L 14.5,5.5 L 13.8,6.8 L 2.2,6.8 Z" Opacity="0.8" />
+                      </Canvas>
+                    </Viewbox>
+
+                    <!-- 3. Symlink thư mục -->
+                    <Viewbox Width="16" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"
+                             IsVisible="{Binding ItemType, Converter={x:Static local:SftpPanel.ItemTypeIs}, ConverterParameter=DirectorySymlink}">
+                      <Canvas Width="16" Height="14">
+                        <Path Fill="#FFA000" Data="M 1,2 L 6,2 L 7.5,4 L 14.5,4 C 15.3,4 15.5,4.5 15.5,5.2 L 15.5,12.5 C 15.5,13.2 15,13.8 14.2,13.8 L 1.8,13.8 C 1,13.8 0.5,13.2 0.5,12.5 L 0.5,3.3 C 0.5,2.6 1,2 1.8,2 Z" />
+                        <Path Fill="#FFCA28" Data="M 0.5,5.2 L 15.5,5.2 L 14.2,13.5 L 1.8,13.5 Z" />
+                        <Path Fill="#FFE082" Data="M 1.5,5.5 L 14.5,5.5 L 13.8,6.8 L 2.2,6.8 Z" Opacity="0.8" />
+                        <Rectangle Canvas.Left="0" Canvas.Top="7" Width="7" Height="7" RadiusX="1" RadiusY="1" Fill="#0288D1" />
+                        <Path Fill="#FFFFFF" Data="M 1.5,11.5 L 3.8,9.2 L 3.8,10.5 C 5,10.5 6,11 6,13 C 5.5,12 4.8,11.7 3.8,11.7 L 3.8,13 Z" />
+                      </Canvas>
+                    </Viewbox>
+
+                    <!-- 4. Symlink file -->
+                    <Viewbox Width="16" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"
+                             IsVisible="{Binding ItemType, Converter={x:Static local:SftpPanel.ItemTypeIs}, ConverterParameter=FileSymlink}">
+                      <Canvas Width="16" Height="14">
+                        <Path Fill="#ECEFF1" Stroke="#78909C" StrokeThickness="0.8" Data="M 3,1 L 10,1 L 13,4 L 13,13 L 3,13 Z" />
+                        <Path Fill="#B0BEC5" Data="M 10,1 L 10,4 L 13,4 Z" />
+                        <Line StartPoint="5,6" EndPoint="11,6" Stroke="#90A4AE" StrokeThickness="0.8" />
+                        <Line StartPoint="5,8" EndPoint="11,8" Stroke="#90A4AE" StrokeThickness="0.8" />
+                        <Rectangle Canvas.Left="0" Canvas.Top="7" Width="7" Height="7" RadiusX="1" RadiusY="1" Fill="#0288D1" />
+                        <Path Fill="#FFFFFF" Data="M 1.5,11.5 L 3.8,9.2 L 3.8,10.5 C 5,10.5 6,11 6,13 C 5.5,12 4.8,11.7 3.8,11.7 L 3.8,13 Z" />
+                      </Canvas>
+                    </Viewbox>
+
+                    <!-- 5. File thường -->
+                    <Viewbox Width="16" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"
+                             IsVisible="{Binding ItemType, Converter={x:Static local:SftpPanel.ItemTypeIs}, ConverterParameter=File}">
+                      <Canvas Width="16" Height="14">
+                        <Path Fill="#ECEFF1" Stroke="#78909C" StrokeThickness="0.8" Data="M 3,1 L 10,1 L 13,4 L 13,13 L 3,13 Z" />
+                        <Path Fill="#B0BEC5" Data="M 10,1 L 10,4 L 13,4 Z" />
+                        <Line StartPoint="5,6" EndPoint="11,6" Stroke="#90A4AE" StrokeThickness="0.8" />
+                        <Line StartPoint="5,8" EndPoint="11,8" Stroke="#90A4AE" StrokeThickness="0.8" />
+                        <Line StartPoint="5,10" EndPoint="9,10" Stroke="#90A4AE" StrokeThickness="0.8" />
+                      </Canvas>
+                    </Viewbox>
+
+                    </Panel>
+                    <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="Normal" VerticalAlignment="Center" Margin="0" TextTrimming="CharacterEllipsis" />
+                  </Grid>
+                  <TextBlock Grid.Column="1" Text="{Binding SizeFormatted}" />
+                  <TextBlock Grid.Column="2" Text="{Binding Permissions}" />
+                  <TextBlock Grid.Column="3" Text="{Binding Owner}" />
+                  <TextBlock Grid.Column="4" Text="{Binding Group}" />
+                  <TextBlock Grid.Column="5" Text="{Binding LastModifiedFormatted}" />
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+
+            <ListBox.ContextMenu>
+              <ContextMenu Opening="FileContextMenu_Opening">
+                <MenuItem Header="{DynamicResource Str_EditFileDefault}" Command="{Binding EditFileDefaultCommand}" IsVisible="{Binding CanEditExternally}" />
+                <MenuItem Header="{DynamicResource Str_EditFileWith}" Command="{Binding EditFileWithAppCommand}" IsVisible="{Binding CanEditExternally}" />
+                <Separator />
+                <MenuItem Header="{DynamicResource Str_Download}" Click="DownloadButton_Click" />
+                <MenuItem Header="{DynamicResource Str_Rename}" Command="{Binding RenameItemCommand}" />
+                <MenuItem Header="{DynamicResource Str_Chmod}" Click="ChmodMenuItem_Click" />
+                <MenuItem Header="{DynamicResource Str_Delete}" Click="ContextMenuDelete_Click" />
+                <Separator />
+                <MenuItem Header="{DynamicResource Str_NewDirectory}" Command="{Binding CreateDirectoryCommand}" />
+                <MenuItem Header="{DynamicResource Str_Refresh}" Command="{Binding RefreshCommand}" />
+                <MenuItem Header="{DynamicResource Str_CopyPath}" Click="CopyPath_Click" />
+              </ContextMenu>
+            </ListBox.ContextMenu>
+          </ListBox>
+        </Grid>
+      </ScrollViewer>
+
+      <!-- Loading overlay -->
+      <Border Background="{DynamicResource ThemeCardBackground}" Opacity="0.8" IsVisible="{Binding IsLoading}">
+        <TextBlock Text="{DynamicResource Str_Loading}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Foreground="{DynamicResource ThemeForegroundMuted}" FontStyle="Italic" />
+      </Border>
+    </Grid>
+
+    <!-- Thanh tiến trình Upload/Download -->
+    <Border Grid.Row="3" Background="{DynamicResource ThemeToolbarBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="0,1,0,0" Padding="6,4"
+            IsVisible="{Binding TransferQueue.IsTransferring}">
+      <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+          <TextBlock Text="{Binding TransferQueue.CurrentFileName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxWidth="160" />
+          <TextBlock Text="{Binding TransferQueue.SpeedFormatted, StringFormat=' ({0})'}" Foreground="{DynamicResource ThemeForegroundMuted}" FontSize="11" Margin="4,0,0,0" />
+        </StackPanel>
+
+        <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Classes="sftp" Content="{DynamicResource Str_Cancel}" Command="{Binding TransferQueue.CancelCommand}"
+                Padding="8,2" FontSize="11" VerticalAlignment="Center" />
+
+        <ProgressBar Grid.Row="1" Grid.Column="0" Value="{Binding TransferQueue.ProgressPercentage}" Height="6" Margin="0,4,8,0" Maximum="100" />
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

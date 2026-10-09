@@ -1,6 +1,6 @@
 ﻿; WN Term - Inno Setup Script
 #define MyAppName "WN Term"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "2.3.0"
 #define MyAppPublisher "WN Term"
 #define MyAppExeName "WNTerm.exe"
 
@@ -15,9 +15,9 @@ AllowNoIcons=yes
 DisableDirPage=no
 UsePreviousAppDir=yes
 DisableProgramGroupPage=yes
-OutputDir=.
+OutputDir=../release
 OutputBaseFilename=WNTerm-Setup
-SetupIconFile=src\WNTerm\Assets\app.ico
+SetupIconFile=src\WNTerm.Desktop\app.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma2/ultra64
 SolidCompression=yes
@@ -37,7 +37,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "Tạo biểu tượng ngoài màn hình Desktop"; GroupDescription: "Biểu tượng bổ sung:"
 
 [Files]
-Source: "publish\win-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "publish\desktop-win-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"

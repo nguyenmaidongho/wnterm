@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <title>WN Term</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#252526">
+  <meta name="description" data-i18n-content content="WN Term — SSH & SFTP ngay trên trình duyệt, đồng bộ danh sách VM với app máy tính và Android.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="WN Term">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="lib/xterm.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <!-- Dải màu cố định sau thanh trạng thái của iPhone (giờ, pin…) để chữ luôn đọc được, không bị lớp mờ của hệ thống làm lem logo -->
+  <div class="statusfill"></div>
+
+  <!-- ===== Đăng nhập ===== -->
+  <section id="login" class="screen" hidden>
+    <div class="login-wrap">
+      <div class="login-brand">
+        <div class="brand-logo"><img src="icons/logo-n.png" alt=""></div>
+        <div><div class="brand-title">WN Term</div><div class="brand-sub" data-i18n>SSH · SFTP · đồng bộ đa thiết bị</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title" data-i18n>Đăng nhập</div>
+        <p class="muted" data-i18n>Dùng tài khoản WN Term để lấy danh sách VM đã backup từ máy tính hoặc Android.</p>
+        <form id="loginForm" autocomplete="on">
+          <label class="field"><span>Email</span><input id="email" type="email" autocomplete="username" autocapitalize="off" required></label>
+          <label class="field"><span data-i18n>Mật khẩu</span><input id="password" type="password" autocomplete="current-password" required></label>
+          <button type="submit" class="btn primary block" id="loginBtn"><span data-ico="play" class="fill"></span><span data-i18n>Đăng nhập</span></button>
+          <p id="loginErr" class="error" hidden></p>
+        </form>
+        <div class="login-links"><a href="/dang-ky" target="_blank" rel="noopener" data-i18n>Tạo tài khoản</a><a href="/khoi-phuc" target="_blank" rel="noopener" data-i18n>Quên mật khẩu</a></div>
+      </div>
+      <p class="muted small center" data-i18n>Mật khẩu và dữ liệu được mã hóa ngay trên máy bạn — máy chủ không đọc được.</p>
+      <div id="installTip" class="tip" hidden><span data-ico="upload"></span><div data-i18n="html">Trên iPhone: bấm <b>Chia sẻ</b> rồi chọn <b>Thêm vào MH chính</b> để dùng như một app.</div></div>
+    </div>
+  </section>
+
+  <!-- ===== App ===== -->
+  <div id="app" class="screen" hidden>
+    <!-- Thanh công cụ (giống app Android) -->
+    <header class="toolbar">
+      <button class="tb primary" id="tbAdd" title="Thêm VM" data-i18n-title><span data-ico="plus"></span></button>
+      <button class="tb" id="tbQuick" title="Kết nối nhanh (thử VM, không lưu)" data-i18n-title><span data-ico="play" class="fill"></span></button>
+      <button class="tb" id="tbExport" title="Export danh sách VM" data-i18n-title><span data-ico="export"></span></button>
+      <button class="tb" id="tbImport" title="Import danh sách VM" data-i18n-title><span data-ico="import"></span></button>
+      <button class="tb" id="tbCloud" title="Cloud — backup & khôi phục" data-i18n-title><span data-ico="cloud"></span><i class="badge" id="cloudBadge" hidden></i></button>
+      <button class="tb" id="tbSnip" title="Snippet — lệnh lưu sẵn" data-i18n-title><span data-ico="snippet"></span></button>
+      <button class="tb" id="tbSearch" title="Tìm nhanh" data-i18n-title><span data-ico="search"></span></button>
+      <button class="tb" id="tbSettings" title="Cài đặt" data-i18n-title><span data-ico="settings"></span></button>
+      <div class="tb-spacer"></div>
+      <div class="tb-logo" title="WebNow - WN Term"><img src="icons/logo-n.png" alt=""></div>
+    </header>
+
+    <main class="views">
+      <!-- Sessions -->
+      <section id="vSessions" class="view">
+        <div class="search-row"><div class="search-box"><span data-ico="search"></span><input id="search" type="search" data-i18n-ph placeholder="Tìm VM (tên, host, user, #tag)" autocomplete="off" autocapitalize="off"></div></div>
+        <div class="chips-row"><div id="chips" class="chips"></div><button class="chip" id="chipGroup" data-i18n>Nhóm</button></div>
+        <div id="vmList" class="vm-list"></div>
+        <div id="emptyState" class="empty" hidden>
+          <div class="empty-title" data-i18n>Chưa có VM nào</div>
+          <div class="muted small" data-i18n="html">Bấm <b>＋</b> để thêm VM, <b>Import</b> để nhập từ file,<br>hoặc <b>Cloud</b> để lấy lại danh sách đã backup.</div>
+        </div>
+        <div class="summary" id="summary"></div>
+      </section>
+
+      <!-- Terminal -->
+      <section id="vTerminal" class="view" hidden>
+        <div class="tabstrip"><div id="tabs" class="tabs"></div><button class="tab-add" id="tabAdd" title="Mở thêm" data-i18n-title><span data-ico="plus"></span></button></div>
+        <div id="termHost" class="term-host"><div id="noTab" class="no-tab muted" data-i18n="html">Chọn một VM ở mục <b>Sessions</b> để kết nối terminal.</div></div>
+        <div id="monitor" class="monitor" hidden>
+          <div class="mon-item"><img id="monOs" class="mon-os" alt=""><span id="monHost" class="mon-host"></span></div>
+          <div class="mon-item"><span data-ico="cpu" class="mi" style="color:#FFA726"></span><span id="monCpu">0%</span><svg class="spark cpu" viewBox="0 0 40 14" preserveAspectRatio="none"><polyline id="monCpuLine" points=""/></svg></div>
+          <div class="mon-item"><span data-ico="ram" class="mi" style="color:#42A5F5"></span><span id="monRam">–</span><svg class="spark ram" viewBox="0 0 40 14" preserveAspectRatio="none"><polyline id="monRamLine" points=""/></svg></div>
+          <div class="mon-item"><span data-ico="up" class="mi" style="color:#00E676"></span><span id="monUp">0 Kb/s</span></div>
+          <div class="mon-item"><span data-ico="down" class="mi" style="color:#29B6F6"></span><span id="monDown">0 Kb/s</span></div>
+          <div class="mon-item"><span data-ico="clock" class="mi" style="color:#AB47BC"></span><span id="monUptime">–</span></div>
+          <div class="mon-item"><span data-ico="user" class="mi" style="color:#FFCA28"></span><span id="monUser">–</span></div>
+          <div class="mon-item last"><span data-ico="disk" class="mi" style="color:#26A69A"></span><span id="monDisk">/: –</span></div>
+        </div>
+        <div class="keybar" id="keybar">
+          <button data-k="snip" class="key key-snip" title="Snippet — lệnh lưu sẵn" data-i18n-title><span data-ico="snippet"></span><span data-i18n>Snippet</span></button><button data-k="ctrl" class="key toggle">Ctrl</button><button data-k="alt" class="key toggle">Alt</button><button data-k="enter" class="key">Enter</button><button data-k="esc" class="key">Esc</button><button data-k="tab" class="key">Tab</button>
+          <button data-k="up" class="key">↑</button><button data-k="down" class="key">↓</button><button data-k="left" class="key">←</button><button data-k="right" class="key">→</button>
+          <button data-k="|" class="key">|</button><button data-k="/" class="key">/</button><button data-k="-" class="key">-</button><button data-k="~" class="key">~</button>
+          <button data-k="home" class="key">Home</button><button data-k="end" class="key">End</button><button data-k="pgup" class="key">PgUp</button><button data-k="pgdn" class="key">PgDn</button>
+          <button data-k="^c" class="key">^C</button><button data-k="^d" class="key">^D</button>
+          <button data-k="copy" class="key" data-i18n>Chép</button><button data-k="paste" class="key" data-i18n>Dán</button><button data-k="kbd" class="key">⌨</button>
+        </div>
+      </section>
+
+      <!-- SFTP -->
+      <section id="vSftp" class="view" hidden>
+        <div class="sftp-tools">
+          <button class="sb" id="sftpUp" title="Lên thư mục cha" data-i18n-title><span data-ico="up"></span><span data-i18n>Lên</span></button>
+          <button class="sb" id="sftpRefresh" title="Làm mới" data-i18n-title><span data-ico="refresh"></span></button>
+          <button class="sb" id="sftpHome" title="Thư mục nhà" data-i18n-title><span data-ico="home"></span></button>
+          <button class="sb" id="sftpUpload" title="Upload" data-i18n-title><span data-ico="upload"></span></button>
+          <button class="sb" id="sftpNewDir" title="Thư mục mới" data-i18n-title><span data-ico="newfolder"></span></button>
+          <button class="sb" id="sftpSelect" title="Chọn nhiều" data-i18n-title><span data-ico="check"></span></button>
+          <button class="sb" id="sftpHidden" title="Hiện/ẩn file ẩn" data-i18n-title><span data-ico="eye"></span></button>
+        </div>
+        <div class="sftp-path"><input id="sftpPath" spellcheck="false" autocapitalize="off" autocomplete="off"></div>
+        <div class="sftp-head"><span data-i18n>Tên</span><span data-i18n>Kích thước</span><span data-i18n>Quyền</span><span></span></div>
+        <div id="sftpList" class="sftp-list"></div>
+        <div id="sftpEmpty" class="no-tab muted" hidden>Chưa có VM nào được kết nối.</div>
+        <div id="selBar" class="selbar" hidden>
+          <span id="selCount">0 đã chọn</span>
+          <button class="sb" id="selAll" data-i18n>Tất cả</button>
+          <button class="sb" id="selDownload"><span data-ico="download"></span><span data-i18n>Tải</span></button>
+          <button class="sb" id="selChmod">chmod</button>
+          <button class="sb danger" id="selDelete"><span data-ico="trash"></span></button>
+        </div>
+        <input type="file" id="sftpFile" multiple hidden>
+      </section>
+    </main>
+
+    <div id="xfer" class="xfer" hidden><span id="xferText"></span><div class="bar"><i id="xferBar"></i></div><button id="xferCancel" class="sb" data-i18n>Hủy</button></div>
+    <div class="statusbar" id="status">Sẵn sàng</div>
+    <nav class="bottomnav">
+      <button data-view="vSessions" class="active">Sessions</button>
+      <button data-view="vTerminal">Terminal</button>
+      <button data-view="vSftp">SFTP</button>
+    </nav>
+  </div>
+
+  <input type="file" id="importFile" hidden>
+
+  <!-- ===== Hộp thoại dùng chung ===== -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-card" id="modalCard">
+      <div class="modal-head"><h3 id="modalTitle"></h3><button class="icon-btn" id="modalX" title="Đóng" data-i18n-title><span data-ico="close"></span></button></div>
+      <div id="modalBody"></div>
+      <p id="modalErr" class="error" hidden></p>
+      <p id="modalInfo" class="info" hidden></p>
+      <div id="modalButtons" class="modal-buttons"></div>
+    </div>
+  </div>
+  <div id="toast" class="toast" hidden></div>
+
+  <!-- Lỗi lúc khởi động (vd. file cũ còn trong bộ nhớ đệm) → hiện thông báo + nút tải lại thay vì màn hình trắng -->
+  <div id="fatal" style="display:none;position:fixed;inset:0;z-index:99;background:#1E1E1E;color:#DCDCDC;padding:calc(env(safe-area-inset-top,0px) + 40px) 24px 24px;font:15px -apple-system,sans-serif;text-align:center">
+    <div style="font-size:18px;font-weight:600;margin-bottom:10px" data-i18n>WN Term chưa khởi động được</div>
+    <div id="fatalMsg" style="color:#A0A0A0;font-size:13px;margin-bottom:20px;word-break:break-word"></div>
+    <button id="fatalBtn" style="background:#0E639C;color:#fff;border:1px solid #1177BB;border-radius:6px;padding:12px 20px;font-weight:600;font-size:15px" data-i18n>Tải lại bản mới</button>
+  </div>
+  <script>
+    (function () {
+      function fatal(msg) {
+        var f = document.getElementById('fatal'); if (!f || f.style.display === 'block') return;
+        if (document.getElementById('login') && (!document.getElementById('login').hidden || !document.getElementById('app').hidden)) return; // app đã chạy được
+        document.getElementById('fatalMsg').textContent = msg || '';
+        f.style.display = 'block';
+      }
+      window.addEventListener('error', function (e) { fatal(e.message); });
+      setTimeout(function () { fatal(window.WNi18n ? WNi18n.t('Hết thời gian chờ tải giao diện.') : 'Hết thời gian chờ tải giao diện.'); }, 12000);
+      document.getElementById('fatalBtn').onclick = async function () {
+        try { if (navigator.serviceWorker) { var regs = await navigator.serviceWorker.getRegistrations(); for (var r of regs) await r.unregister(); } } catch (e) {}
+        try { if (window.caches) { var keys = await caches.keys(); for (var k of keys) await caches.delete(k); } } catch (e) {}
+        location.replace(location.pathname + '?r=' + Date.now());
+      };
+    })();
+  </script>
+  <script src="i18n.js"></script>
+  <script src="wn-crypto.js"></script>
+  <script src="vault.js"></script>
+  <script src="wnfile.js"></script>
+  <script src="lib/xterm.js"></script>
+  <script src="lib/addon-fit.js"></script>
+  <script src="lib/addon-unicode11.js"></script>
+  <script src="wasm_exec.js"></script>
+  <script src="ui.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

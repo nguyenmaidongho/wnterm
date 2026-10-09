@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="WNTerm.App.Views.ChmodDialog">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.hdr">
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundMuted}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="TextBlock.hdrc">
+      <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+    <!-- Tên mục -->
+    <TextBlock x:Name="TargetBlock" Grid.Row="0" Text="Item: " FontWeight="SemiBold" Margin="0,0,0,12" TextTrimming="CharacterEllipsis" />
+
+    <!-- Bảng 9 checkbox phân quyền -->
+    <Border Grid.Row="1" Background="{DynamicResource ThemeWindowBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}"
+            BorderThickness="1" CornerRadius="4" Padding="12,10" Margin="0,0,0,12">
+      <Grid ColumnDefinitions="110,*,*,*" RowDefinitions="26,28,28,28">
+        <TextBlock Grid.Row="0" Grid.Column="0" Classes="hdr" Text="{DynamicResource Str_Subject}" />
+        <TextBlock Grid.Row="0" Grid.Column="1" Classes="hdr hdrc" Text="{DynamicResource Str_Read}" />
+        <TextBlock Grid.Row="0" Grid.Column="2" Classes="hdr hdrc" Text="{DynamicResource Str_Write}" />
+        <TextBlock Grid.Row="0" Grid.Column="3" Classes="hdr hdrc" Text="{DynamicResource Str_Execute}" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource Str_OwnerSubject}" VerticalAlignment="Center" />
+        <CheckBox x:Name="ChkOwnerR" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <CheckBox x:Name="ChkOwnerW" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <CheckBox x:Name="ChkOwnerX" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Str_GroupSubject}" VerticalAlignment="Center" />
+        <CheckBox x:Name="ChkGroupR" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <CheckBox x:Name="ChkGroupW" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <CheckBox x:Name="ChkGroupX" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource Str_OthersSubject}" VerticalAlignment="Center" />
+        <CheckBox x:Name="ChkOthersR" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <CheckBox x:Name="ChkOthersW" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <CheckBox x:Name="ChkOthersX" Grid.Row="3" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+      </Grid>
+    </Border>
+
+    <!-- Nhập số Octal -->
+    <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+      <TextBlock Grid.Column="0" Text="{DynamicResource Str_OctalLabel}" VerticalAlignment="Center" FontWeight="SemiBold" />
+      <TextBox x:Name="OctalBox" Grid.Column="1" Width="70" TextAlignment="Center" FontWeight="Bold" FontSize="14" />
+    </Grid>
+
+    <!-- Tùy chọn đệ quy -->
+    <CheckBox x:Name="RecursiveCheckBox" Grid.Row="3" Content="{DynamicResource Str_RecursiveLabel}" Margin="0,0,0,12" IsVisible="False" />
+
+    <!-- Nút bấm -->
+    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,8,0,0">
+      <Button Content="{DynamicResource Str_Cancel}" Click="Cancel_Click" Padding="14,6" />
+      <Button Content="{DynamicResource Str_Save}" Click="Ok_Click" IsDefault="True" Classes="primary" />
+    </StackPanel>
+  </Grid>
+</UserControl>

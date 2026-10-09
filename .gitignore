@@ -51,3 +51,12 @@ WNTerm-portable.zip
 ## User session backups & dumps
 *.mxtsessions
 Screenshot*.png
+
+## WN Term: tuyệt đối không đưa lên git
+signing/
+web/dist/
+web/pwa-preview.png
+*.keystore
+*.pass
+wnterm_deploy*
+server/public/downloads/
